@@ -304,6 +304,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .card:hover .card__play { transform: scale(1.12); background: var(--accent); }
 .card__img.no-poster { background: linear-gradient(135deg, var(--accent-soft), var(--bg-soft)); }
+/* 视频分类标签 */
+.card__tag {
+  position: absolute; right: 8px; bottom: 8px; padding: 2px 10px; border-radius: 10px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;
+  background: rgba(0,0,0,0.55); color: #fff; backdrop-filter: blur(6px);
+  border: 0.5px solid rgba(255,255,255,0.15); pointer-events: none; z-index: 2;
+}
 
 /* =========================================================
    抖音
@@ -421,7 +428,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .caps__track { height: 360vh; }
 }
 @media (max-width: 480px) {
-  .gallery { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .hero__cta { flex-direction: column; width: 100%; max-width: 280px; margin-inline: auto; }
   .hero__cta .btn { width: 100%; }
   .contact__grid { grid-template-columns: 1fr; }

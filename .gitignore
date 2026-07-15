@@ -1,11 +1,4 @@
-# 视频文件（过大的 mp4 单独排除，其余部署后可播放）
-# 以下超过 Cloudflare Pages 25MB 限制，暂不加入 Git
-assets/video/douyin/douyin-04.mp4
-assets/video/douyin/douyin-08.mp4
-assets/video/school/school-02.mp4
-assets/video/school/school-03.mp4
-assets/video/school/school-05.mp4
-
+# 视频文件（全部已压缩至 25MB 以下）
 # 系统文件
 .DS_Store
 Thumbs.db
