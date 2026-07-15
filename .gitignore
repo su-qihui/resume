@@ -1,0 +1,23 @@
+# 视频文件（大二进制文件，Git 不适合）
+# 部署后通过 Cloudflare R2 / CDN 引用
+assets/video/**/*.mp4
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 工作目录元数据（工具配置，非项目内容）
+.workbuddy/
+
+# 日志
+tools/*.log
+
+# 临时文件
+*~
