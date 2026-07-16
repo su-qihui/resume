@@ -99,11 +99,15 @@
 
     <div class="gear" data-reveal>
       <h3 class="gear__title">创作装备</h3>
-      <div class="gear__grid">
-        <div class="gear__item"><span class="gear__icon">🚁</span><span>DJI Mini 3 / Neo 2 无人机</span></div>
-        <div class="gear__item"><span class="gear__icon">🎥</span><span>Insta360 Ace Pro / Osmo Nano</span></div>
-        <div class="gear__item"><span class="gear__icon">🤳</span><span>Insta360 Flow 2 手持云台</span></div>
-        <div class="gear__item"><span class="gear__icon">🎙️</span><span>DJI Mic Mini 麦克风</span></div>
+      <div class="gear__strip">
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3 无人机"><img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2 无人机"><img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano 运动相机"><img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro 运动相机"><img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2 云台"><img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D 单反"><img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra"><img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /></button>
+        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/collection-shelf.jpg" data-title="装备收藏柜"><img src="assets/img/gear/collection-shelf.jpg" alt="装备收藏柜" loading="lazy" /></button>
       </div>
     </div>
   </div>
@@ -120,9 +124,9 @@
       <div class="caps__stage">
         <div class="caps__visual" id="capsVisual">
           <figure class="caps__media is-active" data-stage="0"><img src="assets/img/portfolio/ai/01-school-building.webp" alt="平面设计作品" /></figure>
-          <figure class="caps__media" data-stage="1"><img src="assets/img/portfolio/ai/03-thinking-lab.webp" alt="影视后期作品" /></figure>
-          <figure class="caps__media" data-stage="2"><img src="assets/img/portfolio/cdr/03-jiangxi-cuisine.webp" alt="摄影航拍" /></figure>
-          <figure class="caps__media" data-stage="3"><img src="assets/img/portfolio/ai/04-guoyanshe.webp" alt="新媒体运营" /></figure>
+          <figure class="caps__media" data-stage="1"><img src="assets/img/memory-flash-cover.jpg" alt="影视后期作品" /></figure>
+          <figure class="caps__media" data-stage="2"><img src="assets/img/gear/djimini3.jpg" alt="摄影航拍" /></figure>
+          <figure class="caps__media" data-stage="3"><img src="assets/img/douyin-profile-new.webp" alt="新媒体运营" /></figure>
           <div class="caps__ring" aria-hidden="true"></div>
         </div>
         <div class="caps__captions">
@@ -229,13 +233,97 @@
     <h2 class="section__title" data-reveal>精选案例</h2>
     <div class="tabs" id="portfolioTabs" data-reveal>
       <button class="tab is-active" data-filter="all">全部</button>
+      <button class="tab" data-filter="video">视频作品</button>
       <button class="tab" data-filter="ai">AI 平面设计</button>
       <button class="tab" data-filter="cdr">CDR 制版</button>
-      <button class="tab" data-filter="video">视频作品</button>
+    </div>
+
+    <!-- 视频（保留 10 个，按用户编号排序：①UMO牌 ②18岁恋爱 ③记忆快闪 ④法国赌神 ⑤无间道 ⑥江南style ⑦flow防抖 ⑧运动会 ⑨vlog ⑪flow2三星） -->
+    <div class="gallery gallery--video" data-group="video">
+      <figure class="card card--video" data-reveal>
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-01.mp4" data-poster="assets/video/douyin/douyin-01.jpg" data-title="UMO牌-融媒体">
+          <img class="card__poster" src="assets/video/douyin/douyin-01.jpg" alt="UMO牌-融媒体" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">UMO牌-融媒体</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="60">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-06.mp4" data-poster="assets/video/douyin/douyin-06.jpg" data-title="当你18岁不再把钱花在恋爱">
+          <img class="card__poster" src="assets/video/douyin/douyin-06.jpg" alt="当你18岁不再把钱花在恋爱" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">当你18岁不再把钱花在恋爱</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="120">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-09.mp4" data-poster="assets/video/douyin/douyin-09.jpg" data-title="记忆快闪">
+          <img class="card__poster" src="assets/video/douyin/douyin-09.jpg" alt="记忆快闪" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">记忆快闪</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="180">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-04.mp4" data-poster="assets/video/school/school-04.jpg" data-title="仿拍 法国赌神">
+          <img class="card__poster" src="assets/video/school/school-04.jpg" alt="仿拍 法国赌神" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 法国赌神</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="240">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-02.mp4" data-poster="assets/video/school/school-02.jpg" data-title="仿拍 无间道">
+          <img class="card__poster" src="assets/video/school/school-02.jpg" alt="仿拍 无间道" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 无间道</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="300">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-03.mp4" data-poster="assets/video/school/school-03.jpg" data-title="仿拍 江南style MV">
+          <img class="card__poster" src="assets/video/school/school-03.jpg" alt="仿拍 江南style MV" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 江南style MV</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="360">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-01.mp4" data-poster="assets/video/school/school-01.jpg" data-title="仿拍 flow防抖广告">
+          <img class="card__poster" src="assets/video/school/school-01.jpg" alt="仿拍 flow防抖广告" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 flow防抖广告</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="420">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-06.mp4" data-poster="assets/video/school/school-06.jpg" data-title="运动会-林杰">
+          <img class="card__poster" src="assets/video/school/school-06.jpg" alt="运动会-林杰" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">运动会-林杰</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="480">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-05.mp4" data-poster="assets/video/school/school-05.jpg" data-title="我的 vlog">
+          <img class="card__poster" src="assets/video/school/school-05.jpg" alt="我的 vlog" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">我的 vlog</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="540">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-02.mp4" data-poster="assets/video/douyin/douyin-02.jpg" data-title="flow2 X 三星">
+          <img class="card__poster" src="assets/video/douyin/douyin-02.jpg" alt="flow2 X 三星" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">flow2 X 三星</figcaption>
+      </figure>
     </div>
 
     <!-- AI 平面 -->
-    <div class="gallery" data-group="ai">
+    <div class="gallery" data-group="ai" hidden>
       <figure class="card" data-reveal>
         <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/01-school-building.webp" data-title="学校厚德楼 · AI 平面">
           <img src="assets/img/portfolio/ai/01-school-building.webp" alt="学校厚德楼" loading="lazy" />
@@ -302,134 +390,6 @@
       </figure>
     </div>
 
-    <!-- 视频（poster 已转码就位） -->
-    <div class="gallery gallery--video" data-group="video" hidden>
-      <!-- 学校视频 6 个 -->
-      <figure class="card card--video" data-reveal>
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-01.mp4" data-poster="assets/video/school/school-01.jpg" data-title="仿拍 flow防抖广告">
-          <img class="card__poster" src="assets/video/school/school-01.jpg" alt="仿拍 flow防抖广告" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">仿拍 flow防抖广告</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="60">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-02.mp4" data-poster="assets/video/school/school-02.jpg" data-title="仿拍 无间道">
-          <img class="card__poster" src="assets/video/school/school-02.jpg" alt="仿拍 无间道" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">仿拍 无间道</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="120">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-03.mp4" data-poster="assets/video/school/school-03.jpg" data-title="仿拍 江南style MV">
-          <img class="card__poster" src="assets/video/school/school-03.jpg" alt="仿拍 江南style MV" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">仿拍 江南style MV</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="180">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-04.mp4" data-poster="assets/video/school/school-04.jpg" data-title="仿拍 法国赌神">
-          <img class="card__poster" src="assets/video/school/school-04.jpg" alt="仿拍 法国赌神" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">仿拍 法国赌神</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="240">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-05.mp4" data-poster="assets/video/school/school-05.jpg" data-title="我的 vlog">
-          <img class="card__poster" src="assets/video/school/school-05.jpg" alt="我的 vlog" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">我的 vlog</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="300">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-06.mp4" data-poster="assets/video/school/school-06.jpg" data-title="运动会-林杰">
-          <img class="card__poster" src="assets/video/school/school-06.jpg" alt="运动会-林杰" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">运动会-林杰</figcaption>
-      </figure>
-      <!-- 抖音视频 9 个 -->
-      <figure class="card card--video" data-reveal data-reveal-delay="360">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-01.mp4" data-poster="assets/video/douyin/douyin-01.jpg" data-title="flow2 X 三星">
-          <img class="card__poster" src="assets/video/douyin/douyin-01.jpg" alt="flow2 X 三星" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">flow2 X 三星</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="420">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-02.mp4" data-poster="assets/video/douyin/douyin-02.jpg" data-title="insta运动相机转场-丽水">
-          <img class="card__poster" src="assets/video/douyin/douyin-02.jpg" alt="insta运动相机转场-丽水" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">insta运动相机转场-丽水</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="480">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-03.mp4" data-poster="assets/video/douyin/douyin-03.jpg" data-title="UMO牌-融媒体">
-          <img class="card__poster" src="assets/video/douyin/douyin-03.jpg" alt="UMO牌-融媒体" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">UMO牌-融媒体</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="540">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-04.mp4" data-poster="assets/video/douyin/douyin-04.jpg" data-title="丽水航拍goushiyun">
-          <img class="card__poster" src="assets/video/douyin/douyin-04.jpg" alt="丽水航拍goushiyun" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">丽水航拍goushiyun</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="600">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-05.mp4" data-poster="assets/video/douyin/douyin-05.jpg" data-title="全景云和梯田">
-          <img class="card__poster" src="assets/video/douyin/douyin-05.jpg" alt="全景云和梯田" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">全景云和梯田</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="660">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-06.mp4" data-poster="assets/video/douyin/douyin-06.jpg" data-title="当你18岁不再把钱花在恋爱">
-          <img class="card__poster" src="assets/video/douyin/douyin-06.jpg" alt="当你18岁不再把钱花在恋爱" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">当你18岁不再把钱花在恋爱</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="720">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-07.mp4" data-poster="assets/video/douyin/douyin-07.jpg" data-title="当你在海面上飞无人机">
-          <img class="card__poster" src="assets/video/douyin/douyin-07.jpg" alt="当你在海面上飞无人机" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">当你在海面上飞无人机</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="780">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-08.mp4" data-poster="assets/video/douyin/douyin-08.jpg" data-title="花200块捡回掉在渔船上的无人机">
-          <img class="card__poster" src="assets/video/douyin/douyin-08.jpg" alt="花200块捡回掉在渔船上的无人机" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">花200块捡回掉在渔船上的无人机</figcaption>
-      </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="840">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-09.mp4" data-poster="assets/video/douyin/douyin-09.jpg" data-title="记忆快闪">
-          <img class="card__poster" src="assets/video/douyin/douyin-09.jpg" alt="记忆快闪" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">抖音</span>
-        </button>
-        <figcaption class="card__cap">记忆快闪</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
 <!-- ============ 抖音 ============ -->
 <section class="section douyin" id="douyin">
   <div class="container douyin__inner">
@@ -438,7 +398,7 @@
       <h2 class="section__title">镜头很勤快，剪辑很懒情</h2>
       <p class="douyin__id">@Gou使运 · s2705579416</p>
       <p class="douyin__desc">在抖音分享无人机航拍、运动相机转场与旅拍日常。从丽水梯田到海上无人机，用镜头记录探索的轨迹。</p>
-      <a class="btn btn--primary" href="https://www.douyin.com/" target="_blank" rel="noopener">前往抖音主页 ↗</a>
+      <a class="btn btn--primary" href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm" target="_blank" rel="noopener">前往抖音主页 ↗</a>
     </div>
     <div class="douyin__phone tilt-card" id="douyinCard" data-reveal data-reveal-delay="120">
       <img src="assets/img/portfolio/douyin/profile.webp" alt="抖音主页截图" />
@@ -493,7 +453,7 @@
         <span class="contact__label">作品网盘（夸克）</span>
         <span class="contact__val">WDdd</span>
       </a>
-      <a class="contact__item" href="https://www.douyin.com/" target="_blank" rel="noopener" data-reveal data-reveal-delay="240">
+      <a class="contact__item" href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm" target="_blank" rel="noopener" data-reveal data-reveal-delay="240">
         <span class="contact__icon">🎬</span>
         <span class="contact__label">抖音</span>
         <span class="contact__val">@Gou使运</span>

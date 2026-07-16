@@ -188,16 +188,22 @@
   /* ---------- 作品集 Tab 筛选 ---------- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
   var galleries = Array.prototype.slice.call(document.querySelectorAll(".gallery"));
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      tabs.forEach(function (t) { t.classList.remove("is-active"); });
-      tab.classList.add("is-active");
-      var f = tab.getAttribute("data-filter");
-      galleries.forEach(function (g) {
-        g.hidden = !(f === "all" || g.getAttribute("data-group") === f);
-      });
+  function activateTab(tab) {
+    if (!tab) return;
+    tabs.forEach(function (t) { t.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    var f = tab.getAttribute("data-filter");
+    galleries.forEach(function (g) {
+      g.hidden = !(f === "all" || g.getAttribute("data-group") === f);
     });
+  }
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () { activateTab(tab); });
   });
+  // 初始化：让默认激活的 Tab 正确显示（修复「全部」只显示平面设计的问题）
+  activateTab(document.querySelector(".tab.is-active") || tabs[0]);
+
+  /* ---------- 装备缩略图已由 Lightbox 统一处理（data-lightbox="image"） ---------- */
 
   /* ---------- Lightbox（图片 / 视频） ---------- */
   var lb = document.getElementById("lightbox");
