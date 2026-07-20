@@ -61,7 +61,7 @@
     <p class="hero__role" data-reveal data-reveal-delay="240">多媒体设计师</p>
     <p class="hero__tagline" data-reveal data-reveal-delay="320">平面设计 · 影视后期 · 摄影航拍 · 新媒体运营</p>
     <div class="hero__cta" data-reveal data-reveal-delay="400">
-      <a href="#experience" class="btn btn--primary">查看经历</a>
+      <a href="#portfolio" class="btn btn--primary">查看作品集</a>
       <a href="#contact" class="btn btn--ghost">联系我</a>
     </div>
     <div class="hero__product tilt-card" id="heroProduct">
@@ -100,14 +100,20 @@
     <div class="gear" data-reveal>
       <h3 class="gear__title">创作装备</h3>
       <div class="gear__strip">
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3 无人机"><img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2 无人机"><img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano 运动相机"><img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro 运动相机"><img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2 云台"><img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D 单反"><img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra"><img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /></button>
-        <button class="gear__thumb" data-lightbox="image" data-src="assets/img/gear/collection-shelf.jpg" data-title="装备收藏柜"><img src="assets/img/gear/collection-shelf.jpg" alt="装备收藏柜" loading="lazy" /></button>
+        <!-- #1 数码收藏柜 -->
+        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/collection-shelf.jpg" data-title="数码收藏柜"><img src="assets/img/gear/collection-shelf.jpg" alt="数码收藏柜" loading="lazy" /></button>
+        <!-- #2 DJI Osmo Nano -->
+        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano"><img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /></button>
+        <!-- #3 DJI Neo 2 -->
+        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2"><img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /></button>
+        <!-- #4 Insta360 Flow 2 -->
+        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2"><img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /></button>
+        <!-- #5 三星 S23 Ultra -->
+        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra"><img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /></button>
+        <!-- 已出售 -->
+        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D"><img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
+        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro"><img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
+        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3"><img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
       </div>
     </div>
   </div>
@@ -168,14 +174,14 @@
     <p class="section__eyebrow" data-reveal>03 — 软件熟练度</p>
     <h2 class="section__title" data-reveal>工具，是手的延伸</h2>
     <div class="skills__grid">
-      <div class="skill" data-reveal><span class="skill__name">CorelDRAW</span><span class="skill__val">90</span><span class="skill__bar"><i style="--w:90%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="60"><span class="skill__name">Photoshop</span><span class="skill__val">85</span><span class="skill__bar"><i style="--w:85%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="120"><span class="skill__name">Illustrator</span><span class="skill__val">80</span><span class="skill__bar"><i style="--w:80%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="180"><span class="skill__name">剪映 CapCut</span><span class="skill__val">80</span><span class="skill__bar"><i style="--w:80%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="240"><span class="skill__name">Premiere</span><span class="skill__val">80</span><span class="skill__bar"><i style="--w:80%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="300"><span class="skill__name">After Effects</span><span class="skill__val">80</span><span class="skill__bar"><i style="--w:80%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="360"><span class="skill__name">Lightroom</span><span class="skill__val">70</span><span class="skill__bar"><i style="--w:70%"></i></span></div>
-      <div class="skill" data-reveal data-reveal-delay="420"><span class="skill__name">Cinema 4D</span><span class="skill__val">45</span><span class="skill__bar"><i style="--w:45%"></i></span></div>
+      <div class="skill" data-reveal><img class="skill__icon" src="assets/img/skills/coreldraw.svg" alt="CorelDRAW" /><span class="skill__name">CorelDRAW</span></div>
+      <div class="skill" data-reveal data-reveal-delay="60"><img class="skill__icon" src="assets/img/skills/photoshop.svg" alt="Photoshop" /><span class="skill__name">Photoshop</span></div>
+      <div class="skill" data-reveal data-reveal-delay="120"><img class="skill__icon" src="assets/img/skills/illustrator.svg" alt="Illustrator" /><span class="skill__name">Illustrator</span></div>
+      <div class="skill" data-reveal data-reveal-delay="180"><img class="skill__icon" src="assets/img/skills/capcut.svg" alt="CapCut" /><span class="skill__name">剪映 CapCut</span></div>
+      <div class="skill" data-reveal data-reveal-delay="240"><img class="skill__icon" src="assets/img/skills/premiere.svg" alt="Premiere Pro" /><span class="skill__name">Premiere Pro</span></div>
+      <div class="skill" data-reveal data-reveal-delay="300"><img class="skill__icon" src="assets/img/skills/aftereffects.svg" alt="After Effects" /><span class="skill__name">After Effects</span></div>
+      <div class="skill" data-reveal data-reveal-delay="360"><img class="skill__icon" src="assets/img/skills/lightroom.svg" alt="Lightroom" /><span class="skill__name">Lightroom</span></div>
+      <div class="skill" data-reveal data-reveal-delay="420"><img class="skill__icon" src="assets/img/skills/cinema4d.svg" alt="Cinema 4D" /><span class="skill__name">Cinema 4D</span></div>
     </div>
   </div>
 </section>
@@ -189,8 +195,8 @@
       <div class="tl__item" data-reveal>
         <span class="tl__dot"></span>
         <div class="tl__card">
-          <span class="tl__date">2022.09 — 至今</span>
-          <h3 class="tl__title">浙江交通技师学院</h3>
+          <span class="tl__date">2022.09 — 2026.06（开启实习）</span>
+          <h3 class="tl__title">浙江交通技师学院 <span class="tl__badge">中专/中技</span></h3>
           <p class="tl__sub">数字媒体技术应用</p>
           <p class="tl__meta">主修：动画制作 / 剧本创作 / 平面设计与制作 · 成绩 78 / 84 / 88</p>
         </div>
@@ -198,8 +204,8 @@
       <div class="tl__item" data-reveal>
         <span class="tl__dot"></span>
         <div class="tl__card">
-          <span class="tl__date">2025.09 — 至今</span>
-          <h3 class="tl__title">浙江机电职业技术学院 <em>（在职）</em></h3>
+          <span class="tl__date">2026.03 — 2028.06</span>
+          <h3 class="tl__title">浙江机电职业技术学院 <em>（函授）</em><span class="tl__badge">大专</span></h3>
           <p class="tl__sub">数字媒体技术应用</p>
           <p class="tl__meta">主修：影视后期 / 分镜头视听语言 / 影视策划 · 成绩 87 / 79 / 85</p>
         </div>
@@ -208,7 +214,7 @@
         <span class="tl__dot"></span>
         <div class="tl__card">
           <span class="tl__date">2020.05 — 兼职</span>
-          <h3 class="tl__title">义乌齐辉广告社 <em>（家族企业）</em></h3>
+          <h3 class="tl__title">义乌齐辉广告社 <span class="tl__badge">家族企业</span></h3>
           <p class="tl__sub">平面设计 / 打印维修</p>
           <p class="tl__meta">从实战中打磨平面设计与物料落地能力。</p>
         </div>
@@ -216,8 +222,8 @@
       <div class="tl__item" data-reveal>
         <span class="tl__dot"></span>
         <div class="tl__card">
-          <span class="tl__date">2025.09 — 至今</span>
-          <h3 class="tl__title">学校融媒体社团</h3>
+          <span class="tl__date">2025.09 — 2026.06</span>
+          <h3 class="tl__title">学校融媒体社团 <span class="tl__badge">社团</span></h3>
           <p class="tl__sub">视频负责人 / 摄影师</p>
           <p class="tl__meta">统筹校园影像内容，负责拍摄、剪辑与发布。</p>
         </div>
@@ -238,7 +244,7 @@
       <button class="tab" data-filter="cdr">CDR 制版</button>
     </div>
 
-    <!-- 视频（保留 10 个，按用户编号排序：①UMO牌 ②18岁恋爱 ③记忆快闪 ④法国赌神 ⑤无间道 ⑥江南style ⑦flow防抖 ⑧运动会 ⑨vlog ⑪flow2三星） -->
+    <!-- 视频（保留 9 个：①UMO牌 ②18岁恋爱 ③记忆快闪 ④法国赌神 ⑤无间道 ⑥江南style ⑦flow防抖 ⑧运动会 ⑪flow2三星） -->
     <div class="gallery gallery--video" data-group="video">
       <figure class="card card--video" data-reveal>
         <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-01.mp4" data-poster="assets/video/douyin/douyin-01.jpg" data-title="UMO牌-融媒体">
@@ -304,14 +310,7 @@
         </button>
         <figcaption class="card__cap">运动会-林杰</figcaption>
       </figure>
-      <figure class="card card--video" data-reveal data-reveal-delay="480">
-        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-05.mp4" data-poster="assets/video/school/school-05.jpg" data-title="我的 vlog">
-          <img class="card__poster" src="assets/video/school/school-05.jpg" alt="我的 vlog" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
-          <span class="card__play">▶</span>
-          <span class="card__tag">学校</span>
-        </button>
-        <figcaption class="card__cap">我的 vlog</figcaption>
-      </figure>
+      <!-- 抖音 #11 flow2 X 三星 -->
       <figure class="card card--video" data-reveal data-reveal-delay="540">
         <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-02.mp4" data-poster="assets/video/douyin/douyin-02.jpg" data-title="flow2 X 三星">
           <img class="card__poster" src="assets/video/douyin/douyin-02.jpg" alt="flow2 X 三星" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
@@ -389,6 +388,10 @@
         <figcaption class="card__cap">警保民最小共治单元</figcaption>
       </figure>
     </div>
+
+    <p class="portfolio__disclaimer">本栏作品均为个人学习与在校练习成果，仅作能力展示，未用于任何商业用途。如涉及品牌视觉元素存在不当使用，请联系本人下架处理。</p>
+  </div>
+</section>
 
 <!-- ============ 抖音 ============ -->
 <section class="section douyin" id="douyin">

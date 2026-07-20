@@ -240,9 +240,18 @@
     lbCaption.textContent = title;
   }
   function openLb(btn) {
-    currentList = Array.prototype.slice.call(
-      document.querySelectorAll(".gallery:not([hidden]) [data-lightbox]")
-    );
+    var lbType = btn.getAttribute("data-lightbox") || "image";
+    if (lbType === "gear") {
+      // 装备区独立 lightbox，只遍历装备缩略图
+      currentList = Array.prototype.slice.call(
+        document.querySelectorAll("[data-lightbox='gear']")
+      );
+    } else {
+      // 作品集 lightbox，只遍历当前显示的 gallery 内元素
+      currentList = Array.prototype.slice.call(
+        document.querySelectorAll(".gallery:not([hidden]) [data-lightbox]")
+      );
+    }
     currentIndex = currentList.indexOf(btn);
     if (currentIndex < 0) currentIndex = 0;
     renderLb();

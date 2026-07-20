@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>技能图标预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f5f7; padding: 40px; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 30px; color: #1d1d1f; text-align: center; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 800px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 16px; padding: 28px 20px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .card img { width: 56px; height: 56px; display: block; margin: 0 auto 12px; object-fit: contain; }
+  .card .name { font-size: 0.9rem; font-weight: 500; color: #1d1d1f; }
+  .card .score { font-size: 0.75rem; color: #86868b; margin-top: 4px; }
+  .error { color: #ff3b30; font-size: 0.72rem; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <h1>🎯 软件技能图标预览</h1>
+  <div class="grid">
+    <div class="card">
+      <img src="coreldraw.svg" alt="CorelDRAW" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">CorelDRAW</div>
+      <div class="score">CDR · 90</div>
+    </div>
+    <div class="card">
+      <img src="photoshop.svg" alt="Photoshop" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">Photoshop</div>
+      <div class="score">PS · 85</div>
+    </div>
+    <div class="card">
+      <img src="illustrator.svg" alt="Illustrator" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">Illustrator</div>
+      <div class="score">AI · 80</div>
+    </div>
+    <div class="card">
+      <img src="capcut.svg" alt="CapCut" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">剪映 CapCut</div>
+      <div class="score">CapCut · 80</div>
+    </div>
+    <div class="card">
+      <img src="premiere.svg" alt="Premiere Pro" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">Premiere Pro</div>
+      <div class="score">PR · 80</div>
+    </div>
+    <div class="card">
+      <img src="aftereffects.svg" alt="After Effects" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">After Effects</div>
+      <div class="score">AE · 80</div>
+    </div>
+    <div class="card">
+      <img src="lightroom.svg" alt="Lightroom" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">Lightroom</div>
+      <div class="score">LR · 70</div>
+    </div>
+    <div class="card">
+      <img src="cinema4d.svg" alt="Cinema 4D" onerror="this.nextElementSibling.textContent='❌ 加载失败'">
+      <span class="error"></span>
+      <div class="name">Cinema 4D</div>
+      <div class="score">C4D · 45</div>
+    </div>
+  </div>
+</body>
+</html>
