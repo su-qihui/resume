@@ -1,0 +1,8 @@
+<!-- WorkBuddy 自有品牌 — 对话气泡 + 闪烁点 + spark -->
+<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <title>WorkBuddy</title>
+  <path d="M12 2 C 6.48 2 2 6.04 2 11 c 0 2.78 1.32 5.24 3.39 6.85 L 4 22 l 4.42 -1.34 c 1.12 0.32 2.33 0.5 3.58 0.5 c 5.52 0 10 -4.04 10 -9 s -4.48 -9 -10 -9 z"/>
+  <circle cx="8.5" cy="11" r="1.2" fill="#ffffff"/>
+  <circle cx="12" cy="11" r="1.2" fill="#ffffff"/>
+  <circle cx="15.5" cy="11" r="1.2" fill="#ffffff"/>
+</svg>

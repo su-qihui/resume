@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>苏其辉 · 多媒体设计师 | 作品集</title>
+<meta name="description" content="苏其辉 — 多媒体设计师。平面设计 / 影视后期 / 摄影航拍 / 新媒体运营作品集。" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" href="assets/img/icons/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="css/v2-style.css" />
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('theme');
+    if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+})();
+</script>
+</head>
+<body>
+<!-- 深色模式圆形扩散切换层 -->
+<div class="theme-ripple" aria-hidden="true"></div>
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+<!-- 光标跟随光晕 -->
+<div class="cursor-glow"></div>
+
+<!-- ============ 顶部导航 ============ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="#home" class="nav__brand" aria-label="苏其辉 首页">
+      <span class="nav__logo">SQ</span>
+      <span class="nav__name">苏其辉</span>
+    </a>
+    <nav class="nav__links" id="navLinks" aria-label="主导航">
+      <a href="#home" class="nav__link" data-section="home">首页</a>
+      <a href="#about" class="nav__link" data-section="about">关于</a>
+      <a href="#capabilities" class="nav__link" data-section="capabilities">能力</a>
+      <a href="#experience" class="nav__link" data-section="experience">经历</a>
+      <a href="#portfolio" class="nav__link" data-section="portfolio">作品</a>
+      <a href="#douyin" class="nav__link" data-section="douyin">抖音</a>
+      <a href="#contact" class="nav__link" data-section="contact">联系</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换深色 / 浅色模式" title="切换主题">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="nav__burger" id="navBurger" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 首屏 Hero ============ -->
+<section class="hero" id="home">
+  <div class="hero__bg" data-parallax-speed="0.15" aria-hidden="true"></div>
+  <div class="hero__glow" data-parallax-speed="0.25" aria-hidden="true"></div>
+<!-- 头像：嵌入 hero__inner 文字流，紧贴名字上方 -->
+  <div class="hero__inner">
+    <div class="hero__avatar" aria-hidden="true">
+      <img src="assets/img/resume/headshot.webp" alt="苏其辉" />
+    </div>
+    <p class="hero__eyebrow" data-reveal>PORTFOLIO · 2026</p>
+    <h1 class="hero__title">
+      <span class="hero__name" data-reveal data-reveal-delay="80">苏其辉</span>
+      <span class="hero__en" data-reveal data-reveal-delay="160">SU QIHUI</span>
+    </h1>
+    <p class="hero__role" data-reveal data-reveal-delay="240">多媒体设计师</p>
+    <p class="hero__tagline" data-reveal data-reveal-delay="320">平面设计 · 影视后期 · 摄影航拍 · 新媒体运营</p>
+    <div class="hero__cta" data-reveal data-reveal-delay="400">
+      <a href="#portfolio" class="btn btn--primary">查看作品集</a>
+      <a href="#contact" class="btn btn--ghost">联系我</a>
+    </div>
+    <!-- 封面层：极慢视差，加reveal延迟保证用户能看到 -->
+    <div class="hero__product tilt-card" id="heroProduct" data-reveal data-reveal-delay="520">
+      <img src="assets/img/resume/cover.jpg" alt="苏其辉 简历封面" loading="eager" />
+    </div>
+  </div>
+  <a href="#about" class="hero__scroll" aria-label="向下滚动">
+    <span class="hero__scroll-text">向下滚动</span>
+    <span class="hero__scroll-line"></span>
+  </a>
+</section>
+
+<!-- ============ 关于我 ============ -->
+<section class="section about" id="about">
+  <div class="container">
+    <p class="section__eyebrow" data-reveal>01 — 关于</p>
+    <h2 class="section__title" data-reveal>用视觉讲述故事</h2>
+    <div class="about__grid">
+      <div class="about__text" data-reveal>
+        <p class="about__lead">我是 <strong>苏其辉</strong>，一名 18 岁的多媒体设计师，来自浙江金华义乌。</p>
+        <p>从家族广告社的平面打印，到校园融媒体社团的影像创作，我始终痴迷于<strong>用画面传递信息</strong>。数码科技爱好者、摄影与航拍实践者、独立探索者——这些身份共同塑造了我的创作视角。</p>
+        <p>我擅长将品牌需求转化为有冲击力的视觉：从一张包装到一支短片，从一次航拍到一场新媒体策划。</p>
+        <ul class="about__stats">
+          <li data-reveal><span class="num" data-count="18">0</span><em>岁</em></li>
+          <li data-reveal data-reveal-delay="80"><span class="num" data-count="2">0</span><em>段学历</em></li>
+          <li data-reveal data-reveal-delay="160"><span class="num" data-count="5">0</span><em>年实战</em></li>
+          <li data-reveal data-reveal-delay="240"><span class="num" data-count="8">0</span><em>款软件</em></li>
+        </ul>
+      </div>
+      <div class="about__card tilt-card" id="aboutCard" data-reveal data-reveal-delay="120">
+        <img src="assets/img/resume/cv.jpg" alt="苏其辉 个人简历" />
+        <span class="about__card-badge">多媒体设计师</span>
+      </div>
+    </div>
+
+    <!-- 装备散开展示 -->
+    <div class="gear" data-reveal>
+      <h3 class="gear__title">创作装备</h3>
+      <p class="gear__hint">悬停查看详情 · 点击放大</p>
+      <div class="gear__scatter">
+        <!-- 左侧：卖掉的 -->
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D（已售）" data-angle="-24">
+          <img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">佳能 EOS 200D</span>
+        </button>
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro（已售）" data-angle="-14">
+          <img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">Insta360 Ace Pro</span>
+        </button>
+        <!-- 中间：现有的5件 -->
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/collection-shelf.jpg" data-title="数码收藏柜" data-angle="-6">
+          <img src="assets/img/gear/collection-shelf.jpg" alt="数码收藏柜" loading="lazy" /><span class="gear__item-name">数码收藏柜</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano" data-angle="-2">
+          <img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /><span class="gear__item-name">DJI Osmo Nano</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2" data-angle="2">
+          <img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /><span class="gear__item-name">DJI Neo 2</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2" data-angle="6">
+          <img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /><span class="gear__item-name">Insta360 Flow 2</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra" data-angle="14">
+          <img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /><span class="gear__item-name">三星 S23 Ultra</span>
+        </button>
+        <!-- 右侧：卖掉的 -->
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3（已售）" data-angle="24">
+          <img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">DJI Mini 3</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 能力叙事（钉住滚动） ============ -->
+<section class="caps" id="capabilities">
+  <div class="caps__track" id="capsTrack">
+    <div class="caps__sticky">
+      <div class="caps__head">
+        <p class="section__eyebrow">02 — 核心能力</p>
+        <h2 class="section__title">随滚动，逐步展开</h2>
+      </div>
+      <div class="caps__stage">
+        <div class="caps__visual" id="capsVisual">
+          <figure class="caps__media is-active" data-stage="0"><img src="assets/img/portfolio/ai/01-school-building.webp" alt="平面设计作品" /></figure>
+          <figure class="caps__media" data-stage="1"><img src="assets/img/memory-flash-cover.jpg" alt="影视后期作品" /></figure>
+          <figure class="caps__media" data-stage="2"><img src="assets/img/gear/djimini3.jpg" alt="摄影航拍" /></figure>
+          <figure class="caps__media" data-stage="3"><img src="assets/img/douyin-profile-new.webp" alt="新媒体运营" /></figure>
+          <div class="caps__ring" aria-hidden="true"></div>
+        </div>
+        <div class="caps__captions">
+          <article class="caps__cap is-active" data-stage="0">
+            <span class="caps__num">01</span>
+            <h3>平面设计</h3>
+            <p>品牌视觉、包装、海报与制版。精通 CorelDRAW、Illustrator、Photoshop，从创意到落地印刷全流程把控。</p>
+          </article>
+          <article class="caps__cap" data-stage="1">
+            <span class="caps__num">02</span>
+            <h3>影视后期</h3>
+            <p>剪辑、特效、调色与分镜。熟练运用 Premiere、After Effects、剪映，擅长把素材剪成有节奏的故事。</p>
+          </article>
+          <article class="caps__cap" data-stage="2">
+            <span class="caps__num">03</span>
+            <h3>摄影航拍</h3>
+            <p>商业拍摄、旅拍与运动记录。DJI 无人机与 Insta360 运动相机，捕捉地面与天空的极致视角。</p>
+          </article>
+          <article class="caps__cap" data-stage="3">
+            <span class="caps__num">04</span>
+            <h3>新媒体运营</h3>
+            <p>全媒体运营高级认证。短视频策划、账号定位与内容投放，让作品被更多人看见。</p>
+          </article>
+        </div>
+        <div class="caps__progress" aria-hidden="true">
+          <span class="dot is-active" data-dot="0"></span>
+          <span class="dot" data-dot="1"></span>
+          <span class="dot" data-dot="2"></span>
+          <span class="dot" data-dot="3"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 技能 ============ -->
+<section class="section skills" id="skills">
+  <div class="container">
+    <p class="section__eyebrow" data-reveal>03 — 软件熟练度</p>
+    <h2 class="section__title" data-reveal>工具，是手的延伸</h2>
+    <div class="skills__radar-wrap" data-reveal>
+      <svg class="skills__radar" id="skillRadar" viewBox="0 0 300 300" width="300" height="300"></svg>
+    </div>
+    <div class="skills__icons" data-reveal>
+      <button class="skill-icon" data-skill="0"><img src="assets/img/skills/coreldraw.svg" alt="CorelDRAW" /><span class="skill-icon__label">CorelDRAW</span></button>
+      <button class="skill-icon" data-skill="1"><img src="assets/img/skills/photoshop.svg" alt="Photoshop" /><span class="skill-icon__label">Photoshop</span></button>
+      <button class="skill-icon" data-skill="2"><img src="assets/img/skills/illustrator.svg" alt="Illustrator" /><span class="skill-icon__label">Illustrator</span></button>
+      <button class="skill-icon" data-skill="3"><img src="assets/img/skills/capcut.svg" alt="CapCut" /><span class="skill-icon__label">剪映</span></button>
+      <button class="skill-icon" data-skill="4"><img src="assets/img/skills/premiere.svg" alt="Premiere Pro" /><span class="skill-icon__label">Premiere</span></button>
+      <button class="skill-icon" data-skill="5"><img src="assets/img/skills/aftereffects.svg" alt="After Effects" /><span class="skill-icon__label">AE</span></button>
+      <button class="skill-icon" data-skill="6"><img src="assets/img/skills/lightroom.svg" alt="Lightroom" /><span class="skill-icon__label">Lightroom</span></button>
+      <button class="skill-icon" data-skill="7"><img src="assets/img/skills/cinema4d.svg" alt="Cinema 4D" /><span class="skill-icon__label">Cinema 4D</span></button>
+    </div>
+    <div class="skills__ai" data-reveal>
+      <p class="skills__ai-label">AI 工具</p>
+      <div class="skills__ai-icons">
+        <div class="skill-icon skill-icon--ai ai-codex"><img src="assets/img/skills/codex.svg" alt="Codex" /><span class="skill-icon__label">Codex</span></div>
+        <div class="skill-icon skill-icon--ai ai-workbuddy"><img src="assets/img/skills/workbuddy.svg" alt="WorkBuddy" /><span class="skill-icon__label">WorkBuddy</span></div>
+        <div class="skill-icon skill-icon--ai ai-qwen"><img src="assets/img/skills/qwen.svg" alt="通义千问" /><span class="skill-icon__label">通义千问</span></div>
+        <div class="skill-icon skill-icon--ai ai-jimeng"><img src="assets/img/skills/jimeng.svg" alt="即梦" /><span class="skill-icon__label">即梦</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 教育 & 经历（移到作品前面） ============ -->
+<section class="section timeline" id="experience">
+  <div class="container">
+    <p class="section__eyebrow" data-reveal>04 — 教育 &amp; 经历</p>
+    <h2 class="section__title" data-reveal>一路走来</h2>
+    <div class="tl">
+      <div class="tl__item" data-reveal>
+        <span class="tl__dot"></span>
+        <div class="tl__card">
+          <span class="tl__date">2022.09 — 2026.06（开启实习）</span>
+          <h3 class="tl__title">浙江交通技师学院 <span class="tl__badge">中专/中技</span></h3>
+          <p class="tl__sub">数字媒体技术应用</p>
+          <p class="tl__meta">主修：动画制作 / 剧本创作 / 平面设计与制作</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>主修广告设计与制作，熟练掌握 CorelDRAW 制版与印刷工艺</p>
+            <p>在校期间参与校园宣传设计，获校园短视频大赛一等奖</p>
+            <p>代表作品：标签制版系列 / 校园活动海报设计</p>
+          </div>
+        </div>
+      </div>
+      <div class="tl__item" data-reveal>
+        <span class="tl__dot"></span>
+        <div class="tl__card">
+          <span class="tl__date">2026.03 — 2028.06</span>
+          <h3 class="tl__title">浙江机电职业技术学院 <em>（函授）</em><span class="tl__badge">大专</span></h3>
+          <p class="tl__sub">数字媒体技术应用</p>
+          <p class="tl__meta">主修：影视后期 / 分镜头视听语言 / 影视策划</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>函授大专，数字媒体技术方向</p>
+            <p>深化 PS / AI 平面设计能力与影视后期全流程</p>
+            <p>目标：新媒体运营与视觉设计岗</p>
+          </div>
+        </div>
+      </div>
+      <div class="tl__item" data-reveal>
+        <span class="tl__dot"></span>
+        <div class="tl__card">
+          <span class="tl__date">2020.05 — 兼职</span>
+          <h3 class="tl__title">义乌齐辉广告社 <span class="tl__badge">家族企业</span></h3>
+          <p class="tl__sub">平面设计 / 打印维修</p>
+          <p class="tl__meta">从实战中打磨平面设计与物料落地能力。</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>从兼职到核心设计，家族企业实战起步</p>
+            <p>负责 CDR 排版制版 → 印刷全流程把控</p>
+            <p>积累了 5 年实战标签打印与广告制作经验</p>
+          </div>
+        </div>
+      </div>
+      <div class="tl__item" data-reveal>
+        <span class="tl__dot"></span>
+        <div class="tl__card">
+          <span class="tl__date">2025.09 — 2026.06</span>
+          <h3 class="tl__title">学校融媒体社团 <span class="tl__badge">社团</span></h3>
+          <p class="tl__sub">视频负责人 / 摄影师</p>
+          <p class="tl__meta">统筹校园影像内容，负责拍摄、剪辑与发布。</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>负责官方账号视觉内容策划与制作</p>
+            <p>短视频拍摄 + 剪辑 + 后期全链路</p>
+            <p>获校园宣传大使称号</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 作品集 ============ -->
+<section class="section portfolio" id="portfolio">
+  <div class="container">
+    <p class="section__eyebrow" data-reveal>05 — 作品集</p>
+    <h2 class="section__title" data-reveal>精选案例</h2>
+    <div class="tabs" id="portfolioTabs" data-reveal>
+      <button class="tab is-active" data-filter="all">全部</button>
+      <button class="tab" data-filter="video">视频作品</button>
+      <button class="tab" data-filter="ai">AI 平面设计</button>
+      <button class="tab" data-filter="cdr">CDR 制版</button>
+    </div>
+
+    <!-- 视频（保留 9 个：①UMO牌 ②18岁恋爱 ③记忆快闪 ④法国赌神 ⑤无间道 ⑥江南style ⑦flow防抖 ⑧运动会 ⑪flow2三星） -->
+    <div class="gallery gallery--video" data-group="video">
+      <figure class="card card--video card--interactive" data-reveal>
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-01.mp4" data-poster="assets/video/douyin/douyin-01.jpg" data-title="UMO牌-融媒体">
+          <img class="card__poster" src="assets/video/douyin/douyin-01.jpg" alt="UMO牌-融媒体" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+          <span class="card__overlay"><span class="card__overlay-text">点击播放</span></span>
+        </button>
+        <figcaption class="card__cap">UMO牌-融媒体</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="60">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-06.mp4" data-poster="assets/video/douyin/douyin-06.jpg" data-title="当你18岁不再把钱花在恋爱">
+          <img class="card__poster" src="assets/video/douyin/douyin-06.jpg" alt="当你18岁不再把钱花在恋爱" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">当你18岁不再把钱花在恋爱</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="120">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-09.mp4" data-poster="assets/video/douyin/douyin-09.jpg" data-title="记忆快闪">
+          <img class="card__poster" src="assets/video/douyin/douyin-09.jpg" alt="记忆快闪" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">记忆快闪</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="180">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-04.mp4" data-poster="assets/video/school/school-04.jpg" data-title="仿拍 法国赌神">
+          <img class="card__poster" src="assets/video/school/school-04.jpg" alt="仿拍 法国赌神" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 法国赌神</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="240">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-02.mp4" data-poster="assets/video/school/school-02.jpg" data-title="仿拍 无间道">
+          <img class="card__poster" src="assets/video/school/school-02.jpg" alt="仿拍 无间道" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 无间道</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="300">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-03.mp4" data-poster="assets/video/school/school-03.jpg" data-title="仿拍 江南style MV">
+          <img class="card__poster" src="assets/video/school/school-03.jpg" alt="仿拍 江南style MV" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 江南style MV</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="360">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-01.mp4" data-poster="assets/video/school/school-01.jpg" data-title="仿拍 flow防抖广告">
+          <img class="card__poster" src="assets/video/school/school-01.jpg" alt="仿拍 flow防抖广告" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">仿拍 flow防抖广告</figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="420">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/school/school-06.mp4" data-poster="assets/video/school/school-06.jpg" data-title="运动会-林杰">
+          <img class="card__poster" src="assets/video/school/school-06.jpg" alt="运动会-林杰" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">学校</span>
+        </button>
+        <figcaption class="card__cap">运动会-林杰</figcaption>
+      </figure>
+      <!-- 抖音 #11 flow2 X 三星 -->
+      <figure class="card card--video" data-reveal data-reveal-delay="540">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-02.mp4" data-poster="assets/video/douyin/douyin-02.jpg" data-title="flow2 X 三星">
+          <img class="card__poster" src="assets/video/douyin/douyin-02.jpg" alt="flow2 X 三星" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">flow2 X 三星</figcaption>
+      </figure>
+    </div>
+
+    <!-- AI 平面 -->
+    <div class="gallery" data-group="ai" hidden>
+      <figure class="card" data-reveal>
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/01-school-building.webp" data-title="学校厚德楼 · AI 平面">
+          <img src="assets/img/portfolio/ai/01-school-building.webp" alt="学校厚德楼" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">学校厚德楼</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="60">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/02-kangrui-medical.webp" data-title="康瑞医疗集团 · AI 平面">
+          <img src="assets/img/portfolio/ai/02-kangrui-medical.webp" alt="康瑞医疗集团" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">康瑞医疗集团</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="120">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/03-thinking-lab.webp" data-title="思维实验室 · AI 平面">
+          <img src="assets/img/portfolio/ai/03-thinking-lab.webp" alt="思维实验室" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">思维实验室</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="180">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/04-guoyanshe.webp" data-title="果研社 · AI 平面">
+          <img src="assets/img/portfolio/ai/04-guoyanshe.webp" alt="果研社" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">果研社</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="240">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/05-jiangnan-buyi.webp" data-title="江南布衣 · AI 平面">
+          <img src="assets/img/portfolio/ai/05-jiangnan-buyi.webp" alt="江南布衣" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">江南布衣</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="300">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/ai/06-green-industry.webp" data-title="绿色工业智能设计大赛 · AI 平面">
+          <img src="assets/img/portfolio/ai/06-green-industry.webp" alt="绿色工业智能设计大赛" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">绿色工业智能设计大赛</figcaption>
+      </figure>
+    </div>
+
+    <!-- CDR 制版 -->
+    <div class="gallery" data-group="cdr" hidden>
+      <figure class="card" data-reveal>
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/cdr/01-socks-package.webp" data-title="公主袜包装 · CDR 制版">
+          <img src="assets/img/portfolio/cdr/01-socks-package.webp" alt="公主袜包装" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">公主袜包装</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="60">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/cdr/02-shaobing-signboard.webp" data-title="手抓饼灯箱 · CDR 制版">
+          <img src="assets/img/portfolio/cdr/02-shaobing-signboard.webp" alt="手抓饼灯箱" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">手抓饼灯箱</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="120">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/cdr/03-jiangxi-cuisine.webp" data-title="江西私房菜 · CDR 制版">
+          <img src="assets/img/portfolio/cdr/03-jiangxi-cuisine.webp" alt="江西私房菜" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">江西私房菜</figcaption>
+      </figure>
+      <figure class="card" data-reveal data-reveal-delay="180">
+        <button class="card__img" data-lightbox="image" data-src="assets/img/portfolio/cdr/04-security-unit.webp" data-title="警保民最小共治单元 · CDR 制版">
+          <img src="assets/img/portfolio/cdr/04-security-unit.webp" alt="警保民最小共治单元" loading="lazy" />
+        </button>
+        <figcaption class="card__cap">警保民最小共治单元</figcaption>
+      </figure>
+    </div>
+
+    <p class="portfolio__disclaimer">本栏作品均为个人学习与在校练习成果，仅作能力展示，未用于任何商业用途。如涉及品牌视觉元素存在不当使用，请联系本人下架处理。</p>
+  </div>
+</section>
+
+<!-- ============ 抖音 ============ -->
+<section class="section douyin" id="douyin">
+  <div class="container douyin__inner">
+    <div class="douyin__text" data-reveal>
+      <p class="section__eyebrow">06 — 抖音账号</p>
+      <h2 class="section__title">镜头很勤快，剪辑很懒情</h2>
+      <p class="douyin__id">@Gou使运 · s2705579416</p>
+      <p class="douyin__desc">在抖音分享无人机航拍、运动相机转场与旅拍日常。从丽水梯田到海上无人机，用镜头记录探索的轨迹。</p>
+      <a class="btn btn--primary" href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm" target="_blank" rel="noopener">前往抖音主页 ↗</a>
+    </div>
+    <div class="douyin__phone tilt-card" id="douyinCard" data-reveal data-reveal-delay="120">
+      <img src="assets/img/portfolio/douyin/profile.webp" alt="抖音主页截图" />
+    </div>
+  </div>
+</section>
+
+<!-- ============ 证书 & 荣誉 ============ -->
+<section class="section certs" id="certificates">
+  <div class="container">
+    <p class="section__eyebrow" data-reveal>07 — 证书 &amp; 荣誉</p>
+    <h2 class="section__title" data-reveal>认可与认证</h2>
+    <div class="certs__grid">
+      <div class="cert" data-reveal>
+        <span class="cert__icon">🎓</span>
+        <h3>互联网营销中级</h3>
+      </div>
+      <div class="cert" data-reveal data-reveal-delay="80">
+        <span class="cert__icon">📡</span>
+        <h3>全媒体运营高级</h3>
+      </div>
+      <div class="cert" data-reveal data-reveal-delay="160">
+        <span class="cert__icon">🤝</span>
+        <h3>校园宣传大使</h3>
+      </div>
+      <div class="cert" data-reveal data-reveal-delay="240">
+        <span class="cert__icon">🏆</span>
+        <h3>校园短视频大赛一等奖</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 联系 ============ -->
+<section class="section contact" id="contact">
+  <div class="container contact__inner">
+    <p class="section__eyebrow" data-reveal>08 — 联系</p>
+    <h2 class="contact__title" data-reveal>一起，把想法做出来</h2>
+    <div class="contact__grid">
+      <a class="contact__item" href="tel:13735728401" data-reveal>
+        <span class="contact__icon">📱</span>
+        <span class="contact__label">微信 / 手机</span>
+        <span class="contact__val">13735728401</span>
+      </a>
+      <a class="contact__item" href="mailto:s2705579416@163.com" data-reveal data-reveal-delay="80">
+        <span class="contact__icon">✉️</span>
+        <span class="contact__label">邮箱</span>
+        <span class="contact__val">s2705579416@163.com</span>
+      </a>
+      <a class="contact__item" href="https://pan.quark.cn/s/6501a2eda2a1?pwd=WDdd" target="_blank" rel="noopener" data-reveal data-reveal-delay="160">
+        <span class="contact__icon">☁️</span>
+        <span class="contact__label">作品网盘（夸克）</span>
+        <span class="contact__val">WDdd</span>
+      </a>
+      <a class="contact__item" href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm" target="_blank" rel="noopener" data-reveal data-reveal-delay="240">
+        <span class="contact__icon">🎬</span>
+        <span class="contact__label">抖音</span>
+        <span class="contact__val">@Gou使运</span>
+      </a>
+    </div>
+    <p class="contact__loc" data-reveal>📍 浙江 · 金华 · 义乌</p>
+  </div>
+</section>
+
+<!-- ============ 页脚 ============ -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <span>© 2026 苏其辉 · 多媒体设计师作品集</span>
+    <span class="footer__made">本页由本人设计制作</span>
+  </div>
+</footer>
+
+<!-- ============ Lightbox ============ -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <button class="lightbox__close" id="lbClose" aria-label="关闭">✕</button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="上一个">‹</button>
+  <div class="lightbox__stage" id="lbStage"></div>
+  <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="下一个">›</button>
+  <p class="lightbox__caption" id="lbCaption"></p>
+</div>
+
+<!-- ============ 回到顶部 ============ -->
+<button class="back-top" id="backTop" aria-label="回到顶部">
+  <svg class="back-top__icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M12 17V7M8 11l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <span class="back-top__text">up0</span>
+</button>
+
+<script src="js/v2-main.js"></script>
+</body>
+</html>
