@@ -7,7 +7,7 @@
 <meta name="description" content="苏其辉 — 多媒体设计师。平面设计 / 影视后期 / 摄影航拍 / 新媒体运营作品集。" />
 <meta name="theme-color" content="#ffffff" />
 <link rel="icon" href="assets/img/icons/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/v2-style.css" />
 <script>
 (function () {
   try {
@@ -19,6 +19,12 @@
 </script>
 </head>
 <body>
+<!-- 深色模式圆形扩散切换层 -->
+<div class="theme-ripple" aria-hidden="true"></div>
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+<!-- 光标跟随光晕 -->
+<div class="cursor-glow"></div>
 
 <!-- ============ 顶部导航 ============ -->
 <header class="nav" id="nav">
@@ -50,9 +56,13 @@
 
 <!-- ============ 首屏 Hero ============ -->
 <section class="hero" id="home">
-  <div class="hero__bg" data-parallax data-speed="0.25" aria-hidden="true"></div>
-  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="hero__bg" data-parallax-speed="0.15" aria-hidden="true"></div>
+  <div class="hero__glow" data-parallax-speed="0.25" aria-hidden="true"></div>
+<!-- 头像：嵌入 hero__inner 文字流，紧贴名字上方 -->
   <div class="hero__inner">
+    <div class="hero__avatar" aria-hidden="true">
+      <img src="assets/img/resume/headshot.webp" alt="苏其辉" />
+    </div>
     <p class="hero__eyebrow" data-reveal>PORTFOLIO · 2026</p>
     <h1 class="hero__title">
       <span class="hero__name" data-reveal data-reveal-delay="80">苏其辉</span>
@@ -64,7 +74,8 @@
       <a href="#portfolio" class="btn btn--primary">查看作品集</a>
       <a href="#contact" class="btn btn--ghost">联系我</a>
     </div>
-    <div class="hero__product tilt-card" id="heroProduct">
+    <!-- 封面层：极慢视差，加reveal延迟保证用户能看到 -->
+    <div class="hero__product tilt-card" id="heroProduct" data-reveal data-reveal-delay="520">
       <img src="assets/img/resume/cover.jpg" alt="苏其辉 简历封面" loading="eager" />
     </div>
   </div>
@@ -97,23 +108,38 @@
       </div>
     </div>
 
+    <!-- 装备散开展示 -->
     <div class="gear" data-reveal>
       <h3 class="gear__title">创作装备</h3>
-      <div class="gear__strip">
-        <!-- #1 数码收藏柜 -->
-        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/collection-shelf.jpg" data-title="数码收藏柜"><img src="assets/img/gear/collection-shelf.jpg" alt="数码收藏柜" loading="lazy" /></button>
-        <!-- #2 DJI Osmo Nano -->
-        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano"><img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /></button>
-        <!-- #3 DJI Neo 2 -->
-        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2"><img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /></button>
-        <!-- #4 Insta360 Flow 2 -->
-        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2"><img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /></button>
-        <!-- #5 三星 S23 Ultra -->
-        <button class="gear__thumb" data-lightbox="gear" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra"><img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /></button>
-        <!-- 已出售 -->
-        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D"><img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
-        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro"><img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
-        <button class="gear__thumb gear__thumb--sold" data-lightbox="gear" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3"><img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" loading="lazy" /></button>
+      <p class="gear__hint">悬停查看详情 · 点击放大</p>
+      <div class="gear__scatter">
+        <!-- 左侧：卖掉的 -->
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/canon200d.jpg" data-title="佳能 EOS 200D（已售）" data-angle="-24">
+          <img src="assets/img/gear/canon200d.jpg" alt="佳能 EOS 200D" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">佳能 EOS 200D</span>
+        </button>
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/insta360acepro.jpg" data-title="Insta360 Ace Pro（已售）" data-angle="-14">
+          <img src="assets/img/gear/insta360acepro.jpg" alt="Insta360 Ace Pro" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">Insta360 Ace Pro</span>
+        </button>
+        <!-- 中间：现有的5件 -->
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/collection-shelf.jpg" data-title="数码收藏柜" data-angle="-6">
+          <img src="assets/img/gear/collection-shelf.jpg" alt="数码收藏柜" loading="lazy" /><span class="gear__item-name">数码收藏柜</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano" data-angle="-2">
+          <img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /><span class="gear__item-name">DJI Osmo Nano</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2" data-angle="2">
+          <img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /><span class="gear__item-name">DJI Neo 2</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/insta360flow2.jpg" data-title="Insta360 Flow 2" data-angle="6">
+          <img src="assets/img/gear/insta360flow2.jpg" alt="Insta360 Flow 2" loading="lazy" /><span class="gear__item-name">Insta360 Flow 2</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/samsung-s23ultra.jpg" data-title="三星 S23 Ultra" data-angle="14">
+          <img src="assets/img/gear/samsung-s23ultra.jpg" alt="三星 S23 Ultra" loading="lazy" /><span class="gear__item-name">三星 S23 Ultra</span>
+        </button>
+        <!-- 右侧：卖掉的 -->
+        <button class="gear__item gear__item--sold" data-lightbox="gear" data-src="assets/img/gear/djimini3.jpg" data-title="DJI Mini 3（已售）" data-angle="24">
+          <img src="assets/img/gear/djimini3.jpg" alt="DJI Mini 3" loading="lazy" /><img class="gear__stamp" src="assets/img/gear/sold-stamp.webp" alt="已售出" /><span class="gear__item-name">DJI Mini 3</span>
+        </button>
       </div>
     </div>
   </div>
@@ -173,15 +199,27 @@
   <div class="container">
     <p class="section__eyebrow" data-reveal>03 — 软件熟练度</p>
     <h2 class="section__title" data-reveal>工具，是手的延伸</h2>
-    <div class="skills__grid">
-      <div class="skill" data-reveal><img class="skill__icon" src="assets/img/skills/coreldraw.svg" alt="CorelDRAW" /><span class="skill__name">CorelDRAW</span></div>
-      <div class="skill" data-reveal data-reveal-delay="60"><img class="skill__icon" src="assets/img/skills/photoshop.svg" alt="Photoshop" /><span class="skill__name">Photoshop</span></div>
-      <div class="skill" data-reveal data-reveal-delay="120"><img class="skill__icon" src="assets/img/skills/illustrator.svg" alt="Illustrator" /><span class="skill__name">Illustrator</span></div>
-      <div class="skill" data-reveal data-reveal-delay="180"><img class="skill__icon" src="assets/img/skills/capcut.svg" alt="CapCut" /><span class="skill__name">剪映 CapCut</span></div>
-      <div class="skill" data-reveal data-reveal-delay="240"><img class="skill__icon" src="assets/img/skills/premiere.svg" alt="Premiere Pro" /><span class="skill__name">Premiere Pro</span></div>
-      <div class="skill" data-reveal data-reveal-delay="300"><img class="skill__icon" src="assets/img/skills/aftereffects.svg" alt="After Effects" /><span class="skill__name">After Effects</span></div>
-      <div class="skill" data-reveal data-reveal-delay="360"><img class="skill__icon" src="assets/img/skills/lightroom.svg" alt="Lightroom" /><span class="skill__name">Lightroom</span></div>
-      <div class="skill" data-reveal data-reveal-delay="420"><img class="skill__icon" src="assets/img/skills/cinema4d.svg" alt="Cinema 4D" /><span class="skill__name">Cinema 4D</span></div>
+    <div class="skills__radar-wrap" data-reveal>
+      <svg class="skills__radar" id="skillRadar" viewBox="0 0 300 300" width="300" height="300"></svg>
+    </div>
+    <div class="skills__icons" data-reveal>
+      <button class="skill-icon" data-skill="0"><img src="assets/img/skills/coreldraw.svg" alt="CorelDRAW" /><span class="skill-icon__label">CorelDRAW</span></button>
+      <button class="skill-icon" data-skill="1"><img src="assets/img/skills/photoshop.svg" alt="Photoshop" /><span class="skill-icon__label">Photoshop</span></button>
+      <button class="skill-icon" data-skill="2"><img src="assets/img/skills/illustrator.svg" alt="Illustrator" /><span class="skill-icon__label">Illustrator</span></button>
+      <button class="skill-icon" data-skill="3"><img src="assets/img/skills/capcut.svg" alt="CapCut" /><span class="skill-icon__label">剪映</span></button>
+      <button class="skill-icon" data-skill="4"><img src="assets/img/skills/premiere.svg" alt="Premiere Pro" /><span class="skill-icon__label">Premiere</span></button>
+      <button class="skill-icon" data-skill="5"><img src="assets/img/skills/aftereffects.svg" alt="After Effects" /><span class="skill-icon__label">AE</span></button>
+      <button class="skill-icon" data-skill="6"><img src="assets/img/skills/lightroom.svg" alt="Lightroom" /><span class="skill-icon__label">Lightroom</span></button>
+      <button class="skill-icon" data-skill="7"><img src="assets/img/skills/cinema4d.svg" alt="Cinema 4D" /><span class="skill-icon__label">Cinema 4D</span></button>
+    </div>
+    <div class="skills__ai" data-reveal>
+      <p class="skills__ai-label">AI 工具</p>
+      <div class="skills__ai-icons">
+        <div class="skill-icon skill-icon--ai ai-codex"><img src="assets/img/skills/codex.svg" alt="Codex" /><span class="skill-icon__label">Codex</span></div>
+        <div class="skill-icon skill-icon--ai ai-workbuddy"><img src="assets/img/skills/workbuddy.svg" alt="WorkBuddy" /><span class="skill-icon__label">WorkBuddy</span></div>
+        <div class="skill-icon skill-icon--ai ai-qwen"><img src="assets/img/skills/qwen.svg" alt="通义千问" /><span class="skill-icon__label">通义千问</span></div>
+        <div class="skill-icon skill-icon--ai ai-jimeng"><img src="assets/img/skills/jimeng.svg" alt="即梦" /><span class="skill-icon__label">即梦</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -199,6 +237,14 @@
           <h3 class="tl__title">浙江交通技师学院 <span class="tl__badge">中专/中技</span></h3>
           <p class="tl__sub">数字媒体技术应用</p>
           <p class="tl__meta">主修：动画制作 / 剧本创作 / 平面设计与制作</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>主修广告设计与制作，熟练掌握 CorelDRAW 制版与印刷工艺</p>
+            <p>在校期间参与校园宣传设计，获校园短视频大赛一等奖</p>
+            <p>代表作品：标签制版系列 / 校园活动海报设计</p>
+          </div>
         </div>
       </div>
       <div class="tl__item" data-reveal>
@@ -208,6 +254,14 @@
           <h3 class="tl__title">浙江机电职业技术学院 <em>（函授）</em><span class="tl__badge">大专</span></h3>
           <p class="tl__sub">数字媒体技术应用</p>
           <p class="tl__meta">主修：影视后期 / 分镜头视听语言 / 影视策划</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>函授大专，数字媒体技术方向</p>
+            <p>深化 PS / AI 平面设计能力与影视后期全流程</p>
+            <p>目标：新媒体运营与视觉设计岗</p>
+          </div>
         </div>
       </div>
       <div class="tl__item" data-reveal>
@@ -217,6 +271,14 @@
           <h3 class="tl__title">义乌齐辉广告社 <span class="tl__badge">家族企业</span></h3>
           <p class="tl__sub">平面设计 / 打印维修</p>
           <p class="tl__meta">从实战中打磨平面设计与物料落地能力。</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>从兼职到核心设计，家族企业实战起步</p>
+            <p>负责 CDR 排版制版 → 印刷全流程把控</p>
+            <p>积累了 5 年实战标签打印与广告制作经验</p>
+          </div>
         </div>
       </div>
       <div class="tl__item" data-reveal>
@@ -226,6 +288,14 @@
           <h3 class="tl__title">学校融媒体社团 <span class="tl__badge">社团</span></h3>
           <p class="tl__sub">视频负责人 / 摄影师</p>
           <p class="tl__meta">统筹校园影像内容，负责拍摄、剪辑与发布。</p>
+          <button class="tl__toggle" aria-label="展开详情">
+            <svg class="tl__arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="tl__detail">
+            <p>负责官方账号视觉内容策划与制作</p>
+            <p>短视频拍摄 + 剪辑 + 后期全链路</p>
+            <p>获校园宣传大使称号</p>
+          </div>
         </div>
       </div>
     </div>
@@ -246,11 +316,12 @@
 
     <!-- 视频（保留 9 个：①UMO牌 ②18岁恋爱 ③记忆快闪 ④法国赌神 ⑤无间道 ⑥江南style ⑦flow防抖 ⑧运动会 ⑪flow2三星） -->
     <div class="gallery gallery--video" data-group="video">
-      <figure class="card card--video" data-reveal>
+      <figure class="card card--video card--interactive" data-reveal>
         <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-01.mp4" data-poster="assets/video/douyin/douyin-01.jpg" data-title="UMO牌-融媒体">
           <img class="card__poster" src="assets/video/douyin/douyin-01.jpg" alt="UMO牌-融媒体" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
           <span class="card__play">▶</span>
           <span class="card__tag">抖音</span>
+          <span class="card__overlay"><span class="card__overlay-text">点击播放</span></span>
         </button>
         <figcaption class="card__cap">UMO牌-融媒体</figcaption>
       </figure>
@@ -483,6 +554,15 @@
   <p class="lightbox__caption" id="lbCaption"></p>
 </div>
 
-<script src="js/main.js"></script>
+<!-- ============ 回到顶部 ============ -->
+<button class="back-top" id="backTop" aria-label="回到顶部">
+  <svg class="back-top__icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M12 17V7M8 11l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <span class="back-top__text">up0</span>
+</button>
+
+<script src="js/v2-main.js"></script>
 </body>
 </html>
