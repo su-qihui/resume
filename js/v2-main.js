@@ -166,26 +166,55 @@
 
   /* ---------- 光标跟随光晕（v2 Signature） ---------- */
   var glow = document.querySelector('.cursor-glow');
-  var isMobileOrReduced = reduceMotion || window.matchMedia("(hover: none)").matches;
+  var isMobileOrReduced = reduceMotion;
+  var isTouch = window.matchMedia("(hover: none)").matches;
+
   if (glow && !isMobileOrReduced) {
     var mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
-    document.addEventListener('mousemove', function (e) {
-      mouseX = e.clientX; mouseY = e.clientY;
-    });
-    function animateGlow() {
-      glowX += (mouseX - glowX) * 0.15;
-      glowY += (mouseY - glowY) * 0.15;
-      glow.style.left = glowX + 'px';
-      glow.style.top = glowY + 'px';
-      requestAnimationFrame(animateGlow);
+
+    if (isTouch) {
+      // ===== 触摸设备：点哪跳哪，带短暂淡出 =====
+      glow.style.opacity = '0';
+      glow.style.mixBlendMode = 'normal';
+      glow.style.transition = 'opacity 0.4s ease-out';
+      document.addEventListener('touchstart', function (e) {
+        var t = e.touches[0];
+        glow.style.left = t.clientX + 'px';
+        glow.style.top = t.clientY + 'px';
+        glowX = t.clientX; glowY = t.clientY;
+        glow.style.opacity = '0.5';
+        glow.classList.add('is-hovering');
+      }, { passive: true });
+      document.addEventListener('touchmove', function (e) {
+        var t = e.touches[0];
+        glow.style.left = t.clientX + 'px';
+        glow.style.top = t.clientY + 'px';
+        glowX = t.clientX; glowY = t.clientY;
+      }, { passive: true });
+      document.addEventListener('touchend', function () {
+        glow.style.opacity = '0';
+        glow.classList.remove('is-hovering');
+      }, { passive: true });
+    } else {
+      // ===== 桌面端：平滑跟随 =====
+      document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX; mouseY = e.clientY;
+      });
+      function animateGlow() {
+        glowX += (mouseX - glowX) * 0.15;
+        glowY += (mouseY - glowY) * 0.15;
+        glow.style.left = glowX + 'px';
+        glow.style.top = glowY + 'px';
+        requestAnimationFrame(animateGlow);
+      }
+      animateGlow();
+      // hover交互元素检测
+      var interactiveSelectors = 'a, button, .nav__link, .tilt-card, .gallery__item, .skill-icon, .tl__item, .tl__toggle, .gear__item, .card--interactive, .cert, .back-top';
+      document.querySelectorAll(interactiveSelectors).forEach(function (el) {
+        el.addEventListener('mouseenter', function () { glow.classList.add('is-hovering'); });
+        el.addEventListener('mouseleave', function () { glow.classList.remove('is-hovering'); });
+      });
     }
-    animateGlow();
-    // hover交互元素检测
-    var interactiveSelectors = 'a, button, .nav__link, .tilt-card, .gallery__item, .skill-icon, .tl__item, .tl__toggle, .gear__item, .card--interactive, .cert, .back-top';
-    document.querySelectorAll(interactiveSelectors).forEach(function (el) {
-      el.addEventListener('mouseenter', function () { glow.classList.add('is-hovering'); });
-      el.addEventListener('mouseleave', function () { glow.classList.remove('is-hovering'); });
-    });
   }
 
   /* ---------- 3D 倾斜交互卡 ---------- */

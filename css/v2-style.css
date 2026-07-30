@@ -105,9 +105,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav__brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 .nav__logo {
-  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
-  background: var(--accent); color: #fff; font-size: 0.8rem; font-weight: 700;
+  width: 30px; height: 30px; border-radius: 50%; overflow: hidden;
+  display: block; flex-shrink: 0;
 }
+.nav__logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .nav__name { font-size: 1.05rem; letter-spacing: -0.01em; }
 .nav__links { display: flex; gap: 4px; }
 .nav__link {
@@ -423,9 +424,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    证书
    ========================================================= */
 .certs__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 680px; margin-inline: auto; }
-@media (max-width: 540px) {
-  .certs__grid { grid-template-columns: 1fr; max-width: none; }
-}
 .cert {
   background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 32px 26px;
   text-align: center; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
@@ -515,7 +513,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
   .hero__cta { flex-direction: column; width: 100%; max-width: 280px; margin-inline: auto; }
   .hero__cta .btn { width: 100%; }
-  .contact__grid { grid-template-columns: 1fr; }
 }
 
 /* 无障碍：减弱动效 */
@@ -564,7 +561,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .cursor-glow.is-hovering { width: 80px; height: 80px; opacity: 0.55; }
 [data-theme="dark"] .cursor-glow.is-hovering { opacity: 0.35; }
 @media (prefers-reduced-motion: reduce) { .cursor-glow { display: none; } }
-@media (hover: none) { .cursor-glow { display: none; } }
+/* 触摸设备光标由JS touchstart 接管，不隐藏 */
 
 /* ---------- Noise 纹理叠加 ---------- */
 .section::after {
@@ -675,3 +672,96 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tl__detail p { color: var(--text-2); font-size: 0.92rem; margin-bottom: 6px; }
 .tl__detail p:last-child { margin-bottom: 0; }
 .tl__item.is-open .tl__detail { max-height: 200px; opacity: 1; margin-top: 0.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+/* =========================================================
+   v2 移动端响应式修复
+   ========================================================= */
+
+/* 平板及以下：装备散开区缩小 */
+@media (max-width: 1024px) {
+  .gear__scatter { gap: 0; flex-wrap: nowrap; overflow-x: auto; padding: 20px 12px 40px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .gear__scatter::-webkit-scrollbar { display: none; }
+  .gear__item { width: 100px; height: 100px; margin-left: -16px; flex-shrink: 0; }
+  .gear__item:first-child { margin-left: 0; }
+}
+
+/* 手机端：全面修复 */
+@media (max-width: 768px) {
+  /* 装备区：改为2行4列grid，不再横向滚动 */
+  .gear__scatter {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    justify-content: center; align-items: center;
+    overflow: visible; padding: 12px 8px 24px; min-height: auto;
+    perspective: none;
+  }
+  .gear__item {
+    width: 100%; height: auto; aspect-ratio: 1; margin-left: 0;
+    transform: rotate(var(--angle, 0deg)) translateY(var(--lift, 0px)) scale(var(--scale, 0.9));
+  }
+  .gear__item:first-child { margin-left: 0; }
+  /* 手机端去掉散开角度，整齐排列 */
+  .gear__item { --angle: 0deg; --lift: 0px; --scale: 1; }
+
+  /* 证书和联系：手机端保持2×2，缩小padding */
+  .cert { padding: 18px 12px; }
+  .cert__icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .cert h3 { font-size: 0.85rem; }
+  .contact__item { padding: 16px 10px; gap: 4px; }
+  .contact__icon { font-size: 1.3rem; }
+  .contact__label { font-size: 0.7rem; }
+  .contact__val { font-size: 0.82rem; word-break: break-all; }
+
+  /* 时间线：toggle 移到右下角，避免与 badge 重叠 */
+  .tl__badge { position: static; display: inline-block; margin-bottom: 8px; }
+  .tl__toggle { position: absolute; bottom: 12px; right: 12px; top: auto; }
+  .tl__card { padding: 20px 20px 44px; }
+
+  /* 回到顶部按钮：缩小，防遮挡 */
+  .back-top { bottom: 18px; right: 18px; padding: 8px 10px 4px; }
+  .back-top__icon svg { width: 20px; height: 20px; }
+  .back-top__text { font-size: 0.55rem; }
+
+  /* 光标光晕：触摸端由JS接管（touchstart/touchmove），CSS不隐藏 */
+
+  /* 能力叙事 sticky：降低高度，减少滚动疲劳 */
+  .caps__track { height: 300vh; }
+  .caps__sticky { padding: 70px 0 30px; }
+  .caps__stage { gap: 20px; }
+  .caps__visual { aspect-ratio: 16/10; }
+
+  /* 雷达图：适配窄屏 */
+  .skills__radar { max-width: 200px; }
+  .skills__radar .radar-label { font-size: 9px; }
+
+  /* AI 工具行：换行居中 */
+  .skills__ai { flex-direction: column; gap: 10px; }
+  .skills__ai-icons { gap: 6px; }
+
+  /* 作品集 overlay：触摸端常显半透明提示 */
+  .card--interactive .card__overlay { opacity: 0.25; }
+  .card__overlay-text { font-size: 0.8rem; }
+
+  /* 涟漪层 z-index 不遮挡 fixed 元素 */
+  .theme-ripple { z-index: 9998; }
+
+  /* 导航：确保汉堡菜单在顶层 */
+  .nav__links.is-open { z-index: 10002; }
+}
+
+/* 超窄屏（≤480px）：装备区更紧凑 */
+@media (max-width: 480px) {
+  .gear__item { width: 72px; height: 72px; margin-left: -12px; }
+  .skills__radar { max-width: 180px; }
+  .skills__radar .radar-label { font-size: 8px; }
+  .skill-icon { padding: 5px 8px; }
+  .skill-icon img { width: 15px; height: 15px; }
+  .skill-icon__label { font-size: 0.68rem; }
+  .back-top { bottom: 14px; right: 14px; }
+}
+
+/* 触摸设备：禁用 3D tilt 和 hover-only 交互 */
+@media (hover: none) {
+  .card--interactive:hover .card__img { transform: none; }
+  .card--interactive:hover .card__overlay { opacity: 0.25; }
+  .gear__item:hover { transform: rotate(var(--angle, 0deg)) translateY(var(--lift, 0px)) scale(var(--scale, 0.9)); }
+}
