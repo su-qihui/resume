@@ -130,6 +130,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 [data-theme="dark"] .nav__link:hover { background: rgba(255,255,255,0.13); }
 [data-theme="dark"] .nav__link.active { box-shadow: 0 6px 20px -6px var(--accent-soft), inset 0 1px 0 rgba(255,255,255,0.22); }
 .nav__actions { display: flex; align-items: center; gap: 8px; }
+/* 右上角「导出简历」：下载 assets/pdf 里的 PDF */
+.nav__export {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 980px; font-size: 0.95rem; font-weight: 500;
+  color: #fff; background: var(--accent); white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.24);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s, opacity 0.35s;
+}
+.nav__export:hover { transform: translateY(-1px) scale(1.04); box-shadow: 0 8px 20px -8px var(--accent-soft), inset 0 1px 0 rgba(255,255,255,0.3); }
+.nav__export:active { transform: scale(0.98); }
+.nav__export svg { flex-shrink: 0; }
+@media (max-width: 768px) {
+  .nav__export { padding: 7px 12px; font-size: 0.8rem; gap: 5px; }
+  .nav__export svg { width: 14px; height: 14px; }
+}
 .theme-toggle {
   width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
   color: var(--text); transition: background 0.2s, transform 0.3s;
@@ -168,26 +183,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   filter: blur(40px); z-index: 0; pointer-events: none;
 }
 .hero__inner { position: relative; z-index: 2; width: min(1100px, 94vw); }
-.hero__avatar {
-  position: relative; /* 嵌入文字流 */
-  width: 96px; height: 96px;
-  border-radius: 50%; overflow: hidden;
-  background: var(--bg);
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12), inset 0 0 0 1px var(--line);
-  margin-bottom: 18px;
-  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-  will-change: transform;
-  /* 入场动画 */
-  opacity: 0; transform: scale(0.6);
-}
-.hero__avatar.is-visible { opacity: 1; transform: scale(1); transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.34,1.56,0.64,1); }
-.hero__avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
-.hero__avatar:hover { transform: scale(1.06) rotate(-3deg); }
-[data-theme="dark"] .hero__avatar { box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 0 0 1px var(--line); }
-@media (max-width: 768px) {
-  .hero__avatar { width: 72px; height: 72px; margin-bottom: 14px; }
-}
+/* 首屏头像已移除（原引用 headshot.webp 线上 404 导致破图） */
 .hero__eyebrow { font-size: 0.85rem; letter-spacing: 0.3em; color: var(--text-2); margin-bottom: 20px; }
 .hero__title { line-height: 0.95; margin-bottom: 22px; }
 .hero__name {
@@ -220,6 +216,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 @keyframes scrollDot { 0% { top: -50%; } 100% { top: 100%; } }
 
+/* =========================================================
+   背景 Emoji 互动层
+   ========================================================= */
+.emoji-bg {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  /* 必须是负层级：正文段落是普通流内容，绘制层级低于 z-index:0 的定位元素，
+     用 0 会让 emoji 盖住文字。负层级让 emoji 只露在页面空白处。 */
+  z-index: -1;
+  pointer-events: none;       /* 永不拦截点击，点击事件由 JS 挂到 document 上 */
+}
+@media (prefers-reduced-motion: reduce) { .emoji-bg { display: none; } }
+
 /* ---------- 3D 倾斜卡 ---------- */
 .tilt-card { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); transform-style: preserve-3d; }
 
@@ -234,8 +242,26 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .about__stats li { display: flex; flex-direction: column; }
 .about__stats .num { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; color: var(--accent); line-height: 1; }
 .about__stats em { font-style: normal; font-size: 0.85rem; color: var(--text-2); margin-top: 6px; }
-.about__card { position: relative; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); background: var(--card-bg); aspect-ratio: 3/4; }
+.about__card {
+  position: relative; display: block; width: 100%; padding: 0; text-align: inherit;
+  border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); background: var(--card-bg);
+  aspect-ratio: 210 / 297; /* A4：与简历图同比例，避免 object-fit:cover 裁掉底部内容 */
+  cursor: zoom-in;
+}
 .about__card img { width: 100%; height: 100%; object-fit: cover; }
+/* 简历卡 hover 提示：点击可看大图 */
+.about__card-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+}
+.about__card:hover .about__card-overlay,
+.about__card:focus-visible .about__card-overlay { opacity: 1; }
+.about__card-overlay-text {
+  color: #fff; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.08em;
+  transform: translateY(8px); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.about__card:hover .about__card-overlay-text { transform: translateY(0); }
 .about__card-badge {
   position: absolute; left: 16px; bottom: 16px; background: var(--nav-bg); backdrop-filter: blur(12px);
   padding: 8px 16px; border-radius: 980px; font-size: 0.85rem; font-weight: 500; box-shadow: var(--shadow-sm);
@@ -522,6 +548,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .tilt-card { transform: none !important; }
 }
 
+
+/* ---------- 作品集：卡片外链 + 图库补充说明（VibeCoding 栏用） ---------- */
+.card__link {
+  color: var(--accent); font-weight: 500;
+  border-bottom: 1px solid var(--accent-soft); text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+.card__link:hover { color: var(--text); border-bottom-color: var(--text); }
+.gallery__note {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  font-size: 0.82rem; color: var(--text-2); letter-spacing: 0.02em;
+}
+
 /* =========================================================
    v2 升级样式
    ========================================================= */
@@ -687,20 +727,41 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* 手机端：全面修复 */
 @media (max-width: 768px) {
-  /* 装备区：改为2行4列grid，不再横向滚动 */
+  /* 手机端：emoji 效果关闭（小屏上彩点乱飞很吵，且省电） */
+  .emoji-bg { display: none !important; }
+
+  /* 装备区：散开效果（同桌面），排成 上排 4 个 / 下排 5 个，已售 3 件集中到下排末尾
+     20 等分网格 + order 调序：
+       显示顺序 = 在用 4 件（上排，各跨 5 格，4×5=20）
+                → 在用 2 件 + 已售 3 件（下排，各跨 4 格，5×4=20）
+     每件另配一套角度/位移/缩放（!important 盖过 JS 内联值），让排布"乱而有序"。 */
   .gear__scatter {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    display: grid; grid-template-columns: repeat(20, 1fr); gap: 22px 0;
     justify-content: center; align-items: center;
-    overflow: visible; padding: 12px 8px 24px; min-height: auto;
+    overflow: visible; padding: 6px 2px 22px; min-height: auto;
     perspective: none;
   }
   .gear__item {
-    width: 100%; height: auto; aspect-ratio: 1; margin-left: 0;
-    transform: rotate(var(--angle, 0deg)) translateY(var(--lift, 0px)) scale(var(--scale, 0.9));
+    width: 100%; height: auto; aspect-ratio: 1; margin: 0 3px;   /* 左右留 3px 缝，横向间隙不再随列数累加 */
+    grid-column: span 4;                        /* 下排：每件跨 4 格 */
+    z-index: 1;
   }
-  .gear__item:first-child { margin-left: 0; }
-  /* 手机端去掉散开角度，整齐排列 */
-  .gear__item { --angle: 0deg; --lift: 0px; --scale: 1; }
+  .gear__item--sold { z-index: 0; }             /* 贴"卖掉了"的压到下层 */
+  /* 上排 4 件 = 在用的 数码收藏柜 / Osmo Nano / Osmo 360 II / Neo 2（DOM 第 3~6 个） */
+  .gear__item:nth-child(n+3):nth-child(-n+6) { grid-column: span 5; }
+  /* 已售 3 件（DOM 第 1、2、9 个）排到显示顺序最后 */
+  .gear__item:nth-child(-n+2), .gear__item:nth-child(9) { order: 10; }
+
+  /* 手机端逐件微调：角度 / 上下位移 / 缩放（!important 盖过 JS 内联值） */
+  .gear__item:nth-child(1) { --angle: -10deg !important; --lift: -6px !important; --scale: .88 !important; }
+  .gear__item:nth-child(2) { --angle:   8deg !important; --lift:  7px !important; --scale: .86 !important; }
+  .gear__item:nth-child(3) { --angle:  -5deg !important; --lift: -4px !important; --scale: 1   !important; }
+  .gear__item:nth-child(4) { --angle:   6deg !important; --lift:  9px !important; --scale: .95 !important; }
+  .gear__item:nth-child(5) { --angle:  -8deg !important; --lift:  5px !important; --scale: .93 !important; }
+  .gear__item:nth-child(6) { --angle:   5deg !important; --lift: -7px !important; --scale: .92 !important; }
+  .gear__item:nth-child(7) { --angle: -11deg !important; --lift:  8px !important; --scale: .90 !important; }
+  .gear__item:nth-child(8) { --angle:   9deg !important; --lift: -5px !important; --scale: .90 !important; }
+  .gear__item:nth-child(9) { --angle:  14deg !important; --lift:  6px !important; --scale: .84 !important; }
 
   /* 证书和联系：手机端保持2×2，缩小padding */
   .cert { padding: 18px 12px; }
@@ -720,8 +781,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .back-top { bottom: 18px; right: 18px; padding: 8px 10px 4px; }
   .back-top__icon svg { width: 20px; height: 20px; }
   .back-top__text { font-size: 0.55rem; }
-
-  /* 光标光晕：触摸端由JS接管（touchstart/touchmove），CSS不隐藏 */
 
   /* 能力叙事 sticky：降低高度，减少滚动疲劳 */
   .caps__track { height: 300vh; }
@@ -750,7 +809,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* 超窄屏（≤480px）：装备区更紧凑 */
 @media (max-width: 480px) {
-  .gear__item { width: 72px; height: 72px; margin-left: -12px; }
+  /* 沿用 ≤768px 的"上 4 下 5"网格，只收紧间距 */
+  .gear__scatter { gap: 18px 0; padding: 4px 2px 16px; }
+  .gear__item { margin: 0 2px; }
   .skills__radar { max-width: 180px; }
   .skills__radar .radar-label { font-size: 8px; }
   .skill-icon { padding: 5px 8px; }
@@ -764,4 +825,304 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .card--interactive:hover .card__img { transform: none; }
   .card--interactive:hover .card__overlay { opacity: 0.25; }
   .gear__item:hover { transform: rotate(var(--angle, 0deg)) translateY(var(--lift, 0px)) scale(var(--scale, 0.9)); }
+}
+
+/* =========================================================================
+   mbl-resume-neo · 修复：首屏姓名下沿被裁掉
+   -------------------------------------------------------------------------
+   现象：`.hero__name` 用了 background-clip:text + color:transparent，
+   而 `.hero__title` 的 line-height 是 0.95 → 元素盒(133.4px) 比
+   字形墨迹(下探至盒底下方约 0.06em)更矮。渐变背景只画在盒内，
+   超出盒子的字形下沿没有背景色 → 变透明 → 看起来被"切掉"。
+   修法：给底部加一点 padding 让背景盒盖住墨迹，再用等量负 margin
+   把下一行拉回原位 —— 版式零位移。
+   ========================================================================= */
+.hero__name {
+  padding-bottom: 0.12em;      /* 背景盒向下扩 0.12em（实测溢出 0.06em，留一倍余量） */
+  margin-bottom: -0.12em;      /* 等量负外边距抵消，下一行（SU QIHUI）位置不变 */
+}
+
+/* =========================================================================
+   mbl-resume-neo · 毛玻璃（Frosted Glass）主题层
+   配方来源：~/.workbuddy/skills/frosted-glass-web（backdrop-blur）
+   -------------------------------------------------------------------------
+   ⚠️ 本变体**不改动原有背景**：页面的白底 / --bg-soft / hero 渐变全部保持原样，
+   毛玻璃只作用在 UI 元素上（导航、卡片、胶囊、灯箱）。
+   由此带来的客观事实：背景接近纯白时 backdrop-filter 几乎没有内容可糊，
+   肉眼可见的"玻璃感"主要来自 ① 半透明填充 ② 内高光描边 ③ 双向投影；
+   真正的模糊最明显的地方是「内容从固定导航底下滚过」和「灯箱浮层」。
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   ① 玻璃令牌（浅/深各一套）
+   深色底要把白玻璃透明度砍到 .12 并加大模糊，否则叠上去是一团灰雾。
+   ------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  --glass-alpha: .52;                 /* 卡面底色透明度（越低越透） */
+  --glass-alpha-nav: .62;             /* 导航栏：底子要厚一些，保证滚动时文字可读 */
+  --glass-blur: 14px;
+  --glass-sat: 180%;
+  --glass-bright: 100%;
+  /* 原背景是浅色，白色描边会"消失"——因此描边走淡灰细线，玻璃边缘改用内高光表达 */
+  --glass-hairline: rgba(17,20,28,.07);
+  --glass-highlight: rgba(255,255,255,.78);
+  --glass-sheen: rgba(219,231,255,.26);   /* 冷色斜向光泽：背景是纯白时，这是最能被看见的玻璃感来源 */
+  --glass-border: rgba(255,255,255,.62);
+  --glass-border-soft: rgba(17,20,28,.08);
+  --glass-ink: #1a1d26;               /* 玻璃上的正文：深色，别用灰 */
+  --glass-ink-2: #4a5060;
+  --glass-shadow: 0 8px 32px rgba(16,24,40,.10);
+}
+
+[data-theme="dark"] {
+  --glass-alpha: .12;
+  --glass-alpha-nav: .62;             /* 深色下导航仍取深色底：黑底 + 白玻璃 12% */
+  --glass-blur: 20px;
+  --glass-sat: 160%;
+  --glass-hairline: rgba(255,255,255,.10);
+  --glass-highlight: rgba(255,255,255,.08);
+  --glass-sheen: rgba(255,255,255,.07);
+  --glass-border: rgba(255,255,255,.14);
+  --glass-border-soft: rgba(255,255,255,.10);
+  --glass-ink: #f5f6fa;
+  --glass-ink-2: rgba(255,255,255,.72);
+  --glass-shadow: 0 12px 40px rgba(0,0,0,.42);
+}
+[data-theme="dark"] .nav.is-scrolled { --glass-alpha-nav: .10; --glass-sat: 160%; }
+
+/* -------------------------------------------------------------------------
+   ② 组件玻璃
+   2.1 吸顶导航栏 —— 本页毛玻璃最有存在感的一处（内容从玻璃底下滚过）
+   ------------------------------------------------------------------------- */
+.nav.is-scrolled {
+  background: rgba(255,255,255,var(--glass-alpha-nav));
+  backdrop-filter: blur(16px) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-sat));
+  border-bottom: 1px solid var(--glass-hairline);
+  box-shadow: 0 8px 30px rgba(16,24,40,.07), inset 0 1px 0 var(--glass-highlight);
+}
+[data-theme="dark"] .nav.is-scrolled {
+  background: rgba(255,255,255,var(--glass-alpha-nav));
+  box-shadow: 0 8px 30px rgba(0,0,0,.45), inset 0 1px 0 var(--glass-highlight);
+}
+
+/* 2.2 通用玻璃面板
+   玻璃容器上重绑文字色变量 —— 半透明白底上正文必须用深色，不能用 --text-2 那种灰 */
+.card,
+.tl__card,
+.cert,
+.contact__item,
+.skill-icon,
+.tab,
+.about__card,
+.douyin__phone,
+.back-top,
+.caps__visual,
+.footer__inner {
+  --text: var(--glass-ink);
+  --text-2: var(--glass-ink-2);
+  --line: var(--glass-border-soft);
+}
+
+.card,
+.tl__card,
+.cert,
+.contact__item,
+.skill-icon,
+.tab,
+.about__card,
+.douyin__phone,
+.back-top,
+.caps__visual {
+  /* 半透明底 + 一道极淡的冷色斜向光泽：
+     背景是纯白时 blur 几乎没有内容可糊，玻璃质感靠这三样表达 ——
+     ① 半透明填充 ② 斜向光泽 ③ 内高光描边 */
+  background-color: rgba(255,255,255,var(--glass-alpha));
+  background-image: linear-gradient(140deg, rgba(255,255,255,.55) 0%, var(--glass-sheen) 50%, rgba(255,255,255,.38) 100%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  border: 1px solid var(--glass-hairline);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+}
+
+/* 作品卡：玻璃感落在图下的说明条；图片区保持原来的占位底色 */
+.card { border-radius: 20px; }
+.card__cap { background: transparent; }
+.card:hover { box-shadow: inset 0 1px 0 var(--glass-highlight), 0 16px 44px rgba(16,24,40,.16); }
+
+/* 技能 / 筛选标签：小胶囊 */
+.skill-icon, .tab { border-radius: 980px; }
+.skill-icon:hover, .skill-icon.is-active, .tab:hover { border-color: var(--glass-border); }
+
+/* 2.3 装备：图本身不透明，做"玻璃相框"而不是上 blur（省一层合成） */
+.gear__item {
+  background: rgba(255,255,255,.5);
+  border: 2px solid var(--glass-border);
+  box-shadow: 0 10px 30px rgba(16,24,40,.16);
+}
+[data-theme="dark"] .gear__item { background: rgba(255,255,255,.08); }
+.gear__item--sold { z-index: 0; }   /* 贴"卖掉了"标签的压到下层，在用的新品盖在上面 */
+
+/* 2.4 首屏封面卡 / 简历卡：玻璃描边 + 玻璃投影 */
+.hero__product { border: 1px solid var(--glass-border); box-shadow: 0 24px 70px rgba(16,24,40,.20); }
+.about__card { box-shadow: inset 0 1px 0 var(--glass-highlight), 0 18px 54px rgba(16,24,40,.18); }
+.about__card-badge {
+  background: rgba(255,255,255,.6);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-ink);
+}
+[data-theme="dark"] .about__card-badge { background: rgba(255,255,255,.14); color: #f5f6fa; }
+
+/* 2.5 页脚：一条玻璃横带 */
+.footer {
+  border-top: 1px solid var(--glass-hairline);
+  background: rgba(255,255,255,var(--glass-alpha));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+}
+[data-theme="dark"] .footer { background: rgba(255,255,255,.06); }
+
+/* -------------------------------------------------------------------------
+   ③ 浮层（灯箱）—— 强隔离档
+   skill 明确：弹窗背后的遮罩别用纯黑半透明，否则毛玻璃就白做了。
+   这里保留背景可辨认，用强模糊区分前后。
+   ------------------------------------------------------------------------- */
+.lightbox {
+  background: rgba(10, 12, 20, .30);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+[data-theme="dark"] .lightbox { background: rgba(3, 5, 12, .46); }
+
+.lightbox__close,
+.lightbox__nav {
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(0,0,0,.3);
+}
+.lightbox__caption {
+  display: inline-block; left: 50%; right: auto; transform: translateX(-50%);
+  padding: 9px 20px;
+  background: rgba(255,255,255,.16);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.26);
+  border-radius: 980px;
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------------
+   ④ 降级（不可省）
+   ------------------------------------------------------------------------- */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav.is-scrolled { background: rgba(255,255,255,.96); }
+  .card, .tl__card, .cert, .contact__item, .skill-icon, .tab,
+  .about__card, .douyin__phone, .back-top, .caps__visual, .footer,
+  .gear__item, .about__card-badge { background: #fbfbfd; }
+  .lightbox { background: rgba(10,12,20,.88); }
+  .lightbox__close, .lightbox__nav, .lightbox__caption { background: rgba(255,255,255,.22); }
+}
+
+/* 系统开启"降低透明度"时同样退化 */
+@media (prefers-reduced-transparency: reduce) {
+  .nav.is-scrolled, .footer, .card, .tl__card, .cert, .contact__item,
+  .skill-icon, .tab, .about__card, .douyin__phone, .back-top, .caps__visual,
+  .gear__item, .about__card-badge {
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  .nav.is-scrolled, .footer { background: rgba(255,255,255,.97); }
+  .card, .tl__card, .cert, .contact__item, .skill-icon, .tab,
+  .about__card, .douyin__phone, .back-top, .caps__visual, .gear__item { background: #fbfbfd; }
+  .lightbox { backdrop-filter: none; background: rgba(10,12,20,.9); }
+}
+
+/* -------------------------------------------------------------------------
+   ⑤ 移动端：玻璃层越少越省，模糊降一档、底子加厚（可读性优先）
+   ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  :root, [data-theme="light"] { --glass-blur: 10px; --glass-alpha: .68; --glass-alpha-nav: .72; }
+  [data-theme="dark"] { --glass-blur: 16px; --glass-alpha: .14; --glass-alpha-nav: .12; }
+  .lightbox__caption { max-width: 86vw; font-size: .85rem; }
+}
+
+
+/* =========================================================================
+   mbl-resume-neo · 手机端（≤768px）效果开关
+   -------------------------------------------------------------------------
+   ① 关闭"蓝点追踪"（跟随手指的蓝色光晕）
+   ② Emoji 已在上面的区块关闭
+   ③ 毛玻璃：**浅色模式开启，深色模式关闭**
+      —— 浅色白玻璃在白底上仍能透出光泽；深色黑底上白玻璃只会变灰雾，
+         且手机上多一层 blur 纯耗电，所以深色直接还原成基底版实心卡面。
+      浅色不需要写任何覆盖（玻璃层对全端生效），这里只写深色的还原。
+   ⚠️ 本块必须放在毛玻璃层之后（文件末尾），否则会被玻璃层反过来盖掉。
+   ========================================================================= */
+@media (max-width: 768px) {
+  /* 蓝点追踪（跟随手指的蓝色光晕）关闭 */
+  .cursor-glow { display: none !important; }
+
+  /* ---------- 深色模式：关闭毛玻璃，还原基底版实心卡面 ---------- */
+  [data-theme="dark"] .nav.is-scrolled {
+    background: rgba(10,10,10,.96); background-image: none;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    border-bottom: none; box-shadow: 0 1px 0 var(--line);
+  }
+  [data-theme="dark"] .card,
+  [data-theme="dark"] .contact__item,
+  [data-theme="dark"] .about__card,
+  [data-theme="dark"] .douyin__phone,
+  [data-theme="dark"] .back-top,
+  [data-theme="dark"] .caps__visual,
+  [data-theme="dark"] .footer {
+    background: var(--card-bg); background-image: none;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  [data-theme="dark"] .tl__card,
+  [data-theme="dark"] .cert,
+  [data-theme="dark"] .skill-icon {
+    background: var(--surface); background-image: none;
+    border: 1px solid var(--line);
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  [data-theme="dark"] .tab {
+    background: rgba(255,255,255,.06); background-image: none;
+    border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  [data-theme="dark"] .footer { background: transparent; border-top: 1px solid var(--line); box-shadow: none; }
+  [data-theme="dark"] .gear__item { background: transparent; border: none; box-shadow: none; }
+  [data-theme="dark"] .caps__visual { box-shadow: var(--shadow); }
+
+  /* 徽标 / 灯箱：还原成基底版外观 */
+  [data-theme="dark"] .about__card-badge {
+    background: var(--nav-bg); background-image: none; border: none; color: inherit;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+  }
+  [data-theme="dark"] .lightbox {
+    background: rgba(0,0,0,.92);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  [data-theme="dark"] .lightbox__close,
+  [data-theme="dark"] .lightbox__nav {
+    background: rgba(255,255,255,.12); border: none;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  [data-theme="dark"] .lightbox__caption {
+    background: none; border: none;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+
+  /* 深色下玻璃专用墨色 = 主题默认墨色 */
+  [data-theme="dark"] {
+    --glass-ink: #f5f5f7; --glass-ink-2: #a1a1a6; --glass-border-soft: #2a2a2c;
+  }
 }

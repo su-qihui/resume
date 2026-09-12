@@ -7,7 +7,7 @@
 <meta name="description" content="苏其辉 — 多媒体设计师。平面设计 / 影视后期 / 摄影航拍 / 新媒体运营作品集。" />
 <meta name="theme-color" content="#ffffff" />
 <link rel="icon" href="assets/img/icons/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="css/v2-style.css" />
+<link rel="stylesheet" href="css/v2-style.css?v=neo8" />
 <script>
 (function () {
   try {
@@ -19,6 +19,9 @@
 </script>
 </head>
 <body>
+<!-- 背景互动层：单击任意位置召唤 emoji（物理重力 / 弹跳 / 碰撞） -->
+<canvas class="emoji-bg" id="emojiBg" aria-hidden="true"></canvas>
+<!-- 本页为 mbl-resume-neo：毛玻璃（Frosted Glass）变体，玻璃配方见 css/v2-style.css 末尾 -->
 <!-- 深色模式圆形扩散切换层 -->
 <div class="theme-ripple" aria-hidden="true"></div>
 <!-- 滚动进度条 -->
@@ -43,6 +46,10 @@
       <a href="#contact" class="nav__link" data-section="contact">联系</a>
     </nav>
     <div class="nav__actions">
+      <a class="nav__export" href="assets/pdf/resume-su-qihui.pdf" download="苏其辉-影视后期-新媒体.pdf" rel="noopener" title="下载简历 PDF">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M4 19h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav__export-text">导出简历</span>
+      </a>
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色 / 浅色模式" title="切换主题">
         <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></g></svg>
         <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -60,9 +67,6 @@
   <div class="hero__glow" data-parallax-speed="0.25" aria-hidden="true"></div>
 <!-- 头像：嵌入 hero__inner 文字流，紧贴名字上方 -->
   <div class="hero__inner">
-    <div class="hero__avatar" aria-hidden="true">
-      <img src="assets/img/resume/headshot.webp" alt="苏其辉" />
-    </div>
     <p class="hero__eyebrow" data-reveal>PORTFOLIO · 2026</p>
     <h1 class="hero__title">
       <span class="hero__name" data-reveal data-reveal-delay="80">苏其辉</span>
@@ -76,7 +80,7 @@
     </div>
     <!-- 封面层：极慢视差，加reveal延迟保证用户能看到 -->
     <div class="hero__product tilt-card" id="heroProduct" data-reveal data-reveal-delay="520">
-      <img src="assets/img/resume/cover.jpg" alt="苏其辉 简历封面" loading="eager" />
+      <img src="assets/img/resume/cover.jpg?v=1.2" alt="苏其辉 简历封面" loading="eager" />
     </div>
   </div>
   <a href="#about" class="hero__scroll" aria-label="向下滚动">
@@ -92,20 +96,21 @@
     <h2 class="section__title" data-reveal>用视觉讲述故事</h2>
     <div class="about__grid">
       <div class="about__text" data-reveal>
-        <p class="about__lead">我是 <strong>苏其辉</strong>，一名 18 岁的多媒体设计师，来自浙江金华义乌。</p>
+        <p class="about__lead">我是 <strong>苏其辉</strong>，一名 19 岁的多媒体设计师，来自浙江金华义乌。</p>
         <p>从家族广告社的平面打印，到校园融媒体社团的影像创作，我始终痴迷于<strong>用画面传递信息</strong>。数码科技爱好者、摄影与航拍实践者、独立探索者——这些身份共同塑造了我的创作视角。</p>
         <p>我擅长将品牌需求转化为有冲击力的视觉：从一张包装到一支短片，从一次航拍到一场新媒体策划。</p>
         <ul class="about__stats">
-          <li data-reveal><span class="num" data-count="18">0</span><em>岁</em></li>
+          <li data-reveal><span class="num" data-count="19">0</span><em>岁</em></li>
           <li data-reveal data-reveal-delay="80"><span class="num" data-count="2">0</span><em>段学历</em></li>
           <li data-reveal data-reveal-delay="160"><span class="num" data-count="5">0</span><em>年实战</em></li>
           <li data-reveal data-reveal-delay="240"><span class="num" data-count="8">0</span><em>款软件</em></li>
         </ul>
       </div>
-      <div class="about__card tilt-card" id="aboutCard" data-reveal data-reveal-delay="120">
-        <img src="assets/img/resume/cv.jpg" alt="苏其辉 个人简历" />
+      <button class="about__card tilt-card" id="aboutCard" data-reveal data-reveal-delay="120" data-lightbox="solo" data-src="assets/img/resume/cv.jpg?v=2.8.1" data-title="苏其辉 个人简历" aria-label="点击查看个人简历大图">
+        <img src="assets/img/resume/cv.jpg?v=2.8.1" alt="苏其辉 个人简历" />
         <span class="about__card-badge">多媒体设计师</span>
-      </div>
+        <span class="about__card-overlay"><span class="about__card-overlay-text">点击查看大图</span></span>
+      </button>
     </div>
 
     <!-- 装备散开展示 -->
@@ -126,6 +131,9 @@
         </button>
         <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djinano.jpg" data-title="DJI Osmo Nano" data-angle="-2">
           <img src="assets/img/gear/djinano.jpg" alt="DJI Osmo Nano" loading="lazy" /><span class="gear__item-name">DJI Osmo Nano</span>
+        </button>
+        <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djiosmo360ii.jpg" data-title="DJI Osmo 360 II" data-angle="0">
+          <img src="assets/img/gear/djiosmo360ii.jpg" alt="DJI Osmo 360 II" loading="lazy" /><span class="gear__item-name">DJI Osmo 360 II</span>
         </button>
         <button class="gear__item" data-lightbox="gear" data-src="assets/img/gear/djineo2.jpg" data-title="DJI Neo 2" data-angle="2">
           <img src="assets/img/gear/djineo2.jpg" alt="DJI Neo 2" loading="lazy" /><span class="gear__item-name">DJI Neo 2</span>
@@ -233,7 +241,7 @@
       <div class="tl__item" data-reveal>
         <span class="tl__dot"></span>
         <div class="tl__card">
-          <span class="tl__date">2022.09 — 2026.06（开启实习）</span>
+          <span class="tl__date">2022.09 — 2027.06（开启实习）</span>
           <h3 class="tl__title">浙江交通技师学院 <span class="tl__badge">中专/中技</span></h3>
           <p class="tl__sub">数字媒体技术应用</p>
           <p class="tl__meta">主修：动画制作 / 剧本创作 / 平面设计与制作</p>
@@ -310,6 +318,7 @@
     <div class="tabs" id="portfolioTabs" data-reveal>
       <button class="tab is-active" data-filter="all">全部</button>
       <button class="tab" data-filter="video">视频作品</button>
+      <button class="tab" data-filter="vibecoding">VibeCoding</button>
       <button class="tab" data-filter="ai">AI 平面设计</button>
       <button class="tab" data-filter="cdr">CDR 制版</button>
     </div>
@@ -390,6 +399,35 @@
         </button>
         <figcaption class="card__cap">flow2 X 三星</figcaption>
       </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="600">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/douyin/douyin-quanzhou.mp4" data-poster="assets/video/douyin/douyin-quanzhou.jpg" data-title="泉州旅行-DJInano">
+          <img class="card__poster" src="assets/video/douyin/douyin-quanzhou.jpg" alt="泉州旅行-DJInano" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">抖音</span>
+        </button>
+        <figcaption class="card__cap">泉州旅行-DJInano</figcaption>
+      </figure>
+    </div>
+
+    <!-- VibeCoding -->
+    <div class="gallery gallery--video" data-group="vibecoding" hidden>
+      <figure class="card card--video" data-reveal>
+        <button class="card__img" data-lightbox="video" data-src="assets/video/vibecoding/vibecoding-01.mp4" data-poster="assets/video/vibecoding/vibecoding-01.jpg" data-title="Trace">
+          <img class="card__poster" src="assets/video/vibecoding/vibecoding-01.jpg" alt="Trace" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">VibeCoding</span>
+        </button>
+        <figcaption class="card__cap">Trace　<a class="card__link" href="https://gitee.com/goushiiyun/trace" target="_blank" rel="noopener">开源地址 ↗</a></figcaption>
+      </figure>
+      <figure class="card card--video" data-reveal data-reveal-delay="60">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/vibecoding/vibecoding-02.mp4" data-poster="assets/video/vibecoding/vibecoding-02.jpg" data-title="简历视频">
+          <img class="card__poster" src="assets/video/vibecoding/vibecoding-02.jpg" alt="简历视频" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">VibeCoding</span>
+        </button>
+        <figcaption class="card__cap">简历视频</figcaption>
+      </figure>
+      <p class="gallery__note">以上视频效果使用 Codex + Hyperframes 制作</p>
     </div>
 
     <!-- AI 平面 -->
@@ -469,7 +507,6 @@
   <div class="container douyin__inner">
     <div class="douyin__text" data-reveal>
       <p class="section__eyebrow">06 — 抖音账号</p>
-      <h2 class="section__title">镜头很勤快，剪辑很懒情</h2>
       <p class="douyin__id">@Gou使运 · s2705579416</p>
       <p class="douyin__desc">在抖音分享无人机航拍、运动相机转场与旅拍日常。从丽水梯田到海上无人机，用镜头记录探索的轨迹。</p>
       <a class="btn btn--primary" href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm" target="_blank" rel="noopener">前往抖音主页 ↗</a>
@@ -563,6 +600,6 @@
   <span class="back-top__text">UP</span>
 </button>
 
-<script src="js/v2-main.js"></script>
+<script src="js/v2-main.js?v=neo4"></script>
 </body>
 </html>

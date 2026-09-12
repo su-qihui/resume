@@ -6,6 +6,7 @@
 (function () {
   "use strict";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var isMobileViewport = window.matchMedia("(max-width: 768px)").matches;  // 手机端（≤768px）：关掉若干重效果
   var root = document.documentElement;
 
   /* ---------- 主题切换（圆形扩散 Ripple） ---------- */
@@ -169,7 +170,7 @@
   var isMobileOrReduced = reduceMotion;
   var isTouch = window.matchMedia("(hover: none)").matches;
 
-  if (glow && !isMobileOrReduced) {
+  if (glow && !isMobileOrReduced && !isMobileViewport) {   // 手机端关闭"蓝点追踪"
     var mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
 
     if (isTouch) {
@@ -252,14 +253,6 @@
     revealEls.forEach(function (el) { io.observe(el); });
   } else {
     revealEls.forEach(function (el) { el.classList.add("is-visible"); });
-  }
-
-  /* ---------- 头像入场 ---------- */
-  var heroAvatar = document.querySelector('.hero__avatar');
-  if (heroAvatar) {
-    setTimeout(function () {
-      heroAvatar.classList.add('is-visible');
-    }, 120); // 比文字早一点
   }
 
   /* ---------- 数字滚动计数 ---------- */
@@ -443,9 +436,9 @@
   if (gearItems.length && !reduceMotion) {
     gearItems.forEach(function (item, i) {
       var angle = parseInt(item.getAttribute('data-angle') || '0', 10);
-      // 中间现有5件较大，两侧卖掉的较小
-      var lifts = [4, -2, 10, -4, 6, -2, 10, 0];     // 当前是新顺序：sold, sold, 现有×5, sold
-      var scales = [0.72, 0.78, 0.92, 0.95, 0.90, 0.88, 0.85, 0.72]; // 中间3个最大
+      // 中间现有6件较大，两侧卖掉的较小
+      var lifts = [4, -2, 10, -4, 8, 6, -2, 10, 0];          // 顺序：sold, sold, 现有×6, sold
+      var scales = [0.72, 0.78, 0.92, 0.95, 0.94, 0.90, 0.88, 0.85, 0.72]; // 中间几个最大
       var lift = lifts[i] || 0;
       var scale = scales[i] || 0.85;
       item.style.setProperty('--angle', angle + 'deg');
@@ -589,6 +582,9 @@
       currentList = Array.prototype.slice.call(
         document.querySelectorAll("[data-lightbox='gear']")
       );
+    } else if (lbType === "solo") {
+      // 单图查看（如「关于」区的简历卡），不参与任何图库
+      currentList = [btn];
     } else {
       currentList = Array.prototype.slice.call(
         document.querySelectorAll(".gallery:not([hidden]) [data-lightbox]")
@@ -664,5 +660,152 @@
         heroProduct.style.transform = "";
       }, 1050);
     });
+  }
+
+  /* ---------- 背景 Emoji 互动层 ----------
+     效果源自「千问代码_html_20260911.html」：单击召唤 emoji，带重力 / 摩擦 / 弹跳 / 粒子碰撞。
+     相对原版的 3 处调整（都是为了适配一个长页面站点）：
+       ① 上限 90 个（原 400），避免滚动页面被堆满；
+       ② 粒子落到底部静止 3s 后淡出 0.4s 再移除，不会永久堆积；
+       ③ 画布 pointer-events:none，点击监听挂 document，不遮挡任何链接 / 按钮。 */
+  var emojiCanvas = document.getElementById('emojiBg');
+  var emojiOffOnMobile = isMobileViewport;  // 手机端关闭 emoji 效果
+  if (emojiCanvas && !reduceMotion && !emojiOffOnMobile) {
+    (function () {
+      var ctx = emojiCanvas.getContext('2d');
+      var EMOJIS = ['😀','😂','🥰','😎','🤩','🥳','😜','🤪','😇','🤠','👻','💩','🎃','👽','🤖','🦄','🐶','🐱','🐼','🦊','🐸','🐵','🦁','🐯','🐻','🐷','🐮','🐔','🦖','🐙','🍕','🍔','🍟','🍩','🍪','🍎','🍉','🍓','🍇','🍌','⭐','🌈','🔥','💎','💖','🎈','🎁','🎵','🚀','⚽','🏀','🎮'];
+      var GRAVITY = 0.5, FRICTION = 0.985, BOUNCE = 0.7, GROUND_FRICTION = 0.9;
+      var MAX_PARTICLES = 90, REST_HOLD = 3000, FADE_MS = 400, MAX_LIFE = 15000; // 掉到底部 3s 后淡出，淡出历时 0.4s（按时间而非帧数，避免低帧率下拖长）
+      var W = 0, H = 0;
+      var particles = [];
+      var loopRunning = false;
+
+      function resize() {
+        var dpr = Math.min(2, window.devicePixelRatio || 1);
+        W = window.innerWidth; H = window.innerHeight;
+        emojiCanvas.width = Math.round(W * dpr);
+        emojiCanvas.height = Math.round(H * dpr);
+        emojiCanvas.style.width = W + 'px';
+        emojiCanvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function Emoji(x, y, char) {
+        this.x = x; this.y = y; this.char = char;
+        this.r = 14 + Math.random() * 12;
+        var angle = Math.random() * Math.PI * 2;
+        var speed = 4 + Math.random() * 8;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 6;
+        this.rot = Math.random() * Math.PI * 2;
+        this.vr = (Math.random() - 0.5) * 0.2;
+        this.mass = this.r * this.r;
+        this.alpha = 1;
+        this.bornAt = 0;
+        this.groundSince = 0;
+        this.lastAt = 0;
+      }
+      Emoji.prototype.update = function (now) {
+        if (!this.bornAt) this.bornAt = now;
+        // 帧间隔（毫秒，封顶 50ms，避免切后台回来一帧直接把 alpha 打穿）
+        var dt = this.lastAt ? Math.min(50, now - this.lastAt) : 16.7;
+        this.lastAt = now;
+
+        this.vy += GRAVITY;
+        this.vx *= FRICTION;
+        this.vy *= FRICTION;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.rot += this.vr;
+
+        if (this.y + this.r > H) {
+          this.y = H - this.r;
+          this.vy *= -BOUNCE;
+          this.vx *= GROUND_FRICTION;
+          this.vr *= 0.8;
+          if (Math.abs(this.vy) < 1) {
+            this.vy = 0;
+            this.vx *= 0.88;   // 落定后额外衰减水平速度，尽快停下
+            this.vr *= 0.7;
+          }
+          // 首次触地时刻（只记一次，弹跳不重置）——倒计时从"掉到底部"那一刻开始
+          if (!this.groundSince) this.groundSince = now;
+        }
+        if (this.y - this.r < 0) { this.y = this.r; this.vy *= -BOUNCE; }
+        if (this.x - this.r < 0) { this.x = this.r; this.vx *= -BOUNCE; }
+        if (this.x + this.r > W) { this.x = W - this.r; this.vx *= -BOUNCE; }
+
+        // 消失判定：掉到底部（首次触地）后 3s 淡出；另设总寿命兜底（避免叠在别的粒子上永不触地）
+        var fadeAt = this.groundSince ? this.groundSince + REST_HOLD : this.bornAt + MAX_LIFE;
+        if (now > fadeAt) this.alpha = Math.max(0, this.alpha - dt / FADE_MS);
+      };
+      Emoji.prototype.draw = function () {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, this.alpha);
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rot);
+        ctx.font = (this.r * 2) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.char, 0, 0);
+        ctx.restore();
+      };
+
+      function resolveCollision(a, b) {
+        var dx = b.x - a.x, dy = b.y - a.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var minDist = a.r + b.r;
+        if (dist === 0 || dist >= minDist) return;
+        var nx = dx / dist, ny = dy / dist;
+        var overlap = (minDist - dist) / 2;
+        a.x -= nx * overlap; a.y -= ny * overlap;
+        b.x += nx * overlap; b.y += ny * overlap;
+        var dvx = b.vx - a.vx, dvy = b.vy - a.vy;
+        var vn = dvx * nx + dvy * ny;
+        if (vn > 0) return;
+        var j = -(1 + 0.8) * vn / (1 / a.mass + 1 / b.mass);
+        a.vx -= j * nx / a.mass; a.vy -= j * ny / a.mass;
+        b.vx += j * nx / b.mass; b.vy += j * ny / b.mass;
+      }
+
+      function loop(now) {
+        ctx.clearRect(0, 0, W, H);
+        var i, j;
+        for (i = 0; i < particles.length; i++) particles[i].update(now);
+        for (i = 0; i < particles.length; i++) {
+          for (j = i + 1; j < particles.length; j++) resolveCollision(particles[i], particles[j]);
+        }
+        var alive = [];
+        for (i = 0; i < particles.length; i++) {
+          if (particles[i].alpha > 0) { particles[i].draw(); alive.push(particles[i]); }
+        }
+        particles = alive;
+        if (particles.length) window.requestAnimationFrame(loop);
+        else { ctx.clearRect(0, 0, W, H); loopRunning = false; }
+      }
+      function startLoop() {
+        if (!loopRunning) { loopRunning = true; window.requestAnimationFrame(loop); }
+      }
+
+      function spawn(x, y) {
+        var count = 8 + Math.floor(Math.random() * 7); // 8~14 个
+        for (var i = 0; i < count; i++) {
+          particles.push(new Emoji(x, y, EMOJIS[Math.floor(Math.random() * EMOJIS.length)]));
+        }
+        while (particles.length > MAX_PARTICLES) particles.shift();
+        startLoop();
+      }
+
+      document.addEventListener('pointerdown', function (e) {
+        spawn(e.clientX, e.clientY);
+      }, { passive: true });
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { particles = []; ctx.clearRect(0, 0, W, H); loopRunning = false; }
+      });
+    })();
   }
 })();
