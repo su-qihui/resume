@@ -648,18 +648,31 @@
     checkBackTop();
   }
 
-  // 首屏产品卡入场缩放
-  var heroProduct = document.getElementById("heroProduct");
-  if (heroProduct && !reduceMotion) {
-    heroProduct.style.transition = "transform 1s cubic-bezier(0.16,1,0.3,1)";
-    heroProduct.style.transform = "perspective(900px) scale(1.12)";
-    window.requestAnimationFrame(function () {
-      heroProduct.style.transform = "perspective(900px) scale(1)";
-      setTimeout(function () {
-        heroProduct.style.transition = "";
-        heroProduct.style.transform = "";
-      }, 1050);
-    });
+  /* 首屏背景视频：「减弱动效」下停在封面帧；其余情况兜底再请求一次播放
+     （部分浏览器会忽略 autoplay 属性，尤其是带声历史或省数据模式） */
+  var heroVideo = document.querySelector('.hero__video');
+  if (heroVideo) {
+    if (reduceMotion) {
+      heroVideo.pause();
+    } else {
+      var p = heroVideo.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+  }
+
+  /* 背景视频舞台：高度 = 页首到 02 核心能力 的下沿，配合 .bg-stage__pin 的 sticky，
+     视频就会一路跟随到那里、然后随舞台一起滚走掐断。
+     用 ResizeObserver 量，不挂到 scroll 上 —— 每帧读 getBoundingClientRect 会强制重排。 */
+  var bgStage = document.querySelector('.bg-stage');
+  var capsSec = document.getElementById('capabilities');
+  if (bgStage && capsSec) {
+    var sizeBgStage = function () {
+      var bottom = capsSec.getBoundingClientRect().bottom + window.pageYOffset;
+      bgStage.style.setProperty('--bg-stage-h', Math.round(bottom) + 'px');
+    };
+    sizeBgStage();
+    if (window.ResizeObserver) { new ResizeObserver(sizeBgStage).observe(capsSec); }
+    window.addEventListener('load', sizeBgStage);
   }
 
   /* ---------- 背景 Emoji 互动层 ----------

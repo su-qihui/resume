@@ -7,7 +7,7 @@
 <meta name="description" content="苏其辉 — 多媒体设计师。平面设计 / 影视后期 / 摄影航拍 / 新媒体运营作品集。" />
 <meta name="theme-color" content="#ffffff" />
 <link rel="icon" href="assets/img/icons/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="css/v2-style.css?v=neo8" />
+<link rel="stylesheet" href="css/v2-style.css?v=neo28" />
 <script>
 (function () {
   try {
@@ -61,10 +61,26 @@
   </div>
 </header>
 
+<!-- ============ 背景视频舞台：从页首一直 sticky 跟随到 02 核心能力 底部再掐掉 ============
+     高度由 js/v2-main.js 按 #capabilities 的下沿实时量出来设，CSS 里不写死 -->
+<div class="bg-stage" aria-hidden="true">
+  <div class="bg-stage__pin">
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata"
+           poster="assets/video/hero/hero-bg.jpg?v=3" tabindex="-1">
+      <!-- 断点必须和 v2-style.css 里手机端首屏那组的 max-width:768px 保持一致，否则视口与处理会错位 -->
+      <source media="(max-width: 768px)" src="assets/video/hero/hero-bg-m.mp4?v=3" type="video/mp4" />
+      <source src="assets/video/hero/hero-bg.mp4?v=3" type="video/mp4" />
+    </video>
+    <div class="hero__scrim"></div>
+  </div>
+  <div class="bg-stage__end"></div>
+</div>
+
 <!-- ============ 首屏 Hero ============ -->
 <section class="hero" id="home">
-  <div class="hero__bg" data-parallax-speed="0.15" aria-hidden="true"></div>
-  <div class="hero__glow" data-parallax-speed="0.25" aria-hidden="true"></div>
+  <!-- 原 .hero__bg / .hero__glow 两层半透明渐变已撤：
+       它们在 hero 内（z-index:1），会压在 body 级视频舞台（z-index:0）之上，
+       等于给首屏蒙了一层乳白膜。视频就是首屏背景，不需要再叠装饰渐变。 -->
 <!-- 头像：嵌入 hero__inner 文字流，紧贴名字上方 -->
   <div class="hero__inner">
     <p class="hero__eyebrow" data-reveal>PORTFOLIO · 2026</p>
@@ -78,10 +94,6 @@
       <a href="#portfolio" class="btn btn--primary">查看作品集</a>
       <a href="#contact" class="btn btn--ghost">联系我</a>
     </div>
-    <!-- 封面层：极慢视差，加reveal延迟保证用户能看到 -->
-    <div class="hero__product tilt-card" id="heroProduct" data-reveal data-reveal-delay="520">
-      <img src="assets/img/resume/cover.jpg?v=1.2" alt="苏其辉 简历封面" loading="eager" />
-    </div>
   </div>
   <a href="#about" class="hero__scroll" aria-label="向下滚动">
     <span class="hero__scroll-text">向下滚动</span>
@@ -90,7 +102,7 @@
 </section>
 
 <!-- ============ 关于我 ============ -->
-<section class="section about" id="about">
+<section class="section about on-video" id="about">
   <div class="container">
     <p class="section__eyebrow" data-reveal>01 — 关于</p>
     <h2 class="section__title" data-reveal>用视觉讲述故事</h2>
@@ -154,7 +166,7 @@
 </section>
 
 <!-- ============ 能力叙事（钉住滚动） ============ -->
-<section class="caps" id="capabilities">
+<section class="caps on-video" id="capabilities">
   <div class="caps__track" id="capsTrack">
     <div class="caps__sticky">
       <div class="caps__head">
@@ -600,6 +612,6 @@
   <span class="back-top__text">UP</span>
 </button>
 
-<script src="js/v2-main.js?v=neo4"></script>
+<script src="js/v2-main.js?v=neo7"></script>
 </body>
 </html>

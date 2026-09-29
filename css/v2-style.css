@@ -164,25 +164,68 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    Hero 首屏
    ========================================================= */
 .hero {
-  position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
+  position: relative; z-index: 1; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center; overflow: hidden;
-  padding: 100px 20px 0;
+  padding: 100px 20px;  /* 上下对称：首屏文字块的光学中心才落在视口正中（原来 0 底边距会压低 50px） */
 }
-.hero__bg {
-  position: absolute; top: -20%; left: 0; right: 0; height: 140%; z-index: 0;
-  background:
-    radial-gradient(circle at 20% 20%, var(--accent-soft), transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(128,90,213,0.10), transparent 42%),
-    var(--glow);
-  will-change: transform;
+/* ---------- 背景视频舞台（横屏 1080p30/7.8MB，手机端竖屏 720×1280/5.3MB） ----------
+   舞台从页首起 sticky 跟随到 02 核心能力 下沿再掐断；高度由 JS 量 #capabilities 写进 --bg-stage-h。
+   片源明暗交替（10.28s 有一记亮度 235 的整幅白闪），所以不能只靠一层暗遮罩：
+   先给视频压一档亮度收住高光，再用「文字区径向暗斑 + 顶部导航压暗」承载可读性。
+   区块末尾的渐隐交给 .bg-stage__end —— 它不跟随，钉在舞台底部，所以能真正落在 02 结束那一处。 */
+.bg-stage {
+  position: absolute; top: 0; left: 0; right: 0; height: var(--bg-stage-h, 100vh);
+  z-index: 0; background: #08090c;  /* 视频未就位/播放失败时的深色底，保证浅色墨始终可读 */
+  pointer-events: none;
 }
-.hero__glow {
-  position: absolute; width: 60vw; height: 60vw; max-width: 720px; max-height: 720px;
-  top: 8%; left: 50%; transform: translateX(-50%);
-  background: radial-gradient(circle, var(--accent-soft), transparent 70%);
-  filter: blur(40px); z-index: 0; pointer-events: none;
+.bg-stage__pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.bg-stage__end {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34vh;
+  background: linear-gradient(180deg, rgba(6,7,10,0) 0%, var(--bg) 92%);
 }
-.hero__inner { position: relative; z-index: 2; width: min(1100px, 94vw); }
+.hero__video {
+  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
+  object-fit: cover;
+  /* 按用户要求：不再压暗、不再挂遮罩，视频按原亮度直接透出。
+     唯一保留的是顶部一条给固定导航压暗的窄带 —— 撤了导航会消失在亮段落里。
+     可读性全部由文字自带投影承担（见下方 .hero__eyebrow 等）。 */
+  filter: saturate(1.06);
+}
+.hero__scrim {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(180deg, rgba(6,7,10,.72) 0%, rgba(6,7,10,.34) 8%, rgba(6,7,10,0) 18%);
+}
+/* 01 关于 / 02 核心能力 压在视频上时共用的墨色档：只重绑变量不够，
+   .section__title、.about__lead 这些没写自身 color 的后代靠继承，必须同时给 color。 */
+.on-video {
+  --text: #f5f6fa; --text-2: rgba(245,246,250,.82); --line: rgba(255,255,255,.26);
+  --accent: #6cb8ff; --accent-soft: rgba(108,184,255,.18);
+  color: var(--text);
+}
+/* 这两段是密集正文区，保留一层均匀垫底撑正文对比度（用户确认要留）。
+   必须带 section 前缀：权重 (0,1,1) 才压得住 .caps 的 background:transparent。
+   ⚠️ 首屏的"膜感"跟这条无关 —— 那是 .hero__bg / .hero__glow 两层浅色渐变造成的乳白洗白，已撤。 */
+section.on-video { background: rgba(6,7,10,.30); }
+.hero__inner {
+  position: relative; z-index: 3; width: min(1100px, 94vw);
+  --text: #f5f6fa; --text-2: rgba(245,246,250,.86); --line: rgba(255,255,255,.34);
+  color: var(--text);  /* .hero__role 等未声明 color 的后代靠继承取色，只重绑变量不够 */
+}
+/* 遮罩减到很薄之后，对比度几乎全靠这层投影。它是唯一"不压暗视频却能加可读性"的手段：
+   紧贴字形的两圈暗边把glyph边缘压住，远处视频完全不受影响。
+   注意别加白色内高光——在亮段落上它会和背景糊成一片，反而更糊。 */
+.hero__eyebrow, .hero__en, .hero__role, .hero__tagline {
+  text-shadow: 0 0 2px rgba(0,0,0,.95), 0 1px 3px rgba(0,0,0,.85), 0 3px 16px rgba(0,0,0,.7);
+}
+/* 顶部导航未吸顶时（只在首屏出现）压在深色视频上，墨色同步转浅 */
+.nav:not(.is-scrolled) {
+  --text: #f5f6fa; --text-2: rgba(245,246,250,.72);
+  color: var(--text);  /* 同理：.nav__name 无自身 color，继承自这里 */
+}
+.nav:not(.is-scrolled) .nav__link {
+  background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+}
 /* 首屏头像已移除（原引用 headshot.webp 线上 404 导致破图） */
 .hero__eyebrow { font-size: 0.85rem; letter-spacing: 0.3em; color: var(--text-2); margin-bottom: 20px; }
 .hero__title { line-height: 0.95; margin-bottom: 22px; }
@@ -190,6 +233,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: block; font-size: clamp(3.4rem, 13vw, 9rem); font-weight: 700;
   letter-spacing: -0.04em; background: linear-gradient(180deg, var(--text), var(--text-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  /* 遮罩减淡后靠投影撑住对比度。必须用 drop-shadow：这行是 background-clip:text + 透明填充，
+     给它加 text-shadow 会从字形后面直接透出来，变成一坨实心鬼影。 */
+  filter: drop-shadow(0 0 2px rgba(0,0,0,.8)) drop-shadow(0 2px 14px rgba(0,0,0,.78)) drop-shadow(0 0 4px rgba(0,0,0,.5));
 }
 .hero__en {
   display: block; font-size: clamp(0.9rem, 3vw, 1.4rem); font-weight: 500;
@@ -198,12 +244,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .hero__role { font-size: clamp(1.2rem, 3.5vw, 1.8rem); font-weight: 600; margin-bottom: 10px; }
 .hero__tagline { color: var(--text-2); font-size: clamp(0.95rem, 2.5vw, 1.1rem); margin-bottom: 36px; }
 .hero__cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.hero__product {
-  margin: 56px auto 0; width: min(420px, 78vw); border-radius: 18px; overflow: hidden;
-  box-shadow: var(--shadow); background: var(--card-bg);
-  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
-}
-.hero__product img { width: 100%; height: auto; display: block; }
 .hero__scroll {
   position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); z-index: 3;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -215,6 +255,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   background: var(--accent); animation: scrollDot 2s cubic-bezier(0.7,0,0.3,1) infinite;
 }
 @keyframes scrollDot { 0% { top: -50%; } 100% { top: 100%; } }
+/* 「向下滚动」提示转浅色墨 —— 必须放在上面那两条基础规则之后，同权重后者赢。
+   首屏底部不再渐隐回白底（渐隐搬到了 .bg-stage__end），它现在是压在视频上的。
+   它只有 12.5px、又落在径向暗斑衰减到的视口底边，所以靠多层投影而不是加遮罩来撑。 */
+.hero__scroll {
+  color: #f5f6fa;
+  text-shadow: 0 0 2px rgba(0,0,0,.9), 0 1px 6px rgba(0,0,0,.85), 0 2px 16px rgba(0,0,0,.6);
+}
+.hero__scroll-line { background: linear-gradient(rgba(245,246,250,.9), transparent); }
 
 /* =========================================================
    背景 Emoji 互动层
@@ -315,7 +363,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* =========================================================
    能力叙事（钉住滚动）
    ========================================================= */
-.caps { position: relative; background: var(--bg-soft); }
+.caps { position: relative; background: transparent; }  /* 原为 var(--bg-soft) 不透明白底，会盖掉跟随的视频 */
 .caps__track { position: relative; height: 420vh; }
 .caps__sticky {
   position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column;
@@ -506,6 +554,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    ========================================================= */
 [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); transition-delay: var(--rd, 0ms); will-change: opacity, transform; }
 [data-reveal].is-visible { opacity: 1; transform: none; }
+/* ⚠️ 上面 is-visible 的 transform:none 优先级 (0,2,0) 会永久压住 .tilt-card (0,1,0) 的 3D 倾斜，
+   导致封面卡 / 简历卡 / 抖音手机壳鼠标移上去完全不倾斜 —— 必须用更高优先级把倾斜接回来 */
+[data-reveal].is-visible.tilt-card {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);   /* 倾斜要跟手，不能沿用入场那 0.8s */
+  transition-delay: 0ms;
+}
 
 /* =========================================================
    响应式
@@ -533,12 +588,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .gallery { gap: 16px; }
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
   .caps__track { height: 360vh; }
+  /* 手机端首屏不单独处理：与桌面同一套"零遮罩 + 文字投影"。
+     历史上这里曾有 brightness(.46)/(.70)/(.80) + 一整片线性灰幕，以及一个会露出椭圆边的中央径向暗斑
+     （用户两次反馈"手机端效果差""再通透些"后全部撤除）。
+     区块末尾的渐隐也不在这里做 —— 那是 .bg-stage__end 的活，它钉在舞台底部而非视口底部。 */
 }
 @media (max-width: 480px) {
   .gallery { gap: 12px; }
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
-  .hero__cta { flex-direction: column; width: 100%; max-width: 280px; margin-inline: auto; }
-  .hero__cta .btn { width: 100%; }
+  .hero__cta { gap: 10px; }
+  .hero__cta .btn { padding: 11px 22px; font-size: 0.9rem; }
 }
 
 /* 无障碍：减弱动效 */
@@ -964,8 +1023,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 [data-theme="dark"] .gear__item { background: rgba(255,255,255,.08); }
 .gear__item--sold { z-index: 0; }   /* 贴"卖掉了"标签的压到下层，在用的新品盖在上面 */
 
-/* 2.4 首屏封面卡 / 简历卡：玻璃描边 + 玻璃投影 */
-.hero__product { border: 1px solid var(--glass-border); box-shadow: 0 24px 70px rgba(16,24,40,.20); }
+/* 2.4 简历卡：玻璃描边 + 玻璃投影 */
 .about__card { box-shadow: inset 0 1px 0 var(--glass-highlight), 0 18px 54px rgba(16,24,40,.18); }
 .about__card-badge {
   background: rgba(255,255,255,.6);
