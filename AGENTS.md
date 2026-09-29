@@ -3,8 +3,9 @@
 > 供 AI agent 快速建立上下文用。读完本文即可直接改代码，无需再通读全部源码。
 > **本目录 = `mbl-resume-neo`：在 `resume-main` 基础上增加毛玻璃（Frosted Glass）主题层的变体。**
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
-> 与线上 https://resume-34f.pages.dev 的关系：基底同源，本目录未部署
-> 更新日期：2026-09-28
+> 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
+> `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
+> 更新日期：2026-09-29
 
 ## 1. 一句话定位
 
@@ -132,16 +133,31 @@
 
 ```bash
 # 本地预览（推荐，避免 file:// 限制）
-python -m http.server 8765      # 然后开 http://127.0.0.1:8765
+# ⚠️ 8765 已被另一个会话占用（会看到"杭州微缩沙盘"），本站用 8766 / 8767
+python -m http.server 8766 --bind 0.0.0.0          # 仅 HTTP/1.0，不支持 Range
+"C:/Users/Administrator/AppData/Local/Programs/Python/Python312/python.exe" \
+  C:/Users/Administrator/AppData/Local/Temp/range_server.py 8767 "E:/vibe coding/Resume/HTTP/mbl-resume-neo"
+# ↑ 8767 支持 Range（返回 206），手机 Safari 播视频必须要这个
 ```
 
 也可直接双击 `index.html`——纯静态、无模块、无跨域请求限制，但视频在 `file://` 下可能不播。
 
-部署：Cloudflare Pages，推仓库即上线。无构建命令，输出目录为仓库根（本目录）。
+部署：**推 `main` 即上线**，Cloudflare Pages 自动重建（实测 1 分钟内生效）。无构建命令，输出目录为仓库根（本目录）。
+
+```bash
+G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-neo"
+"$G" status --porcelain                      # 先看改动面
+"$G" add -A && "$G" commit -m "…"            # 身份已配在仓库本地，别动全局
+"$G" -c credential.helper=store push origin main   # token 在 ~/.git-credentials，直连通，不需代理
+```
+
+⚠️ **本仓库 blob 存的是 CRLF**，而 Windows git 全局默认 `core.autocrlf=true` 会在 check-in 时把 CRLF 重写成 LF，
+导致**每个文件整文件假 diff**（实测 css 从 112 行真改动膨胀到 2314 行）。本目录已设 `core.autocrlf=false`（仓库级），
+新建工作副本后要沿用；若发现某文件工作副本是 LF 而仓库是 CRLF，用 python 把 `\n` 换回 `\r\n` 再 add。
 
 ## 9. 观感速记（无图版，供判断改动影响面）
 
-- **首屏～02（深色带）**：30s 循环的个人 Showreel 当背景，`brightness(.88)` + 中央径向暗斑，视频透过率约 .44（能认出是支片子）；`.bg-stage` sticky 跟随，**到 02 核心能力 下沿掐掉**，03 起回到白底。姓名/标语/正文全转浅色墨 + 文字投影。片源明暗交替（横屏版有 3.7 秒单帧亮度 >200、峰值 218），所以遮罩必须按最亮那一帧定，不是按平均。
+- **首屏～02（深色带）**：30s 循环的个人 Showreel 当背景，**视频上没有任何遮罩、没有 CSS 滤镜、转码也不加调色**（第九轮把压暗的 curves 撤了，成片全片 meanY 83.0 / 源片 83.4，观感与原片一致）；`.bg-stage` sticky 跟随，**到 02 核心能力 下沿掐掉**，03 起回到白底。姓名/标语/正文全转浅色墨 + 文字投影，01/02 各自挂 `.30` 墨色垫底。片源明暗交替得很厉害（全片 38% 的帧亮度 >128、13% >200、中位只有 21/255），所以**暗场时文字对比 12~18:1 极好，白闪那几秒文字基本读不出**——这是片子自己的节奏，不是遮罩没加够。
 - **装备区**：8 件设备呈扇面散开，已售三件降透明加灰度并盖"已售"印章，hover 复原放大。
 - **能力区**：滚动时中央视觉体缓慢立体旋转，四项能力依次切换，底部圆点指示。
 - **技能区**：SVG 雷达图替代进度条，图与图标双向 hover 联动。
@@ -500,3 +516,21 @@ python -m http.server 8765      # 然后开 http://127.0.0.1:8765
 **方法论补一条**：用户说"有膜/发灰/不透"，嫌疑名单必须是**整条链** —— CSS 遮罩 → CSS filter → 编解码滤镜 → 片源本身。
 判别工具是"对照片源与成片的全片 meanY/SATAVG"，**看两帧、量 CSS 计算值都不算证据**。
 版本号：`hero-bg.*?v=2 → 3`，CSS 仍 `neo28`（本轮没动样式）。
+
+**2026-09-29（第十轮：接回 git 仓库并首次部署本目录）**
+本目录原先**没有 `.git`**（`git status` 报 not a git repository），所以 9-12 之后 17 天的改动一直没上线，
+线上停在 `00efbd7`（CSS `neo8` / JS `neo4`，且 `assets/video/hero/` 整个目录不存在）。本轮做法：
+
+1. `git init -b main` + `remote add origin` + `fetch origin main`（全量 212MB 对象，约 6 分钟）
+   → `git reset --soft FETCH_HEAD` → `git add -A`。这样当前工作树变成远端 main 的**直接子提交**，历史不断。
+2. ⚠️ 踩到 CRLF 假 diff：仓库 blob 是 CRLF，全局 `core.autocrlf=true` 把 check-in 内容重写成 LF，
+   css 的 112 行真改动被放大成 2314 行整文件重写。解法是仓库级 `core.autocrlf=false` + `add --renormalize -A`，
+   再把工作副本已是 LF 的 `index.html` 换回 CRLF。最终 diff 回到 **410 insertions / 63 deletions**，可审。
+3. 提交身份用仓库级 `user.name=苏其辉` / `user.email=s2705579416@163.com`（与历史一致），**没动全局配置**。
+4. 推送：`git -c credential.helper=store push origin main`，token 在 `~/.git-credentials`（scope `repo`），
+   `github.com` 直连通，**不需要 socks5/7897 代理**（旧记忆里那套代理需求已过时）。
+5. 提交 `20178cb` 推上去后 **约 1 分钟**线上就换成了新版：`resume-34f.pages.dev` 的 index 与本地**逐字节相同**，
+   三个 hero 资源各 200 且字节数一致，浏览器实测 `hero-bg.mp4` 在播（currentTime 1.5s 内走 1.45s），无 console 报错。
+6. ⚠️ **`pages.dev` 对 `Range: bytes=0-1023` 回的是 `200 + 全文件`，且没有 `Accept-Ranges` 头**
+   （对老的 `douyin-01.mp4` 同样如此，不是本次新文件的锅）。桌面 Chrome 能放，iOS Safari 对无 Range 的视频历史上会拒播，
+   真机如果黑屏，这是第一嫌疑。本地 `range_server.py`（8767）是有 206 的，所以"本地能放线上不能放"要先看这里。
