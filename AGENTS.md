@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-09-29
+> 更新日期：2026-10-08
 
 ## 1. 一句话定位
 
@@ -21,13 +21,14 @@
 | `assets/img/portfolio/{ai,cdr}/` | 10 张 WebP | 作品图 | ✅ |
 | `assets/img/gear/` | 10 张 | 9 件设备图 + `sold-stamp.webp` 已售印章 | ✅ |
 | `assets/img/skills/*.svg` | 12 个 | 软件 / AI 工具图标（`fill=currentColor`） | ✅ |
+| `assets/img/certs/` | 2 张 jpg / 合计 615 KB | C1 驾驶证、民航局无人机合格证的**打码证件照**，证书卡点击进灯箱 | ✅ |
 | `assets/img/resume/` | cv.jpg / headshot.png | 简历（2.8.1 版，「关于」区）、导航 logo 头像 | ✅ |
 | `assets/img/resume/cover.jpg` | 133 KB | **首屏封面卡图 —— 2026-09-28 该卡已删，此图现无人引用**（`v2.html` 那份是 v1 遗留副本，不算） | ❌ 可删 |
 | `assets/pdf/` | resume-su-qihui.pdf | 供导航「导出简历」下载的 PDF（1.5 MB） | ✅ |
 | `assets/video/{douyin,school}/` | 15 段 mp4 + 同名 jpg 封面 | 视频与封面 | ⚠️ 仅 9 段被用 |
-| `assets/video/vibecoding/` | 2 段 mp4 + 2 张 jpg 封面 | VibeCoding 栏：Trace / 简历视频（源 4K 已压到 720p，合计 4.5 MB） | ✅ |
+| `assets/video/vibecoding/` | 3 段 mp4 + 3 张 jpg 封面 | VibeCoding 栏：Trace / 简历视频 / 讨厌红楼梦字幕动效（依次 3.1 MB、1.4 MB、**22.4 MB**，全部 720p24；第三段已剪掉前奏） | ✅ |
 | `assets/video/douyin/douyin-quanzhou.*` | 1 段 mp4 + 1 张 jpg | 泉州旅行-DJInano（源 4K 已压到 720p，5.8 MB） | ✅ |
-| `assets/video/hero/` | hero-bg.mp4 (1080p30 / **8.5 MB**) + hero-bg-m.mp4 (720×1280 / **5.6 MB**，手机端) + hero-bg.jpg 封面，均 30s 循环 | **首屏背景视频**，`<source media>` 按视口二选一（源 `Final V2_30s_4K60.mp4` 横屏 / `Final V1_30s_1080x1920_60.mp4` 竖屏）；**调色必须和原片一致，不许加任何 curves/brightness 滤镜**（见 §10 第九轮） | ✅ |
+| `assets/video/hero/` | hero-bg.mp4 (1080p30 / **8.5 MB**) + hero-bg-m.mp4 (720×1280 / **5.6 MB**，手机端) + **各自第一帧封面** `hero-bg-first.jpg`(23 KB) / `hero-bg-m-first.jpg`(12 KB)，均 30s 循环。`hero-bg.jpg`（6s 抽的那张）已无人引用 | **首屏背景视频**，`<source media>` 按视口二选一（源 `Final V2_30s_4K60.mp4` 横屏 / `Final V1_30s_1080x1920_60.mp4` 竖屏）；**调色必须和原片一致，不许加任何 curves/brightness 滤镜**（见 §10 第九轮） | ✅ |
 | `tools/compress_videos.sh` | — | 批量转码 720p H.264 + faststart | 手动工具 |
 | `css/style.css`、`js/main.js`、`v2.html` | — | **v1 遗留，全未被引用**（`v2.html` 与 `index.html` 逐字节相同） | ❌ 可删 |
 
@@ -42,7 +43,7 @@
 | 首屏 | `#home` | 苏其辉 / SU QIHUI | 首页 | `.hero__video` + `.hero__scrim`（`.hero__avatar`、`.hero__product` 两张图卡均已移除，首屏只剩文字） |
 | 01 | `#about` | 用视觉讲述故事 | 关于 | `.about__grid` `.about__card` `.about__stats .num[data-count]` |
 | — | （同一 section 内） | 创作装备 | — | `.gear__scatter` `.gear__item[data-angle]`（9 件） |
-| 02 | `#capabilities` | 随滚动，逐步展开 | 能力 | `#capsTrack` `#capsVisual` `.caps__media[data-stage]` `.caps__cap[data-stage]` |
+| 02 | `#capabilities` | 随滚动，逐步展开 | 能力 | `.caps__stack` `.caps__card`（4 张，偶数张带 `.caps__card--flip`）`.caps__shot` `.caps__body` |
 | 03 | `#skills` | 工具，是手的延伸 | — | `#skillRadar`（SVG 由 JS 生成）`.skill-icon[data-skill]` |
 | 04 | `#experience` | 一路走来 | 经历 | `.tl__item` `.tl__toggle` `.tl__detail` |
 | 05 | `#portfolio` | 精选案例 | 作品 | `#portfolioTabs` `.tab[data-filter]` `.gallery[data-group]` |
@@ -78,7 +79,7 @@
 | 首屏背景视频 | `.bg-stage` > `.bg-stage__pin`（`position:sticky`）> `.hero__video` + `.hero__scrim`，另有 `.bg-stage__end` | 视频**不在 `.hero` 里**，是 body 级跟随层；高度由 `sizeBgStage()` 量 `#capabilities` 下沿写进 `--bg-stage-h`（挂 ResizeObserver），到那里自然滚走掐断。桌面 `brightness(.88)`+径向斑，手机 `.80`+纯线性。`reduceMotion` 时 `pause()` 停在封面。**`.bg-stage` 必须 `pointer-events:none`** |
 | 01/02 压在视频上 | `section.on-video`（加在 `#about`、`#capabilities` 上） | 重绑 `--text/--text-2/--line/--accent` **且写 `color:var(--text)`**；另叠 `background:rgba(6,7,10,.22)` 均匀垫底（必须带 `section` 前缀才压得过 `.caps`）。`.caps` 底色已改 transparent |
 | 多层视差 | 任意元素加 `data-parallax-speed` | 现仅 hero 背景 0.15、光晕 0.25 |
-| 钉住滚动叙事 | `#capsTrack`（420vh）、`#capsVisual` | 进度 p → `--cap-rot` 从 −18° 到 +18°；`floor(p×4)` 切 stage |
+| 能力区堆叠卡片 | `.caps__stack` 内 4 个 `.caps__card` 兄弟节点 | **盖住关系是纯 CSS**：每张 `position:sticky; top:var(--caps-pin)=74px`，后一张滚上来把前一张整块盖住（不淡出）。**另有一层 JS 挤扁**（`updateCapsSquash()`，见 §11 第十六轮）：上升途中 `scaleY` 压到 0.925，落位加 `.is-landed` 弹回。卡高 `min-height:48vh`（录屏原比例 68vh，第十一轮照抄后用户要求压扁）＋ `--caps-gap` 14px → 钉住行程 ≈445px，四张等长（最后一张靠 `.caps__stack{padding-bottom:50vh}` 补齐）。`z-index` 按 `nth-child` 1→4 递增保证"后来者在上" |
 | 滚动进度条 | `.scroll-progress` | 顶层 2px，`scrollY / 可滚动高度` |
 | 光标跟随光晕 | `.cursor-glow` | lerp 0.15；触摸端改 touchstart 跟随 |
 | 3D 倾斜 | 任意 `.tilt-card`，作品卡由 JS 加 `.card--interactive` | 卡片 ±12°，作品卡 ±6° |
@@ -88,9 +89,10 @@
 | 技能图标联动 | `.radar-dot[data-skill-index]` ↔ `.skill-icon[data-skill]` | 双向 hover 高亮 |
 | 装备散开入场 | `.gear__item[data-angle]` | JS 注入 `--angle/--lift/--scale`，每件错位 60ms；`lifts`/`scales` 数组按 DOM 顺序对齐，**增减装备必须同步改数组** |
 | 背景 Emoji 互动层 | `#emojiBg`（`<canvas>`，`z-index:-1`） | 点击任意处召唤 8~14 个 emoji，重力 0.5 / 摩擦 0.985 / 弹跳 0.7 / 粒子碰撞；上限 90 个，**首次掉到底部后 3s 淡出、0.4s 内消失**；**≤768px 手机端整体关闭**（CSS `display:none` + JS `matchMedia` 短路，不初始化引擎、点击也不响应） |
-| 时间线展开 | `.tl__toggle` → `.tl__item.is-open` | `max-height` 0 → 200px |
+| 时间线展开 | **点 `.tl__item` 任意处** → `.is-open`（`.tl__toggle` 只当箭头 + 键盘焦点，`aria-expanded` 由 JS 同步） | `max-height` 0 → 200px；展开后点 `.tl__detail` 内的文字不收起（可选中） |
 | 作品集筛选 | `.tab[data-filter]` → `.gallery[data-group]` | 切换时 80ms 错位入场 |
 | 灯箱 | `[data-lightbox]` = `image` / `video` / `gear` / `solo` | Esc 关、←→ 切换、点遮罩关；`video` 类型自动 play；`solo` 为单图查看（不参与任何图库） |
+| 作品卡悬停即播 | `.card--video .card__img` 的 `mouseenter` → `setupHoverPlay()`，首次才建 `<video class="card__vid">` | `preload="none"` + 首次悬停才赋 src；淡入盖封面、`.card__play` 隐掉；`mouseleave` 暂停并淡回封面。**慢网才出进度条**：`mouseenter` 挂 260ms 定时器 → `.card__buf.is-on`，`playing`/`mouseleave` 撤掉，宽度取 `buffered.end/duration`。触屏（`hover: none`）与 `reduceMotion` 不启用，点卡片仍走灯箱 |
 
 性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
 
@@ -101,13 +103,14 @@
 | 文案 / 联系方式 | 直接改 `index.html` 对应区块 |
 | 主题色 | `v2-style.css` 的 `:root` 与 `[data-theme="dark"]` 两个块 |
 | 加一张作品图 | 图片丢进 `assets/img/portfolio/{ai,cdr}/`，在对应 `.gallery` 里复制一个 `<figure class="card">`，改 `data-src` / `data-title` / `<figcaption>` |
-| 加一段视频 | mp4 + 同名 jpg 封面放 `assets/video/{school,douyin}/`，复制 `<figure class="card card--video">`，改 `data-src` / `data-poster` / `data-title` |
+| 加一段视频 | mp4 + 同名 jpg 封面放 `assets/video/{school,douyin,vibecoding}/`，复制 `<figure class="card card--video">`，改 `data-src` / `data-poster` / `data-title`。**别再手写 `.card__overlay`** —— 暗罩现在只由 JS 注入给图片卡，视频卡是悬停即播 |
 | 改技能分值 | `js/v2-main.js` 里的 `skillData` 数组（`score` 0–100） |
 | 加/改时间线 | 复制 `.tl__item` 结构，补充 `.tl__detail` 内段落 |
 | 加/改装备 | 复制 `.gear__item`，注意 `data-angle`（旋转角，度）与 `.gear__item--sold` 类；**同时改 `js/v2-main.js` 里 `lifts` / `scales` 两个数组**（按下标对应 DOM 顺序，中间件大、两侧已售件小） |
 | 加导航项 | `#navLinks` 里加 `<a class="nav__link" data-section="区块id">`，`data-section` 必须等于目标 `section[id]` |
-| **改完资源记得升版本号** | `index.html` 里 CSS / JS / 资源都带 `?v=` 查询串（当前 `css/v2-style.css?v=neo28`、`js/v2-main.js?v=neo7`、`cv.jpg?v=2.8.1`、`hero-bg.mp4?v=3`；`cover.jpg` 已随首屏封面卡移除，不再被引用）。同名文件覆盖后浏览器仍会吃缓存，**不升版本号页面看起来"没变"**（2026-09-28 一天内踩过两次：改完 CSS 没升号，量到的还是旧值）。换图 / 改样式 / 改脚本后把对应 `?v=` 递增即可 |
-| 换首屏背景视频 | 覆盖 `assets/video/hero/hero-bg.mp4`（手机端另有 `hero-bg-m.mp4`，两条都要重导）+ 重新抽 `hero-bg.jpg`，并递增 `index.html` 里三处 `?v=`。转码命令：`ffmpeg -i in.mp4 -vf "scale=1920:-2:in_range=full:out_range=limited:flags=lanczos,fps=30" -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -an -movflags +faststart out.mp4`（`-an` 去音轨；`in_range/out_range` 是因为源是 `yuvj420p` 全量程，配合输出的 `tv` 标记它是外观无损的往返映射）。⛔ **链里绝不许加 `curves` / `brightness` / `eq` 等调色滤镜** —— 第九轮查明"看着有层膜"就是上一轮加的 curves 把全片亮度压掉 25%、饱和度压掉 32%。导完用 `signalstats` 对照片源与成片的**全片** meanY / SATAVG，两边要对得上 |
+| 加一张证书卡 | `.certs__grid` 里复制 `<div class="cert">`；**要挂证件图的**复制 `<button class="cert" data-lightbox="solo" data-src data-title>`（`solo` 分支见 §5 灯箱那行），说明行走 `.cert__meta`；`data-reveal-delay` 按 80ms 递增 |
+| **改完资源记得升版本号** | `index.html` 里 CSS / JS / 资源都带 `?v=` 查询串（当前 `css/v2-style.css?v=neo38`、`js/v2-main.js?v=neo10`、`cv.jpg?v=2.8.1`、`hero-bg.mp4?v=3`；`cover.jpg` 已随首屏封面卡移除，不再被引用）。同名文件覆盖后浏览器仍会吃缓存，**不升版本号页面看起来"没变"**（2026-09-28 一天内踩过两次：改完 CSS 没升号，量到的还是旧值）。换图 / 改样式 / 改脚本后把对应 `?v=` 递增即可 |
+| 换首屏背景视频 | 覆盖 `assets/video/hero/hero-bg.mp4`（手机端另有 `hero-bg-m.mp4`，两条都要重导）+ 重新抽**两支各自的第一帧** `hero-bg-first.jpg` / `hero-bg-m-first.jpg`（手机端那张由 JS 按 `matchMedia` 选，见 §5 首屏背景视频那行），并递增 `index.html` 里三处 `?v=`。转码命令：`ffmpeg -i in.mp4 -vf "scale=1920:-2:in_range=full:out_range=limited:flags=lanczos,fps=30" -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -an -movflags +faststart out.mp4`（`-an` 去音轨；`in_range/out_range` 是因为源是 `yuvj420p` 全量程，配合输出的 `tv` 标记它是外观无损的往返映射）。⛔ **链里绝不许加 `curves` / `brightness` / `eq` 等调色滤镜** —— 第九轮查明"看着有层膜"就是上一轮加的 curves 把全片亮度压掉 25%、饱和度压掉 32%。导完用 `signalstats` 对照片源与成片的**全片** meanY / SATAVG，两边要对得上 |
 | 加一段作品视频 | mp4 + 同名 jpg 封面放 `assets/video/<分组>/`，在对应 `.gallery[data-group]` 里复制一个 `<figure class="card card--video">`，改 `data-src` / `data-poster` / `data-title`；分组标签在 `.tabs` 里加 `<button class="tab" data-filter="<分组>">` |
 | 换导出简历的 PDF | 覆盖 `assets/pdf/resume-su-qihui.pdf`（文件名保持 ASCII，避免 URL 编码）；导航按钮在 `.nav__actions` 里的 `.nav__export`，`download` 属性决定保存的文件名 |
 | 换简历大图 | 覆盖 `assets/img/resume/cv.jpg` 并同步改 `.about__card` 与灯箱的 `data-src` 版本号（当前 `?v=2.8.1`）；图是 A4 比例，卡片 `aspect-ratio: 210/297` 与之匹配，别改回 `3/4` 否则会裁掉底部 |
@@ -124,7 +127,7 @@
 | P2 | 导航缺 2 个入口 | `#skills`、`#certificates` 无导航项 | 补 `nav__link` |
 | P3 | 未定义变量 | `v2-style.css` 中 `.radar-label` 用 `font-family: var(--sans)`，`--sans` 全站未定义 | 改 `var(--ff-body)` 或删该行 |
 | P3 | 死代码 | `.skills__grid`、`.skill`、`.skill__icon`、`.skill__name` 无对应 DOM | 清理 |
-| P3 | 重复媒体查询 | `.caps__track` 在 `≤768px` 先设 360vh 后又设 300vh，前者永不生效 | 合并为一处 |
+| ~~P3~~ | ~~重复媒体查询~~ | ~~`.caps__track` 在 `≤768px` 先设 360vh 后又设 300vh，前者永不生效~~ | **已修**（2026-09-29 第十一轮）：堆叠卡片改版后 `.caps__track` 整类已不存在，两处旧的 `≤768px` caps 规则一并清掉，手机端规则只留在「响应式」那组一处 |
 | P3 | 灯箱视频可能不自动播 | `v2-main.js` 中 `autoplay` 未设 `muted`，部分浏览器拒绝（代码已 catch，不报错） | 需必定自动播就加 `v.muted = true` |
 
 非缺陷但需知：主题初值取 `matchMedia('(prefers-color-scheme: light)')`，在无系统偏好的环境（无头渲染、部分 WebView）会落到**深色**。
@@ -159,7 +162,7 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
 
 - **首屏～02（深色带）**：30s 循环的个人 Showreel 当背景，**视频上没有任何遮罩、没有 CSS 滤镜、转码也不加调色**（第九轮把压暗的 curves 撤了，成片全片 meanY 83.0 / 源片 83.4，观感与原片一致）；`.bg-stage` sticky 跟随，**到 02 核心能力 下沿掐掉**，03 起回到白底。姓名/标语/正文全转浅色墨 + 文字投影，01/02 各自挂 `.30` 墨色垫底。片源明暗交替得很厉害（全片 38% 的帧亮度 >128、13% >200、中位只有 21/255），所以**暗场时文字对比 12~18:1 极好，白闪那几秒文字基本读不出**——这是片子自己的节奏，不是遮罩没加够。
 - **装备区**：8 件设备呈扇面散开，已售三件降透明加灰度并盖"已售"印章，hover 复原放大。
-- **能力区**：滚动时中央视觉体缓慢立体旋转，四项能力依次切换，底部圆点指示。
+- **能力区（02）**：**堆叠卡片 + 烟熏液态玻璃**。四张圆角卡（图占约 1.45 列、文字占 1 列，偶数卡左右对调，卡高 48vh）依次钉在导航下方 74px 处不动，后一张从前下方滚上来盖住前一张（不缩放、不淡出），四张钉住行程等长 ≈445px。卡面是 `rgba(8,10,16,.40)` + `blur(26px)` 的烟熏玻璃 —— 下面那张被糊成一片柔光当深度层，看得出叠了但读不出字。手机端（≤768px）关掉 sticky，改普通流、图统一在上。
 - **技能区**：SVG 雷达图替代进度条，图与图标双向 hover 联动。
 - **作品区**：2 列瀑布卡片，hover 抬升 + 遮罩"点击播放/查看"，点击开灯箱。
 - **深色模式**：纯黑底，作品图成为画面唯一亮部；切换有从按钮原点扩散的圆动画。
@@ -218,7 +221,8 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
 | 档位 | 元素 | 参数 |
 |---|---|---|
 | 吸顶导航 | `.nav.is-scrolled` | `blur(16px) saturate(180%)` |
-| 卡面（通用） | `.card` `.tl__card` `.cert` `.contact__item` `.skill-icon` `.tab` `.about__card` `.douyin__phone` `.back-top` `.caps__visual` | `blur(var(--glass-blur)) saturate(var(--glass-sat))` + 高光描边 |
+| 卡面（通用） | `.card` `.tl__card` `.cert` `.contact__item` `.skill-icon` `.tab` `.about__card` `.douyin__phone` `.back-top` | `blur(var(--glass-blur)) saturate(var(--glass-sat))` + 高光描边 |
+| 堆叠卡（02） | `.caps__card` | **自带一套，不吃主题玻璃令牌**：`rgba(8,10,16,.40)` + `blur(26px) saturate(160%) brightness(.80)` + 顶边内高光 + 斜向光泽。必须**深色**半透，理由见 §11 第十三轮 |
 | 玻璃相框 | `.gear__item` | **只做描边+半透明白底，不加 backdrop-filter** —— 图本身不透明，加模糊纯浪费一层合成 |
 | 页脚横带 | `.footer` | 同卡面 |
 | 浮层（强隔离） | `#lightbox` 遮罩 / 关闭键 / 左右键 / 说明条 | 遮罩用 `rgba(10,12,20,.30)` + `blur(24px)`。**不要用纯黑半透明**，那样毛玻璃就白做了 |
@@ -534,3 +538,119 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
 6. ⚠️ **`pages.dev` 对 `Range: bytes=0-1023` 回的是 `200 + 全文件`，且没有 `Accept-Ranges` 头**
    （对老的 `douyin-01.mp4` 同样如此，不是本次新文件的锅）。桌面 Chrome 能放，iOS Safari 对无 Range 的视频历史上会拒播，
    真机如果黑屏，这是第一嫌疑。本地 `range_server.py`（8767）是有 206 的，所以"本地能放线上不能放"要先看这里。
+
+**2026-09-29（第十一轮：02 能力区改成"堆叠卡片"，照抄参考录屏）**
+用户给了一段 8.2s 的录屏（夸克录屏，1210×588），要求把中间那段鼠标滚动的效果"完全摘抄"过来。
+原实现是 JS 驱动的钉住滚动（`#capsTrack` 420vh + `--cap-rot` 立体旋转 + `floor(p×4)` 切 stage + 底部圆点）。
+
+1. **先量录屏再动手**（逐帧灰度化后取"卡片左内边距"那条竖带的行中位数，>15 判为卡面）：
+   | 量到的 | 值 |
+   |---|---|
+   | 钉住位置 | 卡顶恒定停在 **y=26**（f96→f168 共 72 帧不动） |
+   | 卡高 | **399 / 588 = 67.9vh** |
+   | 卡宽 | 1079 / 1210 = **89.2vw** |
+   | 卡间距 | **13px**；圆角 ≈12px |
+   | 卡面色 / 页面底色 | **#161617 on #090909** |
+   | 图文列宽 | 579 : 403 ≈ **1.45 : 1**，列间距 50px，内边距 24px |
+   | 标题字号 | ≈30px（两行占 74px） |
+   关键判据：**被盖住的那张顶边一直停在 26 不动**，而盖上来那张的顶边从 440 → 148 → 25 匀速上移
+   → 结论是**纯覆盖**，没有缩放、没有淡出、没有变暗。
+2. **机制其实是纯 CSS**：四个 `.caps__card` 作为**兄弟节点**各带 `position:sticky; top:74px` 就够了 ——
+   先到的钉住，后到的因为 DOM 靠后自然画在上面并盖住它，等整叠的容器底边过去再一起滚走。
+   据此**删掉了 `updateCaps()` 全部逻辑**（含 `onScroll` 里逐帧读 `getBoundingClientRect` 那一次强制重排）。
+   录屏里"最后一张钉不住多久就滚走"也是这个机制的自然结果，不是额外做的。
+3. **两处必须适配的偏差**（照抄会坏的地方）：
+   - 钉住位从 26 下移到 **74px** —— 本站导航是 56px 固定毛玻璃条，26px 会让卡顶被导航糊住。
+   - 卡面**必须不透明**。玻璃变体的默认做法（半透明白底 + `backdrop-filter`）在这里是致命冲突：
+     被盖住的那张会透上来，堆叠层次直接消失。所以 `.caps__card` **不入玻璃层**，
+     并从玻璃层的 5 个选择器列表里摘掉了原来的 `.caps__visual`。
+4. **踩到的一个真 bug**：`.caps__shot img` 原本在文档流里，它的**固有高度会反过来撑高 grid 行** ——
+   四张卡里第三张被撑到 655px、其余 610px，每张的钉住行程就不一样了。
+   改成 `position:absolute; inset:0` 让图脱离流，卡高只由 `min-height:68vh` 决定。实测四张等高 610px。
+5. **最后一张补行程**：卡片靠"下一张滚上来"结束钉住，最后一张没有下一张，原本只钉 209px 就交还给 03。
+   `.caps__stack{padding-bottom:70vh}` 补成一张卡高+间距。实测四张钉住行程 **623 / 624 / 624 / 642px**。
+6. **连带影响（自动适配，无需改代码）**：`.caps` 高度从 420vh 变成 ~374vh，
+   `sizeBgStage()` 量 `#capabilities` 下沿写进 `--bg-stage-h`，背景视频舞台从 6089px 缩到 **5660px** 并仍与 section 底边对齐。
+7. 手机端（≤768px）**关掉 sticky** 改普通流、图统一在上、`.caps__card--flip` 的 `order` 归零；
+   顺带清掉了 §7 那条 P3「`.caps__track` 360vh 被 300vh 永久盖掉」的死规则。
+8. 验证：headless Chrome 走 CDP 在 1210×588 / 1440×900 / 390×844 三档逐阶段截图，确认
+   钉住→覆盖→交替左右→交还 03 全流程；1920 宽下 `scrollWidth 1910 < innerWidth 1920` 无横向溢出；无 console 报错。
+   ⚠️ 截图里卡片四周偶尔出现的红色细线**不是 bug**，是他自己 Showreel 的画面内容（全站 CSS 里没有任何红色）。
+9. 版本号：CSS `neo28 → neo31`（中途修 img 撑高、补 padding-bottom 各升一次），JS `neo7 → neo8`。
+
+**2026-09-29（第十二轮：卡片压扁）**
+用户拿自己浏览器截图圈了个红框，说卡片"有点大"、要压成红框那样。
+
+1. **从截图里量出比例**（1641×978 的窗口截图，实测 1:1 CSS px，视口高 ≈897）：
+   卡片实际 **604px**（y 180→784，靠"图区结束→卡面结束→19px 缝→下一张"三段定位，
+   直接扫单列会被 `box-shadow` 压暗的缝隙骗过去），红框 **433px**（y 162→595，
+   红框边缘按"整行红像素 >400"筛横线、">300"筛竖线抓出来的）。
+   → 433/604 = **71.7%**，`min-height: 68vh → 48vh`。红框顶边和卡顶基本重合，所以只收底边。
+   宽度没动（红框 1152 vs 卡 1125，是他手画偏出去的一点余量）。
+2. **连带改 `--caps-stack` 的补行程**：`padding-bottom: 70vh → 50vh`（一个行程 = 48vh + 14px 间距）。
+3. **代价要说清**：钉住行程从 623px 掉到 **445px**（四张仍是 444/445/444/462 等长）。
+   这套纯 CSS 机制里"一张卡停留多久"完全等于"下一张要走多远"，而两者之间只有 `--caps-gap` 一个旋钮 ——
+   想把节奏放慢就得同时接受卡片之间露出更宽的背景带。觉得滚太快就调 `--caps-gap`，别调卡高。
+4. 复验：1641×903 下实测卡高 **433px**（与红框逐像素对上）、四张等高、`.caps__body` 的
+   `scrollHeight - clientHeight` 全为 0（文字没被裁）、图区 381px 等宽。版本号 CSS `neo31 → neo32`。
+
+**2026-09-29（第十三轮：卡片换成透明液态玻璃）**
+用户要"试试透明液态玻璃的背景效果"。这直接顶掉了第十一轮写进注释和 §10.3 的那条"卡面必须不透明"。
+
+1. **结论先说：透明可以做，前提是模糊半径开足。** 之前判断"半透明会让下面那张透上来"只对了一半 ——
+   真正致命的不是透明，是**没有模糊的透明**。`blur(26px)` 之后下面那张变成一片柔光，
+   反而成了深度层，叠过的痕迹看得出、字读不出，观感比不透明更立体。
+2. **踩到的真问题：清水玻璃会被片源牵着走。** 第一版按 Apple 那种浅色玻璃做 `rgba(255,255,255,.08)` +
+   `brightness(1.08)`，赶上 Showreel 里那段白底彩色纸屑画面，整张卡跟着变乳白，白字对比掉到 2.8:1。
+   → 改**烟熏档**：`background-color: rgba(8,10,16,.40)` + `backdrop-filter: blur(26px) saturate(160%) brightness(.80)`。
+   深色自底 + 压一档 backdrop 亮度，把卡片亮度和背景亮度脱钩。
+3. **补文字投影而不是把卡调更黑**（`.caps__num/.caps__body h3/p` 三层 text-shadow）——
+   投影是唯一"不牺牲玻璃通透度却能加可读性"的手段，和首屏那套是同一个打法。
+   实测最坏那一帧（t=10.3s 整幅白闪）：角标 **6.23:1**、标题 **6.93:1**、正文 **4.83:1** —— 三项全过 AA 4.5。
+   暗场（t=15s）分别是 3.35 / 9.11 / 10.30:1。
+   ⚠️ 量角标时我第一版把取样框定在 y 452-470，报出 2.79:1 判成 FAIL —— 那是**取样框错了**
+   （数字实际在 y 443-452）。按蓝色像素反查定位后重测才拿到真值。**先确认量的是那个东西，再判它坏。**
+4. **降级不可省**：`@supports not (backdrop-filter)` 和 `prefers-reduced-transparency: reduce` 两条
+   都退回不透明 `#161617`。**没有模糊的半透明比不透明更糟** —— 下面那张的字会直接看清。
+5. 不吃主题玻璃令牌（`--glass-alpha` 等）。02 区永远是深色带（压在跟随视频上），
+   浅色主题的 `.52` 白玻璃放这儿必然重演第 2 条的乳白问题，所以数值写死在 `.caps__card` 上。
+6. 复验：1641×903 与 390×844 两档、把背景视频分别定格在 10.3s / 15s / 21s 三种亮度帧截图，
+   钉住→盖住→玻璃深度→手机端普通流全部正常，无 console 报错。
+7. 版本号：CSS `neo32 → neo35`。
+
+**2026-10-06（第十四轮：证书区新增两张可点击的证件卡）**
+用户要求新增 C1 机动车驾驶证与民航局无人机合格证，并明确"原有四张一个字都不要改"（互联网营销 / 全媒体运营那两张证暂时在国网只查到一条，是评价机构上报链路的问题，后续再调）。
+
+1. 素材：根目录 `C1驾驶证-打码.jpg` / `UOM合格证-打码.jpg` 复制为 `assets/img/certs/c1-license.jpg`（346 KB / 1894×1280）与 `caac-uom.jpg`（269 KB / 1814×1280）。**两张源图 EXIF 0 条**，无 GPS / 设备信息随图外泄。
+2. 卡片沿用第二轮「关于」区简历卡的打法：`div` → `button.cert` + `data-lightbox="solo"`，点击进灯箱看打码证件，`data-title` 写官方全名并注明打码范围。
+3. CSS 三条（紧跟 `.cert h3`）：`button.cert` 还原表单控件（`width:100%; font:inherit; color:var(--text); cursor:pointer; appearance:none`）、`.cert__meta`（0.78rem / `--text-2`）；手机端那组里 meta 降 0.66rem。
+4. 文案定稿过程：无人机那张 h3 原写"民航局无人机操控合格证"，390px 下断成"…合格 / 证"两行 → 改"民航局无人机合格证"；两条 meta 各去掉末尾"证件"，桌面卡高由 223px 回到 203px、meta 收成单行。
+5. 版本号：CSS `neo35 → neo36`。JS 未动，仍 `neo8`。
+6. 验证（headless Chrome + CDP，`Runtime.evaluate` 量数值 + `Page.captureScreenshot` 出图，1440×1000 与 390×844 各跑浅/深）：`.certs__grid` 6 张卡两列三行，列宽 331px / 170px，新卡 h3 与 meta **全部单行**、`opacity` 全 1（reveal 正常触发）；`scrollWidth` 1430/1440 与 380/390 无横向溢出；`Runtime.exceptionThrown` 0 条；两张证件图 `naturalWidth` 1894 / 1814 加载成功；点击后 `#lightbox` 加 `is-open`、`aria-hidden=false`、`body.overflow=hidden`、说明条与 `data-src` 均对得上。
+7. ⚠️ **本目录工作树里此前就压着第十一～十三轮未提交的改动**（`git log` 停在 `0f67396` 第十轮，2026-09-29）。本轮若一起提交，会把那三轮同时带上，推 main 即一起上线。
+8. ⚠️ 证件图只打了证号 / 住址 / 证件编号，**C1 上的出生日期与有效期、UOM 上的证书编号仍公开可见**，要不要再压一层等用户定。
+
+**2026-10-06（第十五轮：证书卡换位 + 作品卡改悬停即播 + 时间线整卡可点 + VibeCoding 加片）**
+用户一次提了四件事，逐条落地。
+
+1. **证书卡**：两张证件卡从第 5、6 位挪到第 3、4 位（紧跟互联网营销中级 / 全媒体运营高级），`data-reveal-delay` 重新按 80ms 排；meta 去掉「点击查看」字样（卡片本身有 `cursor:pointer` 和 hover 抬升，够了）。原有四张仍一字未动。
+2. **作品卡去掉那层暗罩**：暗色「点击播放」层是 `v2-main.js` 里给每张 `.portfolio .card` 注入的 `.card__overlay`（`rgba(0,0,0,.45)` + `blur(4px)`），douyin-01 那张还额外在 HTML 里硬写了一份 —— 硬写那份已删。**现在 JS 只给图片卡注入**（`点击查看`），视频卡改为**悬停即播**：首次 `mouseenter` 才建 `<video class="card__vid">` 并赋 src（`preload="none"`，不抢首屏带宽），淡入盖住封面同时把 `▶` 的 opacity 收到 0；`mouseleave` 暂停并淡回封面。
+3. **慢网进度条**：`mouseenter` 挂 260ms 定时器才显示 `.card__buf`（宽 = `buffered.end/duration`），`playing` 一到就撤 —— 网不卡的话这条根本不会露脸。触屏 `hover:none` 与 `reduceMotion` 下整套不启用，点卡片照旧开灯箱。
+4. **时间线**：监听从 `.tl__toggle` 改挂到 `.tl__item`，点卡片任意处展开/收起；`.tl__toggle` 保留为箭头 + 键盘焦点（`aria-expanded` 由 JS 同步）。**展开后点详情正文不再收起**（`detail.contains(e.target)` 直接 return），否则选个文字就把卡片关了。顺带修掉一个老重叠：`.tl__toggle` 原本 `top:14px; right:14px`，和同样在右上角的 `.tl__badge`（`top:14px; right:16px`）叠在一起、箭头画在徽章上 —— 改成两端统一 `bottom:12px; right:12px`，`.tl__card` 桌面内边距补 `padding-bottom:42px`，手机端那条同值覆盖规则删掉。
+5. **VibeCoding 第三张**：`E:\Project\2026\9月\2026.09.28-讨厌红楼梦\导出\讨厌红楼梦.mp4`（1920×1080 / 24fps / 242.4s / **430 MB**）压成 `assets/video/vibecoding/vibecoding-03.mp4`（1280×720 / 24fps / **23.1 MB** / 761 kbps）。命令：`ffmpeg -i in -vf "scale=1280:-2,fps=24" -c:v libx264 -preset medium -crf 28 -pix_fmt yuv420p -c:a aac -b:a 96k -ac 1 -movflags +faststart out`（源已是 24fps，**不强转 30**）。封面取 45s 那帧（胶片框 + 像素字幕，最能说明"字幕动效"）。⚠️ 中文路径先 `cp` 成 `rh-src.mp4` 再转码（老坑）。
+6. **归属更正**：栏底那行「以上视频效果使用 Codex + Hyperframes 制作」对新片不成立 —— 源工程是 `讨厌红楼梦.aligned.jizura.json`（JIZURA 逐句对齐），已改成按作品分别标注。
+7. 版本号：CSS `neo36 → neo37`，JS `neo8 → neo9`。
+8. 验证（headless Chrome + CDP，1440×1000 浅色）：证书 6 张顺序与文案逐张核对；`.card--video` 13 张**带暗罩 0 张**、图片卡 10 张**带暗罩 10 张**；悬停 douyin-01 → 527ms 内 `paused=false`、`currentTime 0.26`、`is-playing` 挂上、`▶` opacity 0，离开 → `paused=true` 且视频淡回 0；时间线点标题展开 ✓、`aria-expanded=true` ✓、点详情不收起 ✓、再点收起 ✓、箭头与徽章实测不再重叠；新卡 poster 1280×720、mp4 metadata 242.4s 加载无错；无横向溢出（1430/1440）、`Runtime.exceptionThrown` 0 条。
+
+**2026-10-08（第十六轮：所在地改温州 + 首屏改用真·第一帧 + 装备放大 + 堆叠卡挤扁）**
+用户四件事。
+
+1. **所在地**：`about__lead`「来自浙江金华义乌」→「来自浙江温州」，联系区 `📍 浙江 · 金华 · 义乌` → `📍 浙江 · 温州`（驾驶证住址是浙江苍南，属温州）。时间线里「义乌齐辉广告社」是店名，未动。
+2. **首屏背景视频改为"从原视频第一帧起播、且封面就是那一帧"**：原来 `poster` 是 6s 抽的亮帧，而视频从 0 起播 —— 手机上会先亮一下再黑掉。实测两支片子的入点亮度：**0s meanY 10.2 / 0.5s 10.5 / 1s 13.3 / 2s 18.4 / 3s 175.7**（横竖屏同形，竖屏 0s 10.6），即**前约 2 秒本来就是黑场淡入**。据此抽了两张真·第一帧：`hero-bg-first.jpg`（横，23 KB）、`hero-bg-m-first.jpg`（竖，12 KB）。`<video poster>` 是单属性、没法跟 `<source media>` 分视口，所以 JS 里按 `matchMedia('(max-width:768px)')` 选封面并监听 change；另加 `loadedmetadata` 时 `currentTime>0.05 → 归 0`，以及自动播放被拒时 `touchstart`/`scroll` 各 `once` 兜底重播。⚠️ 代价：**首屏开头约 2 秒是黑的**（片子自己的淡入），不是 bug。
+3. **电脑端装备放大**：`.gear__item` 由写死 `120px` 改 `clamp(120px, 9.6vw, 148px)`（宽高等比），`margin-left` -20 → -24px，`.gear__scatter` `min-height` 220 → 252px、下内边距 40 → 44px。实测 `offsetWidth`：1025px 视口 120、1280 视口 123、1440 视口 **138**、1920 视口 **148**；≤1024px 仍走原来那组 100px + 横向滚动，四档 `scrollWidth` 均 ≤ 视口宽，无溢出。
+4. **02 堆叠卡：宽度收窄 + 挤扁动效**。`.caps__stack` 宽 `min(1120px,89vw)` → **`min(980px,82vw)`**（实测 1440 下 980px），图文列间距 48 → 40px。挤扁做法：`.caps__card` 加 `transform: scaleY(var(--sq)) scaleX(var(--sx))` + `transform-origin:50% 0`，卡片上升途中越接近钉住位越扁（最多 **sy 0.925 / sx 1.03**），钉住那一下由 `.is-landed { transform:none; transition: .55s cubic-bezier(.34,1.56,.64,1) }` 弹回原形。
+   ⚠️ **第一版用 IntersectionObserver 判"钉住"是错的**：root 顶边缩 74px 后，卡片完全进入视口时 `intersectionRatio` 就已经到 1（top≈468px），**从 468 升到 74 这一段不再有任何回调**，卡片会永远停在压扁状态（实测钉住的卡读到 sy=0.925 且没有 landed 标记）。改成：load/resize 时给 `.caps` 加 `is-measuring`（临时 `position:static`）量一次各卡的自然位置，之后**每帧只做算术**（`k=(naturalTop - scrollY - 74)/(vh - 74)`，`k<=0` 即落位），挂在已有的 `onScroll` rAF 里，值没变化就不碰样式。这也符合 §5 末尾"不逐帧读 rect"的约定。
+5. **追加：剪掉讨厌红楼梦的前奏**。用户"前大半段有一大部分是前奏"。依据两处独立时间轴对齐：JIZURA 工程 `timing.lineTimes` 第一句人声在 **30.68s**（`-1: 0.2` 是标题卡），ASR `asr_full.json` 段落间隔 **2.00 → 31.30 正好 29.3 秒无人声**。取 **29.6s** 作切点（留 1.1s 呼吸），从 **430 MB 原始源片**一次重导（不在已压好的 720p 上二次转码）：`ffmpeg -ss 29.6 -i src -vf "scale=1280:-2,fps=24" -c:v libx264 -crf 28 ... -af "afade=t=in:st=0:d=0.35"` → **212.8s / 22.4 MB**。封面按同位移取切片 15.4s 那帧（与原封面同一画面）。资源引用 `?v=1 → ?v=2` 三处。
+   实测：首帧是 IDR（frame types I,B,P）、`moov` 在偏移 36（faststart 生效）、HTTP 200 全文件可取、开头三帧 meanY 206/211/173（前奏末段的亮画面，1.1s 后进人声）。
+6. 版本号：CSS `neo37 → neo38`，JS `neo9 → neo10`。
+7. 验证（headless Chrome + CDP）：文案两处实测为新值；1440 与 390 两档下 `heroVideo.poster` 分别是横/竖那张第一帧、`currentSrc` 选对源、起播后 currentTime 从 0 连续走（+0.7s 时 4.87 / 4.84，说明没有跳帧）；装备四档尺寸与溢出见上；挤扁逐档滚动扫（1440×900，卡高 432，步长 200px）：上升中 `#3 sy=0.927 top=92` → 落位 `#3 sy=1.004* top=74`（弹性过冲可见）→ 交还阶段四张全 `sy=1.000`，无异常拉伸；`Runtime.exceptionThrown` 0 条。

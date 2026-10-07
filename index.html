@@ -7,7 +7,7 @@
 <meta name="description" content="苏其辉 — 多媒体设计师。平面设计 / 影视后期 / 摄影航拍 / 新媒体运营作品集。" />
 <meta name="theme-color" content="#ffffff" />
 <link rel="icon" href="assets/img/icons/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="css/v2-style.css?v=neo28" />
+<link rel="stylesheet" href="css/v2-style.css?v=neo38" />
 <script>
 (function () {
   try {
@@ -66,7 +66,7 @@
 <div class="bg-stage" aria-hidden="true">
   <div class="bg-stage__pin">
     <video class="hero__video" autoplay muted loop playsinline preload="metadata"
-           poster="assets/video/hero/hero-bg.jpg?v=3" tabindex="-1">
+           poster="assets/video/hero/hero-bg-first.jpg?v=1" tabindex="-1">
       <!-- 断点必须和 v2-style.css 里手机端首屏那组的 max-width:768px 保持一致，否则视口与处理会错位 -->
       <source media="(max-width: 768px)" src="assets/video/hero/hero-bg-m.mp4?v=3" type="video/mp4" />
       <source src="assets/video/hero/hero-bg.mp4?v=3" type="video/mp4" />
@@ -108,7 +108,7 @@
     <h2 class="section__title" data-reveal>用视觉讲述故事</h2>
     <div class="about__grid">
       <div class="about__text" data-reveal>
-        <p class="about__lead">我是 <strong>苏其辉</strong>，一名 19 岁的多媒体设计师，来自浙江金华义乌。</p>
+        <p class="about__lead">我是 <strong>苏其辉</strong>，一名 19 岁的多媒体设计师，来自浙江温州。</p>
         <p>从家族广告社的平面打印，到校园融媒体社团的影像创作，我始终痴迷于<strong>用画面传递信息</strong>。数码科技爱好者、摄影与航拍实践者、独立探索者——这些身份共同塑造了我的创作视角。</p>
         <p>我擅长将品牌需求转化为有冲击力的视觉：从一张包装到一支短片，从一次航拍到一场新媒体策划。</p>
         <ul class="about__stats">
@@ -165,52 +165,45 @@
   </div>
 </section>
 
-<!-- ============ 能力叙事（钉住滚动） ============ -->
+<!-- ============ 能力叙事（堆叠卡片 · 滚动钉住） ============ -->
 <section class="caps on-video" id="capabilities">
-  <div class="caps__track" id="capsTrack">
-    <div class="caps__sticky">
-      <div class="caps__head">
-        <p class="section__eyebrow">02 — 核心能力</p>
-        <h2 class="section__title">随滚动，逐步展开</h2>
+  <div class="caps__head">
+    <p class="section__eyebrow">02 — 核心能力</p>
+    <h2 class="section__title">随滚动，逐步展开</h2>
+  </div>
+  <div class="caps__stack">
+    <article class="caps__card">
+      <figure class="caps__shot"><img src="assets/img/portfolio/ai/01-school-building.webp" alt="平面设计作品" /></figure>
+      <div class="caps__body">
+        <span class="caps__num">01</span>
+        <h3>平面设计</h3>
+        <p>品牌视觉、包装、海报与制版。精通 CorelDRAW、Illustrator、Photoshop，从创意到落地印刷全流程把控。</p>
       </div>
-      <div class="caps__stage">
-        <div class="caps__visual" id="capsVisual">
-          <figure class="caps__media is-active" data-stage="0"><img src="assets/img/portfolio/ai/01-school-building.webp" alt="平面设计作品" /></figure>
-          <figure class="caps__media" data-stage="1"><img src="assets/img/memory-flash-cover.jpg" alt="影视后期作品" /></figure>
-          <figure class="caps__media" data-stage="2"><img src="assets/img/gear/djimini3.jpg" alt="摄影航拍" /></figure>
-          <figure class="caps__media" data-stage="3"><img src="assets/img/douyin-profile-new.webp" alt="新媒体运营" /></figure>
-          <div class="caps__ring" aria-hidden="true"></div>
-        </div>
-        <div class="caps__captions">
-          <article class="caps__cap is-active" data-stage="0">
-            <span class="caps__num">01</span>
-            <h3>平面设计</h3>
-            <p>品牌视觉、包装、海报与制版。精通 CorelDRAW、Illustrator、Photoshop，从创意到落地印刷全流程把控。</p>
-          </article>
-          <article class="caps__cap" data-stage="1">
-            <span class="caps__num">02</span>
-            <h3>影视后期</h3>
-            <p>剪辑、特效、调色与分镜。熟练运用 Premiere、After Effects、剪映，擅长把素材剪成有节奏的故事。</p>
-          </article>
-          <article class="caps__cap" data-stage="2">
-            <span class="caps__num">03</span>
-            <h3>摄影航拍</h3>
-            <p>商业拍摄、旅拍与运动记录。DJI 无人机与 Insta360 运动相机，捕捉地面与天空的极致视角。</p>
-          </article>
-          <article class="caps__cap" data-stage="3">
-            <span class="caps__num">04</span>
-            <h3>新媒体运营</h3>
-            <p>全媒体运营高级认证。短视频策划、账号定位与内容投放，让作品被更多人看见。</p>
-          </article>
-        </div>
-        <div class="caps__progress" aria-hidden="true">
-          <span class="dot is-active" data-dot="0"></span>
-          <span class="dot" data-dot="1"></span>
-          <span class="dot" data-dot="2"></span>
-          <span class="dot" data-dot="3"></span>
-        </div>
+    </article>
+    <article class="caps__card caps__card--flip">
+      <figure class="caps__shot"><img src="assets/img/memory-flash-cover.jpg" alt="影视后期作品" /></figure>
+      <div class="caps__body">
+        <span class="caps__num">02</span>
+        <h3>影视后期</h3>
+        <p>剪辑、特效、调色与分镜。熟练运用 Premiere、After Effects、剪映，擅长把素材剪成有节奏的故事。</p>
       </div>
-    </div>
+    </article>
+    <article class="caps__card">
+      <figure class="caps__shot"><img src="assets/img/gear/djimini3.jpg" alt="摄影航拍" /></figure>
+      <div class="caps__body">
+        <span class="caps__num">03</span>
+        <h3>摄影航拍</h3>
+        <p>商业拍摄、旅拍与运动记录。DJI 无人机与 Insta360 运动相机，捕捉地面与天空的极致视角。</p>
+      </div>
+    </article>
+    <article class="caps__card caps__card--flip">
+      <figure class="caps__shot"><img src="assets/img/douyin-profile-new.webp" alt="新媒体运营" /></figure>
+      <div class="caps__body">
+        <span class="caps__num">04</span>
+        <h3>新媒体运营</h3>
+        <p>全媒体运营高级认证。短视频策划、账号定位与内容投放，让作品被更多人看见。</p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -342,7 +335,6 @@
           <img class="card__poster" src="assets/video/douyin/douyin-01.jpg" alt="UMO牌-融媒体" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
           <span class="card__play">▶</span>
           <span class="card__tag">抖音</span>
-          <span class="card__overlay"><span class="card__overlay-text">点击播放</span></span>
         </button>
         <figcaption class="card__cap">UMO牌-融媒体</figcaption>
       </figure>
@@ -439,7 +431,15 @@
         </button>
         <figcaption class="card__cap">简历视频</figcaption>
       </figure>
-      <p class="gallery__note">以上视频效果使用 Codex + Hyperframes 制作</p>
+      <figure class="card card--video" data-reveal data-reveal-delay="120">
+        <button class="card__img" data-lightbox="video" data-src="assets/video/vibecoding/vibecoding-03.mp4?v=2" data-poster="assets/video/vibecoding/vibecoding-03.jpg?v=2" data-title="讨厌红楼梦 · 字幕动效">
+          <img class="card__poster" src="assets/video/vibecoding/vibecoding-03.jpg?v=2" alt="讨厌红楼梦字幕动效" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-poster')" />
+          <span class="card__play">▶</span>
+          <span class="card__tag">VibeCoding</span>
+        </button>
+        <figcaption class="card__cap">讨厌红楼梦 · 字幕动效</figcaption>
+      </figure>
+      <p class="gallery__note">Trace 与简历视频用 Codex + Hyperframes 制作；讨厌红楼梦字幕动效用 JIZURA 逐句对齐制作</p>
     </div>
 
     <!-- AI 平面 -->
@@ -543,11 +543,25 @@
         <span class="cert__icon">📡</span>
         <h3>全媒体运营高级</h3>
       </div>
-      <div class="cert" data-reveal data-reveal-delay="160">
+      <button class="cert" data-reveal data-reveal-delay="160" data-lightbox="solo"
+              data-src="assets/img/certs/c1-license.jpg?v=1" data-title="C1 机动车驾驶证（证号与住址已打码）"
+              aria-label="点击查看 C1 机动车驾驶证打码证件">
+        <span class="cert__icon">🚗</span>
+        <h3>C1 机动车驾驶证</h3>
+        <p class="cert__meta">准驾车型 C1 · 2026-08 领证</p>
+      </button>
+      <button class="cert" data-reveal data-reveal-delay="240" data-lightbox="solo"
+              data-src="assets/img/certs/caac-uom.jpg?v=1" data-title="轻型民用无人驾驶航空器安全操控理论培训合格证（证件编号已打码）"
+              aria-label="点击查看民航局无人机安全操控合格证打码证件">
+        <span class="cert__icon">🛩️</span>
+        <h3>民航局无人机合格证</h3>
+        <p class="cert__meta">轻型无人驾驶航空器 · 安全操控理论</p>
+      </button>
+      <div class="cert" data-reveal data-reveal-delay="320">
         <span class="cert__icon">🤝</span>
         <h3>校园宣传大使</h3>
       </div>
-      <div class="cert" data-reveal data-reveal-delay="240">
+      <div class="cert" data-reveal data-reveal-delay="400">
         <span class="cert__icon">🏆</span>
         <h3>校园短视频大赛一等奖</h3>
       </div>
@@ -582,7 +596,7 @@
         <span class="contact__val">@Gou使运</span>
       </a>
     </div>
-    <p class="contact__loc" data-reveal>📍 浙江 · 金华 · 义乌</p>
+    <p class="contact__loc" data-reveal>📍 浙江 · 温州</p>
   </div>
 </section>
 
@@ -612,6 +626,6 @@
   <span class="back-top__text">UP</span>
 </button>
 
-<script src="js/v2-main.js?v=neo7"></script>
+<script src="js/v2-main.js?v=neo10"></script>
 </body>
 </html>

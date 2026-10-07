@@ -111,33 +111,11 @@
     });
   }
 
-  /* ---------- 能力叙事（钉住滚动） ---------- */
-  var track = document.getElementById("capsTrack");
-  var visual = document.getElementById("capsVisual");
-  var medias = Array.prototype.slice.call(document.querySelectorAll(".caps__media"));
-  var caps = Array.prototype.slice.call(document.querySelectorAll(".caps__cap"));
-  var dots = Array.prototype.slice.call(document.querySelectorAll(".caps__progress .dot"));
-  var STAGES = caps.length || 4;
-
-  function updateCaps() {
-    if (!track || !visual) return;
-    var rect = track.getBoundingClientRect();
-    var vh = window.innerHeight;
-    var total = track.offsetHeight - vh;
-    if (total <= 0) total = 1;
-    var p = -rect.top / total;
-    if (p < 0) p = 0;
-    if (p > 1) p = 1;
-    var rot = (p * 36 - 18).toFixed(2);
-    visual.style.setProperty("--cap-rot", rot + "deg");
-    var idx = Math.min(STAGES - 1, Math.floor(p * STAGES + 0.0001));
-    for (var i = 0; i < medias.length; i++) {
-      var on = i === idx;
-      medias[i].classList.toggle("is-active", on);
-      if (caps[i]) caps[i].classList.toggle("is-active", on);
-      if (dots[i]) dots[i].classList.toggle("is-active", on);
-    }
-  }
+  /* ---------- 能力叙事（02）----------
+     改版前这里有一套 JS 驱动的"钉住滚动"：读 #capsTrack 进度 → 写 --cap-rot 让视觉体
+     立体旋转 → 按 floor(p×4) 切换四项能力的 is-active。
+     现在换成堆叠卡片（后一张 sticky 盖住前一张），纯 CSS position:sticky 就能表达，
+     逐帧读 rect 反而会把合成器的工作抢回主线程，所以整段删除。 */
 
   /* ---------- 滚动进度条（v2 升级） ---------- */
   var progressBar = document.querySelector(".scroll-progress");
@@ -154,8 +132,8 @@
   function onScroll() {
     onScrollNav();
     if (!reduceMotion) applyParallax();
-    updateCaps();
     updateProgress();
+    updateCapsSquash();
     ticking = false;
   }
   window.addEventListener("scroll", function () {
@@ -423,11 +401,19 @@
     }
   }
 
-  /* ---------- 可展开时间线（v2 升级） ---------- */
-  document.querySelectorAll('.tl__toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var item = btn.closest('.tl__item');
-      if (item) item.classList.toggle('is-open');
+  /* ---------- 可展开时间线：点整张卡片展开（v2 升级） ---------- */
+  document.querySelectorAll('.tl__item').forEach(function (item) {
+    var toggle = item.querySelector('.tl__toggle');
+    var detail = item.querySelector('.tl__detail');
+    function setOpen(open) {
+      item.classList.toggle('is-open', open);
+      if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    item.addEventListener('click', function (e) {
+      // 展开之后在详情里选文字、点链接，不该顺手把卡片收起来
+      if (detail && item.classList.contains('is-open') && detail.contains(e.target)) return;
+      setOpen(!item.classList.contains('is-open'));
     });
   });
 
@@ -473,19 +459,122 @@
     }
   }
 
+  /* ---------- 02 堆叠卡：上升途中挤扁，钉住那一下弹回 ---------- */
+  // 不用 IntersectionObserver 判"钉住了"：卡片完全进入视口时 ratio 就已经到 1，
+  // 之后从 468px 继续升到 74px 这一段没有任何回调，卡片会永远停在压扁状态。
+  // 这里改成读一次布局位置（临时撤 sticky），之后每帧只做算术，不读 rect。
+  var capsCards = Array.prototype.slice.call(document.querySelectorAll('.caps__card'));
+  var capsSec = document.querySelector('.caps');
+  var CAPS_PIN = 74;                       // = CSS 的 --caps-pin
+  var capsTops = null;
+  var capsSquashOn = capsCards.length && !!capsSec && !reduceMotion &&
+                     window.matchMedia('(min-width: 769px)').matches;
+
+  function measureCaps() {
+    capsSec.classList.add('is-measuring');           // position:static 一档，量未钉住的位置
+    capsTops = capsCards.map(function (c) { return c.getBoundingClientRect().top + window.pageYOffset; });
+    capsSec.classList.remove('is-measuring');
+  }
+
+  function updateCapsSquash() {
+    if (!capsSquashOn) return;
+    if (!capsTops) measureCaps();
+    var vh = window.innerHeight, y = window.pageYOffset;
+    for (var i = 0; i < capsCards.length; i++) {
+      var el = capsCards[i];
+      var k = (capsTops[i] - y - CAPS_PIN) / (vh - CAPS_PIN);   // 1=刚进视口底，0=到钉住位
+      if (k > 1) k = 1;                                // 还在视口下方就别反向拉长
+      var landed = k <= 0;
+      var next = landed ? 'L' : (k >= 1 ? 'N' : k.toFixed(2));
+      if (el._sq === next) continue;                            // 值没变就不碰样式
+      el._sq = next;
+      if (landed) {
+        el.style.removeProperty('--sq');
+        el.style.removeProperty('--sx');
+        el.classList.add('is-landed');
+      } else {
+        el.classList.remove('is-landed');
+        var q = 1 - 0.075 * (1 - k);                            // 越接近钉住位越扁
+        el.style.setProperty('--sq', q.toFixed(3));
+        el.style.setProperty('--sx', (1 + 0.03 * (1 - k)).toFixed(3));       // 只鼓一点点，别做成果冻
+      }
+    }
+  }
+
+  if (capsSquashOn) {
+    window.addEventListener('resize', function () { capsTops = null; }, { passive: true });
+    updateCapsSquash();
+  }
+
   /* ---------- 作品集交互增强 ---------- */
+  // 视频卡：鼠标移上去就播，第一次悬停才建 <video> 并给 src（preload=none，不抢首屏带宽）
+  function setupHoverPlay(imgEl) {
+    var src = imgEl.getAttribute('data-src');
+    if (!src) return;
+    var vid = null, bar = null, fill = null, barTimer = 0;
+
+    function buffered() {
+      try {
+        if (!vid.duration || !vid.buffered.length) return 0;
+        return vid.buffered.end(vid.buffered.length - 1) / vid.duration;
+      } catch (err) { return 0; }
+    }
+    function paint() { if (fill) fill.style.width = Math.round(buffered() * 100) + '%'; }
+    function showBar() { if (bar) { bar.classList.add('is-on'); paint(); } }
+    function hideBar() {
+      if (barTimer) { clearTimeout(barTimer); barTimer = 0; }
+      if (bar) bar.classList.remove('is-on');
+    }
+    function ensure() {
+      if (vid) return;
+      vid = document.createElement('video');
+      vid.className = 'card__vid';
+      vid.muted = true; vid.loop = true; vid.preload = 'none';
+      vid.setAttribute('muted', '');
+      vid.setAttribute('playsinline', '');
+      vid.setAttribute('loop', '');
+      vid.setAttribute('preload', 'none');
+      var poster = imgEl.getAttribute('data-poster');
+      if (poster) vid.poster = poster;
+      vid.src = src;
+      bar = document.createElement('span');
+      bar.className = 'card__buf';
+      fill = document.createElement('i');
+      bar.appendChild(fill);
+      imgEl.insertBefore(vid, imgEl.firstChild);
+      imgEl.appendChild(bar);
+      vid.addEventListener('progress', paint);
+      vid.addEventListener('waiting', showBar);
+      vid.addEventListener('canplay', paint);
+      vid.addEventListener('playing', function () { imgEl.classList.add('is-playing'); hideBar(); });
+    }
+    imgEl.addEventListener('mouseenter', function () {
+      ensure();
+      barTimer = setTimeout(showBar, 260);   // 网不卡时这条根本不会露脸
+      var pr = vid.play();
+      if (pr && pr.catch) pr.catch(function () {});
+    });
+    imgEl.addEventListener('mouseleave', function () {
+      hideBar();
+      if (vid) { vid.pause(); imgEl.classList.remove('is-playing'); }
+    });
+  }
+
   // 动态给所有portfolio cards添加overlay + interactive class
   var portfolioCards = document.querySelectorAll('.portfolio .card');
   portfolioCards.forEach(function (card) {
     card.classList.add('card--interactive');
     var imgEl = card.querySelector('.card__img');
-    if (imgEl) {
-      // 添加overlay
+    var isVideo = card.classList.contains('card--video');
+    if (imgEl && !isVideo) {
+      // 图片卡保留那层暗色「点击查看」；视频卡换成悬停即播，不再铺暗罩
       var overlay = document.createElement('span');
       overlay.className = 'card__overlay';
-      var isVideo = card.classList.contains('card--video');
-      overlay.innerHTML = '<span class="card__overlay-text">' + (isVideo ? '点击播放' : '点击查看') + '</span>';
+      overlay.innerHTML = '<span class="card__overlay-text">点击查看</span>';
       imgEl.appendChild(overlay);
+    }
+    if (imgEl && isVideo && !reduceMotion && !window.matchMedia('(hover: none)').matches) {
+      setupHoverPlay(imgEl);
     }
     // 3D tilt hover
     if (!reduceMotion && !window.matchMedia("(hover: none)").matches) {
@@ -627,7 +716,6 @@
 
   /* ---------- 初始化 ---------- */
   onScrollNav();
-  updateCaps();
   updateProgress();
 
   /* ---------- 回到顶部按钮 ---------- */
@@ -648,15 +736,37 @@
     checkBackTop();
   }
 
-  /* 首屏背景视频：「减弱动效」下停在封面帧；其余情况兜底再请求一次播放
-     （部分浏览器会忽略 autoplay 属性，尤其是带声历史或省数据模式） */
+  /* 首屏背景视频：封面用**片子自己的第一帧**，所以静态图和起播画面是同一帧，
+     不会再出现"先亮一下再黑掉"的跳帧。<video poster> 是单属性、没法跟 <source media>
+     按视口分，所以手机端（竖屏片）由 JS 换封面，断点数值与 CSS 手机端那组一致。
+     「减弱动效」下停在封面帧；自动播放被拦时等第一次手势再从头播。 */
   var heroVideo = document.querySelector('.hero__video');
   if (heroVideo) {
+    var mqPhone = window.matchMedia('(max-width: 768px)');
+    function setHeroPoster() {
+      heroVideo.poster = mqPhone.matches
+        ? 'assets/video/hero/hero-bg-m-first.jpg?v=1'
+        : 'assets/video/hero/hero-bg-first.jpg?v=1';
+    }
+    setHeroPoster();
+    if (mqPhone.addEventListener) mqPhone.addEventListener('change', setHeroPoster);
+    function fromFirstFrame() {
+      if (heroVideo.currentTime > 0.05) heroVideo.currentTime = 0;
+    }
+    heroVideo.addEventListener('loadedmetadata', fromFirstFrame);
     if (reduceMotion) {
       heroVideo.pause();
     } else {
       var p = heroVideo.play();
-      if (p && p.catch) p.catch(function () {});
+      if (p && p.catch) p.catch(function () {
+        var retry = function () {
+          fromFirstFrame();
+          var p2 = heroVideo.play();
+          if (p2 && p2.catch) p2.catch(function () {});
+        };
+        window.addEventListener('touchstart', retry, { passive: true, once: true });
+        window.addEventListener('scroll', retry, { passive: true, once: true });
+      });
     }
   }
 
