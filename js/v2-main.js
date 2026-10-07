@@ -507,61 +507,122 @@
     updateCapsSquash();
   }
 
-  /* ---------- 作品集交互增强 ---------- */
-  // 视频卡：鼠标移上去就播，第一次悬停才建 <video> 并给 src（preload=none，不抢首屏带宽）
-  function setupHoverPlay(imgEl) {
+  /* ---------- 作品集交互增强：视频卡就地播放 ---------- */
+  // 桌面 = 悬停即播，手机 = 停留即播（下面两块共用这一套起停函数）。
+  // 第一次触发才建 <video> 并赋 src，preload=none —— 不抢首屏带宽；离开就 pause，下载随之停。
+  function inlinePlayer(imgEl) {
+    if (imgEl._ip) return imgEl._ip;
     var src = imgEl.getAttribute('data-src');
-    if (!src) return;
-    var vid = null, bar = null, fill = null, barTimer = 0;
+    if (!src) return null;
+    var vid = document.createElement('video');
+    vid.className = 'card__vid';
+    vid.muted = true; vid.loop = true; vid.preload = 'none';
+    vid.setAttribute('muted', '');
+    vid.setAttribute('playsinline', '');
+    vid.setAttribute('loop', '');
+    vid.setAttribute('preload', 'none');
+    var poster = imgEl.getAttribute('data-poster');
+    if (poster) vid.poster = poster;
+    vid.src = src;
+    var bar = document.createElement('span');
+    bar.className = 'card__buf';
+    var fill = document.createElement('i');
+    bar.appendChild(fill);
+    imgEl.insertBefore(vid, imgEl.firstChild);
+    imgEl.appendChild(bar);
 
-    function buffered() {
+    var p = { vid: vid, bar: bar, fill: fill, timer: 0 };
+    function paint() {
       try {
-        if (!vid.duration || !vid.buffered.length) return 0;
-        return vid.buffered.end(vid.buffered.length - 1) / vid.duration;
-      } catch (err) { return 0; }
+        if (vid.duration && vid.buffered.length) {
+          fill.style.width = Math.round(vid.buffered.end(vid.buffered.length - 1) / vid.duration * 100) + '%';
+        }
+      } catch (err) {}
     }
-    function paint() { if (fill) fill.style.width = Math.round(buffered() * 100) + '%'; }
-    function showBar() { if (bar) { bar.classList.add('is-on'); paint(); } }
-    function hideBar() {
-      if (barTimer) { clearTimeout(barTimer); barTimer = 0; }
-      if (bar) bar.classList.remove('is-on');
+    function showBar() { bar.classList.add('is-on'); paint(); }
+    p.hideBar = function () { if (p.timer) { clearTimeout(p.timer); p.timer = 0; } bar.classList.remove('is-on'); };
+    vid.addEventListener('progress', paint);
+    vid.addEventListener('waiting', showBar);
+    vid.addEventListener('canplay', paint);
+    vid.addEventListener('playing', function () { imgEl.classList.add('is-playing'); p.hideBar(); });
+    imgEl._ip = p;
+    return p;
+  }
+
+  function inlinePlay(imgEl) {
+    var p = inlinePlayer(imgEl);
+    if (!p) return;
+    p.timer = setTimeout(function () { p.bar.classList.add('is-on'); p.bar._on = 1; }, 260);  // 网不卡时这条根本不露脸
+    var pr = p.vid.play();
+    if (pr && pr.catch) pr.catch(function () {});
+  }
+
+  function inlineStop(imgEl) {
+    var p = imgEl._ip;
+    if (!p) return;
+    p.hideBar();
+    p.vid.pause();
+    imgEl.classList.remove('is-playing');
+  }
+
+  function setupHoverPlay(imgEl) {
+    imgEl.addEventListener('mouseenter', function () { inlinePlay(imgEl); });
+    imgEl.addEventListener('mouseleave', function () { inlineStop(imgEl); });
+  }
+
+  /* ---------- 手机端：停留即播（没有 hover 可用，改成"停在视口里才播"） ----------
+     三条硬约束，少一条就会变成流量黑洞：
+       ① 同一时刻全站只播一张（挑视口中心最近的那张），其余立即 pause；
+       ② 停留满 500ms 才起播 —— 快速划过时不连环触发下载；
+       ③ 开了省数据、或 effectiveType 掉到 2g/3g，整套不启用，退回"点一下开灯箱播"。
+     开销按"在播时长 × 码率"涨（本机实测慢慢滑完视频栏一遍 33MB，最重的 douyin-01/06 是 3.2Mbps），
+     不是整只文件大小 —— 划走就 pause，所以上限由用户停多久决定。 */
+  function setupPhoneAutoPlay(imgEls) {
+    var inView = [], dwell = 0, playing = null;
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+    function gateOpen() {
+      if (!conn) return true;
+      if (conn.saveData) return false;
+      return !/(^|[,\s])(2g|3g)(?=$|[,\s])/.test(conn.effectiveType || '');
     }
-    function ensure() {
-      if (vid) return;
-      vid = document.createElement('video');
-      vid.className = 'card__vid';
-      vid.muted = true; vid.loop = true; vid.preload = 'none';
-      vid.setAttribute('muted', '');
-      vid.setAttribute('playsinline', '');
-      vid.setAttribute('loop', '');
-      vid.setAttribute('preload', 'none');
-      var poster = imgEl.getAttribute('data-poster');
-      if (poster) vid.poster = poster;
-      vid.src = src;
-      bar = document.createElement('span');
-      bar.className = 'card__buf';
-      fill = document.createElement('i');
-      bar.appendChild(fill);
-      imgEl.insertBefore(vid, imgEl.firstChild);
-      imgEl.appendChild(bar);
-      vid.addEventListener('progress', paint);
-      vid.addEventListener('waiting', showBar);
-      vid.addEventListener('canplay', paint);
-      vid.addEventListener('playing', function () { imgEl.classList.add('is-playing'); hideBar(); });
+    function nearestToCenter() {
+      var best = null, bd = Infinity;
+      for (var i = 0; i < inView.length; i++) {
+        var r = inView[i].getBoundingClientRect();
+        var d = Math.abs(r.top + r.height / 2 - window.innerHeight / 2);
+        if (d < bd) { bd = d; best = inView[i]; }
+      }
+      return best;
     }
-    imgEl.addEventListener('mouseenter', function () {
-      ensure();
-      barTimer = setTimeout(showBar, 260);   // 网不卡时这条根本不会露脸
-      var pr = vid.play();
-      if (pr && pr.catch) pr.catch(function () {});
-    });
-    imgEl.addEventListener('mouseleave', function () {
-      hideBar();
-      if (vid) { vid.pause(); imgEl.classList.remove('is-playing'); }
-    });
+    function sync() {
+      var t = nearestToCenter();
+      if (t === playing) return;
+      if (playing) inlineStop(playing);
+      playing = t || null;
+      if (playing) inlinePlay(playing);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var el = en.target, k = inView.indexOf(el);
+        if (en.intersectionRatio >= 0.6) { if (k < 0) inView.push(el); }
+        else if (k >= 0) inView.splice(k, 1);
+      });
+      clearTimeout(dwell);
+      dwell = setTimeout(function () {
+        if (!gateOpen()) { if (playing) { inlineStop(playing); playing = null; } return; }
+        sync();
+      }, 500);
+    }, { threshold: [0, 0.6, 1] });
+    imgEls.forEach(function (el) { io.observe(el); });
+    if (conn && conn.addEventListener) {
+      conn.addEventListener('change', function () {
+        if (!gateOpen() && playing) { inlineStop(playing); playing = null; }
+      });
+    }
   }
 
   // 动态给所有portfolio cards添加overlay + interactive class
+  var phoneVideoCards = [];
   var portfolioCards = document.querySelectorAll('.portfolio .card');
   portfolioCards.forEach(function (card) {
     card.classList.add('card--interactive');
@@ -574,8 +635,9 @@
       overlay.innerHTML = '<span class="card__overlay-text">点击查看</span>';
       imgEl.appendChild(overlay);
     }
-    if (imgEl && isVideo && !reduceMotion && !window.matchMedia('(hover: none)').matches) {
-      setupHoverPlay(imgEl);
+    if (imgEl && isVideo && !reduceMotion) {
+      if (window.matchMedia('(hover: none)').matches) { phoneVideoCards.push(imgEl); }
+      else { setupHoverPlay(imgEl); }
     }
     // 3D tilt hover
     if (!reduceMotion && !window.matchMedia("(hover: none)").matches) {
@@ -592,6 +654,8 @@
       });
     }
   });
+
+  if (phoneVideoCards.length && 'IntersectionObserver' in window) setupPhoneAutoPlay(phoneVideoCards);
 
   // Tab切换时gallery的stagger reveal动画
   var staggerObserver = null;

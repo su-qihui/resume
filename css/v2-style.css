@@ -657,7 +657,12 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
   .nav__link { padding: 14px 24px; border-radius: 0; }
   .nav__burger { display: flex; }
   .about__stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  .gallery { gap: 16px; }
+  /* 作品集手机端改单列大图：两列实测画面只有 169x95（390 视口扣内边距和 16px 列间距再除以 2），
+     ▶ 三角和右下角标签相对画面过大，看着不像作品集。单列后实测画面 357x201。 */
+  .gallery { grid-template-columns: 1fr; gap: 22px; }
+  .card__cap { font-size: 1rem; padding: 13px 16px 15px; }
+  .card__play { border-width: 10px 0 10px 17px; }
+  .card__tag { font-size: 0.66rem; padding: 2px 8px; right: 10px; bottom: 10px; }
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
   /* 手机端也走堆叠：第十二轮把卡高压到 48vh 之后，实测 390x844 下一张卡 422px、
      钉住位以下还有 782px，放得下了（当年"一屏放不下 68vh"的理由已经不成立）。
@@ -679,7 +684,7 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
      区块末尾的渐隐也不在这里做 —— 那是 .bg-stage__end 的活，它钉在舞台底部而非视口底部。 */
 }
 @media (max-width: 480px) {
-  .gallery { gap: 12px; }
+  .gallery { gap: 18px; }
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
   .hero__cta { gap: 10px; }
   .hero__cta .btn { padding: 11px 22px; font-size: 0.9rem; }

@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第十七轮）
+> 更新日期：2026-10-08（第十八轮）
 
 ## 1. 一句话定位
 
@@ -92,7 +92,7 @@
 | 时间线展开 | **点 `.tl__item` 任意处** → `.is-open`（`.tl__toggle` 只当箭头 + 键盘焦点，`aria-expanded` 由 JS 同步） | `max-height` 0 → 200px；展开后点 `.tl__detail` 内的文字不收起（可选中） |
 | 作品集筛选 | `.tab[data-filter]` → `.gallery[data-group]` | 切换时 80ms 错位入场 |
 | 灯箱 | `[data-lightbox]` = `image` / `video` / `gear` / `solo` | Esc 关、←→ 切换、点遮罩关；`video` 类型自动 play；`solo` 为单图查看（不参与任何图库） |
-| 作品卡悬停即播 | `.card--video .card__img` 的 `mouseenter` → `setupHoverPlay()`，首次才建 `<video class="card__vid">` | `preload="none"` + 首次悬停才赋 src；淡入盖封面、`.card__play` 隐掉；`mouseleave` 暂停并淡回封面。**慢网才出进度条**：`mouseenter` 挂 260ms 定时器 → `.card__buf.is-on`，`playing`/`mouseleave` 撤掉，宽度取 `buffered.end/duration`。触屏（`hover: none`）与 `reduceMotion` 不启用，点卡片仍走灯箱 |
+| 作品卡即播（桌面悬停 / 手机停留） | 同一套 `inlinePlay/inlineStop(imgEl)`，状态挂在 `imgEl._ip`（`{vid,bar,fill,timer,hideBar}`），首次才建 `<video class="card__vid">` | `preload="none"` + 首次触发才赋 src；淡入盖封面、`.card__play` 隐掉。**慢网才出进度条**：起播挂 260ms 定时器 → `.card__buf.is-on`，`playing`/停止时撤掉，宽度取 `buffered.end/duration`。桌面 `mouseenter/leave` 直接绑；触屏（`hover: none`）走 `setupPhoneAutoPlay()`：IO 阈值 0.6 收集在_view 卡 → **停留 500ms** 才起播 → 只播 `_ip` 状态里离视口中线最近的那一张，切换时先 `inlineStop` 旧的。`navigator.connection.saveData` 或 `effectiveType` 含 2g/3g 时闸住不播，并监听 `connection.change`。`reduceMotion` 下整套不启用，点卡片仍走灯箱 |
 
 性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
 
@@ -153,6 +153,21 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
 "$G" add -A && "$G" commit -m "…"            # 身份已配在仓库本地，别动全局
 "$G" -c credential.helper=store push origin main   # token 在 ~/.git-credentials，直连通，不需代理
 ```
+
+**线上验收两个必踩的坑（2026-10-08 实测）**
+
+1. `curl https://resume-34f.pages.dev/index.html` 回的是 **308 跳转到 `/`**，不加 `-L` 拿到的是 0 字节，
+   grep 永远数不到新版本号 —— 会误判成"Pages 没重建"（第十七轮就这么误判了一次）。
+   **探测线上版本一律 `curl -sL "$U/?nc=随机"`**（带随机 query 躲边缘缓存）。
+2. **`github.com:443` 会整段不通而 `api.github.com` 正常**（推第十七轮时遇到：`Connection was reset` /
+   `Empty reply from server` / `Failed to connect after 21s`，同时 api 回 200；本机 7897 代理没起、`ProxyEnable=0`）。
+   这时走 REST 推：从 `~/.git-credentials` 取 `ghp_` 令牌 → `GET /git/ref/heads/main` 确认远端就是本地提交的父提交 →
+   逐个 `POST /git/blobs`（base64，**返回 sha 必须等于 `git rev-parse main:<path>`**，不等就停）→
+   `POST /git/trees`（带 `base_tree`）→ `POST /git/commits`（带上本地提交的 author / committer / date）→
+   `PATCH /git/refs/heads/main`。实测 6 个文件（含 2 张 jpg）约 60 秒推完，Pages 照常重建。
+   ⚠️ 这样造出来的提交 sha 与本地不同、**tree 相同**（本次本地 `2c36c8e` / 远端 `f3adfcd`，tree 都是 `2bf85d8`）。
+   等 `github.com` 恢复后先 `git fetch` 再 `git reset --soft origin/main` 对齐，**不要 `git pull --rebase`**
+   （会把同一批改动复制成第二个提交）。
 
 ⚠️ **本仓库 blob 存的是 CRLF**，而 Windows git 全局默认 `core.autocrlf=true` 会在 check-in 时把 CRLF 重写成 LF，
 导致**每个文件整文件假 diff**（实测 css 从 112 行真改动膨胀到 2314 行）。本目录已设 `core.autocrlf=false`（仓库级），
@@ -673,3 +688,34 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
 5. ⚠️ **实测确认 pages.dev 不支持 Range**：同一台机器上 MDN 的 mp4 回 `206 + Accept-Ranges: bytes`，
    本站 `--noproxy` 下仍回 `200 + 整文件`、且响应里根本没有 `Accept-Ranges` 头 —— 不是本机代理的锅。
    iOS Safari 对无 Range 的视频会拒播/拖不动，这是手机端第一嫌疑。
+
+**2026-10-08（第十八轮：作品集手机端单列大图 + 停留即播）**
+用户："手机版的效果不太理想这点怎么优化好，也想加入类似电脑版停留自动播放的效果"。布局方案问他时选了**单列大图**。
+
+1. **作品集手机端改单列**。改前用 `style.gridTemplateColumns="repeat(2,1fr)"` 现场复原两列量过：一张卡 **171px** 宽、
+   画面 **169×95** —— 16:9 缩到这么小，`▶` 三角和右下角标签几乎和画面一样抢眼。
+   `@media (max-width:768px)` 里 `.gallery` 改 `grid-template-columns:1fr; gap:22px`（≤480px 时 18px），
+   配套 `.card__cap` 字号 → `1rem`、`.card__play` 三角 → `10px 0 10px 17px`、`.card__tag` → `.66rem`。
+   实测 390×844：卡宽 **359**、画面 **357×201**、标题 16px 单行。
+2. **手机"停留即播"**（触屏没有 hover）。先把第十五轮那套悬停播放拆成共用的
+   `inlinePlayer(imgEl)` / `inlinePlay` / `inlineStop`（状态挂在 `imgEl._ip`，`setupHoverPlay` 只剩两行绑定），
+   再为 `hover:none` 的设备加 `setupPhoneAutoPlay()`：**IO 阈值 0.6 收集在屏卡 → 停留 500ms 才起播 →
+   全站只播离视口中线最近的一张**，切走的立刻 `pause()`。
+   ⚠️ 三条约束一条都不能少，缺了就变成流量黑洞（本轮实测见下）。
+   另外接了 `navigator.connection`：`saveData` 打开、或 `effectiveType` 含 2g/3g 时整套闸住不播，
+   退回"点卡片开灯箱"，并监听 `connection.change` 在网速掉下去时立刻停。
+   触屏与桌面的分流派发在原来的循环里：`hover:none` push 进 `phoneVideoCards`，否则 `setupHoverPlay`。
+3. 版本号：CSS `neo39 → neo40`，JS `neo11 → neo12`。
+4. **验证（headless Chrome + CDP，390×844 dpr3 + `setTouchEmulationEnabled`）**：
+   `hover:none`=true、`pointer:coarse`=true、dpr=3；一次完整滚动 `.card__vid` 从 1 建到 13、
+   **同时在播峰值始终 = 1**、`Runtime.exceptionThrown` 0 条、`scrollWidth` 380/390 无溢出。
+5. **流量实测**（`Network.dataReceived` 按 requestId 归属到 URL、`cacheDisabled`、390 视口每停 1.5s 滚一格）：
+   首屏 **5.00 MB**（全是竖背景 `hero-bg-m.mp4`，5.9 MB 的整片被拉完 —— 它跟视口无关，加载就下）；
+   「视频作品」栏滚一遍 **33.31 MB**，被碰到的 7 张各 3.5~6.2 MB（`douyin-01/06` 6.19、`school-01` 5.63…）。
+   ⚠️ "码率 × 停留秒"这个直觉低估了 Chrome：它**前向缓冲不看停留时长**，起播一次就预拉好几兆，
+   所以真实量级是"**每张 3~6 MB**"，不是每兆每秒。一次看 2~3 张 ≈ 10~15 MB，够用但别在 3G 下刷。
+   **没有**为此再压一套 540p 预览片：仓库已经 238 MB，多一份素材+一份 `?v=` 维护不值；
+   真要省流量，正路是给 `.card__vid` 单配低码率预览源（重编码 + 双份文件），留作以后的活。
+   ⚠️ 量法两个坑：`Network.loadingFinished` 对**没下完**的视频请求永远不来，字节必须用 `dataReceived` 累加；
+   `performance.getEntriesByType('resource').transferSize` 同样只记已完成的请求，用它量流式视频会严重少报
+   （第一版就是这么读出"7.3 MB"的假数）。
