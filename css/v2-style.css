@@ -659,10 +659,13 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
   .about__stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .gallery { gap: 16px; }
   .skills__grid { grid-template-columns: repeat(2, 1fr); }
-  /* 手机端放弃堆叠：一屏放不下 68vh 的卡，改成普通顺序流，图统一在上 */
-  .caps__stack { width: 92vw; padding-bottom: 40px; }
+  /* 手机端也走堆叠：第十二轮把卡高压到 48vh 之后，实测 390x844 下一张卡 422px、
+     钉住位以下还有 782px，放得下了（当年"一屏放不下 68vh"的理由已经不成立）。
+     图文改成上下排，图在上；钉住位从 74px 收到 62px（手机导航 56px）。 */
+  .caps { --caps-pin: 62px; }
+  .caps__stack { width: 92vw; padding-bottom: calc(50vh + 40px); }
   .caps__card {
-    position: static; grid-template-columns: 1fr; gap: 16px;
+    position: sticky; top: var(--caps-pin); grid-template-columns: 1fr; gap: 16px;
     min-height: 0; margin-bottom: 20px; padding: 14px;
   }
   .caps__shot { aspect-ratio: 16/10; }

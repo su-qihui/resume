@@ -465,12 +465,13 @@
   // 这里改成读一次布局位置（临时撤 sticky），之后每帧只做算术，不读 rect。
   var capsCards = Array.prototype.slice.call(document.querySelectorAll('.caps__card'));
   var capsSec = document.querySelector('.caps');
-  var CAPS_PIN = 74;                       // = CSS 的 --caps-pin
+  var CAPS_PIN = 74;                       // 由 measureCaps() 从 CSS 的 --caps-pin 读实际值（手机端是 62）
   var capsTops = null;
-  var capsSquashOn = capsCards.length && !!capsSec && !reduceMotion &&
-                     window.matchMedia('(min-width: 769px)').matches;
+  var capsSquashOn = capsCards.length && !!capsSec && !reduceMotion;
 
   function measureCaps() {
+    var pinVar = parseFloat(getComputedStyle(capsSec).getPropertyValue('--caps-pin'));
+    if (pinVar) CAPS_PIN = pinVar;
     capsSec.classList.add('is-measuring');           // position:static 一档，量未钉住的位置
     capsTops = capsCards.map(function (c) { return c.getBoundingClientRect().top + window.pageYOffset; });
     capsSec.classList.remove('is-measuring');
