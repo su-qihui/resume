@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第二十轮）
+> 更新日期：2026-10-08（第二十一轮）
 
 ## 1. 一句话定位
 
@@ -96,7 +96,7 @@
 | 触屏判定 `isTouchLike` | `(hover:none)` ‖ `(pointer:coarse)` ‖ `(max-width:768px) && maxTouchPoints>0` | **只认 `(hover:none)` 不够**：三星浏览器报有 hover，点击补发的 mouseenter 会让卡片视频和灯箱视频一起播。第三条**必须带宽度条件**，否则带触摸屏的笔记本（`maxTouchPoints=10`）会被误判成手机，桌面悬停播放就没了。3D 倾斜同样用 `!isTouchLike` |
 | 平滑滚动 | `html { scroll-behavior: smooth }` **只写在 `@media (min-width: 769px)` 里** | 全局挂会让安卓地址栏收起时浏览器自己的滚动修正变成"往上跳一段"的动画（三星复现、夸克不复现）。手机端锚点跳转瞬时到位 |
 | 视口高度锁 `--vport-h` | JS 开页时把 `innerHeight` 写成 px 变量，`resize` 里**只有宽度变了才重量**；`.hero min-height`、手机端 `.caps__stack padding-bottom`、`.section / .caps__head` 的 `clamp(64px, 10vh, 120px)` 三处都改读 `var(--vport-h, 100svh)` | **任何留在文档流里的 `vh/svh` 都会让安卓/ iOS 地址栏收起时整页位移**（实测 94px，就是「往下滑却往上跳」）。锁只对触屏生效，桌面拖窗口高度该变还是要变。背景视频那一层反过来用 `100dvh` 跟随长高填满——它在 absolute 的 `.bg-stage` 里，不在流中，推不动内容 |
-性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
+| 手机端目录抽屉 | 一份状态 `.nav.is-open` 同时驱动三处：`.nav__links`（浮起的玻璃片）、`.nav-scrim`（遮罩，z-index 99，压在内容上、导航下）、`.nav__burger`（三条杠变 X） | 行=左名称右章节号（01/02/04/05/06/08 复用页面 `section__eyebrow` 的真实序号，首页给 TOP），行间是内缩 14px 的细线；`.active` 整行淡蓝底。点遮罩/Esc/点链接都关闭，`aria-expanded`+`aria-label` 同步。样式集中在文件末尾「⑨ 手机端导航」一节（放最后是为了盖过玻璃层，不靠 !important）。手机端顶栏是**常驻**玻璃，深色档另用 `rgba(10,11,14,.72)` 深底，因为顶栏底下是视频、有一帧整幅白闪会把白玻璃+浅墨糊掉 |性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
 
 ## 6. 常用改动指引
 
@@ -792,3 +792,38 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    桌面悬停播放与 3D 倾斜 ✓、`scrollBehavior` 1440=smooth / 390=auto ✓、`Runtime.exceptionThrown` 0 条。
 7. ⚠️ 仍未在真机验证：iPhone 上拖进度条（`pages.dev` 不支持 Range 的已知后果）。
    用户手上那台 6s Plus 系统偏老，能播不足以证明新系统的行为。
+
+**2026-10-08（第二十一轮：手机端顶栏常驻玻璃 + 抽屉改成"目录"，并加海外托管提示）**
+用户三件事：①"站点在 Cloudflare 海外，卡顿可开代理"的提示放哪；②右上角折叠栏太土，重做；③手机顶栏也要液态玻璃，深浅两套。
+
+1. **提示放哪：页脚一行 + 抽屉底部一行，不做弹窗。** 判断依据是"谁需要看到它"：
+   第一眼看到"这站可能卡"会直接压低第一印象，而招聘方点开作品集的前三秒就是全部；
+   浮层提示在对方屏幕上弹一句"本站很慢"更是减分。页脚是"关于本站"的常规位置，
+   主动翻菜单的人本来就在找信息，所以抽屉里再留一条短版。文案保留他要的"开代理"。
+2. **抽屉从"贴满宽的平铺列表"改成浮起的玻璃目录片**（`.nav__links` ≤768px 整段重写，见 §5 新增行）：
+   左右各留 12px、顶部留 8px 缝、圆角 16px（**不是** 24/32px，卡片圆角上限就是 16）、
+   行高 48px 上下排，**左侧名称 + 右侧章节编号**，行间是内缩 14px 的细线（不是左侧色条，也不是卡片）。
+   编号 01/02/04/05/06/08 直接复用页面上本来就有的 `section__eyebrow` 序号，
+   所以它不是装饰性脚手架，而是"点了会落到哪"的预告；首页没有序号，给 `TOP`。
+   当前所在章节沿用 `.active`，在抽屉里表现为整行淡蓝底 + 蓝字。
+3. **交互补齐**：`is-open` 从 `navLinks` 挪到 `.nav` 上（状态只有一份，抽屉/遮罩/汉堡三处样式都由它驱动，
+   `navLinks.is-open` 保留兼容），新增 `.nav-scrim`（`z-index:99`，压在内容上、导航下）点它关闭，
+   `Escape` 关闭，`aria-expanded` 与 `aria-label` 同步成"关闭菜单/打开菜单"。
+   入场是错开的逐行淡入上移（24ms 一档，共 8 个元素），全局 `prefers-reduced-motion` 那组会自动压成瞬时。
+4. **手机端顶栏常驻玻璃**：`.nav` 与 `.nav.is-scrolled` 在 ≤768px 同一套配方（白玻璃 `.72` + `blur(18px) saturate`
+   + 细线 + 内高光）。⚠️ **深色档必须换成不透光的深底** `rgba(10,11,14,.72)`：玻璃层原本那套是
+   "页面纯黑 + 白玻璃 .10"，那是叠在页面背景上的配方，而顶栏底下是 Showreel 视频，
+   片里 10.28s 有一帧整幅白闪（meanY 235），白玻璃叠白闪会把浅墨糊掉。
+   同时把 `.nav:not(.is-scrolled)` 那组"浅墨压视频"的规则收进 `@media (min-width:769px)` ——
+   手机端顶栏现在有实底了，再套浅墨就反了。
+5. 版本号：CSS `neo42 → neo43`，JS `neo17`。
+6. **验证（390×844 触屏，浅/深各一遍，截图人工看过）**：抽屉 `border-radius 16px`、
+   左右各 `12px`、`top 64px`、宽 `366px`、`backdrop-filter blur(26px)`、7 条链接、编号与提示均可见、
+   遮罩展开时 `visibility:visible`；**点遮罩关闭 ✓、Esc 关闭 ✓**；
+   对比度按最坏情况算（抽屉底下当成那帧整幅白闪 235 合成）：**浅色 16.41:1、深色 13.19:1**，
+   都远高于正文 4.5:1 线。桌面档逐项未变：编号/提示 `display:none`、链接仍是 `980px` 胶囊、汉堡隐藏、
+   `.nav__links` 回到 `static`。`Runtime.exceptionThrown` 0 条。
+7. ⚠️ **顺带发现、未处理**：Showreel 的几何图案那一段（首屏 0~2s 附近）让 hero 的
+   "苏其辉 / 联系我"几乎读不出来 —— 这是第九轮"视频上不加任何遮罩"的既定取舍撞上了这段素材，
+   不是这轮引入的。真要治，最小改动是给 hero 文字块单独垫一层径向墨斑（不动视频本身），
+   需要用户先点头。

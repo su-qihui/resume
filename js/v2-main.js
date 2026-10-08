@@ -111,17 +111,24 @@
   }
 
   if (burger && navLinks) {
-    burger.addEventListener("click", function () {
-      var open = navLinks.classList.toggle("is-open");
+    var scrim = document.getElementById("navScrim");
+    // is-open 挂在 .nav 上：抽屉、遮罩、汉堡三处样式都由它驱动，状态只有一份
+    function setMenu(open) {
+      nav.classList.toggle("is-open", open);
+      navLinks.classList.toggle("is-open", open);   // 兼容旧选择器
       burger.classList.toggle("is-open", open);
       burger.setAttribute("aria-expanded", String(open));
+      burger.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+    }
+    burger.addEventListener("click", function () {
+      setMenu(!nav.classList.contains("is-open"));
+    });
+    if (scrim) scrim.addEventListener("click", function () { setMenu(false); });
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.classList.contains("is-open")) setMenu(false);
     });
     navLinks.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () {
-        navLinks.classList.remove("is-open");
-        burger.classList.remove("is-open");
-        burger.setAttribute("aria-expanded", "false");
-      });
+      a.addEventListener("click", function () { setMenu(false); });
     });
   }
 

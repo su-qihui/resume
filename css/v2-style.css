@@ -162,6 +162,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .nav__burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav__burger.is-open span:nth-child(2) { opacity: 0; }
 .nav__burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* 抽屉里的章节编号 / 海外托管提示：只在手机端出现（桌面是横排胶囊，塞不进去） */
+.nav__link-num, .nav__note { display: none; }
+/* 抽屉背后的遮罩：手机端 .nav.is-open 时才现身，点它关闭菜单 */
+.nav-scrim {
+  position: fixed; inset: 0; z-index: 99;
+  background: rgba(8,9,12,.34);
+  opacity: 0; visibility: hidden;
+  transition: opacity .28s ease, visibility .28s;
+}
+.footer__note { flex: 0 0 100%; margin-top: 2px; font-size: 0.82rem; line-height: 1.6; opacity: .82; }
 
 /* =========================================================
    Hero 首屏
@@ -225,14 +235,18 @@ section.on-video { background: rgba(6,7,10,.30); }
 .hero__eyebrow, .hero__en, .hero__role, .hero__tagline {
   text-shadow: 0 0 2px rgba(0,0,0,.95), 0 1px 3px rgba(0,0,0,.85), 0 3px 16px rgba(0,0,0,.7);
 }
-/* 顶部导航未吸顶时（只在首屏出现）压在深色视频上，墨色同步转浅 */
-.nav:not(.is-scrolled) {
-  --text: #f5f6fa; --text-2: rgba(245,246,250,.72);
-  color: var(--text);  /* 同理：.nav__name 无自身 color，继承自这里 */
-}
-.nav:not(.is-scrolled) .nav__link {
-  background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+/* 顶部导航未吸顶时（只在首屏出现）压在深色视频上，墨色同步转浅。
+   ⚠️ 只给桌面：手机端顶部栏现在是常驻玻璃（见 ≤768px 那组），底子不透明了，
+   再套浅墨就会在白玻璃上糊成一片，所以手机端要走主题自己的墨色。 */
+@media (min-width: 769px) {
+  .nav:not(.is-scrolled) {
+    --text: #f5f6fa; --text-2: rgba(245,246,250,.72);
+    color: var(--text);  /* 同理：.nav__name 无自身 color，继承自这里 */
+  }
+  .nav:not(.is-scrolled) .nav__link {
+    background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+  }
 }
 /* 首屏头像已移除（原引用 headshot.webp 线上 404 导致破图） */
 .hero__eyebrow { font-size: 0.85rem; letter-spacing: 0.3em; color: var(--text-2); margin-bottom: 20px; }
@@ -657,13 +671,9 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
 }
 @media (max-width: 768px) {
   body { font-size: 16px; }
-  .nav__links {
-    position: fixed; inset: 56px 0 auto 0; flex-direction: column; gap: 0;
-    background: var(--nav-bg); backdrop-filter: blur(20px); padding: 10px 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15); transform: translateY(-120%); transition: transform 0.35s ease;
-  }
-  .nav__links.is-open { transform: translateY(0); }
-  .nav__link { padding: 14px 24px; border-radius: 0; }
+  /* 手机端顶部栏与目录抽屉的全部样式在文件末尾「⑨ 手机端导航」那一节
+     （放最后是为了盖过玻璃层的 .nav.is-scrolled 规则，不用靠 !important）。
+     这里只留汉堡按钮的显隐。 */
   .nav__burger { display: flex; }
   .about__stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   /* 作品集手机端改单列大图：两列实测画面只有 169x95（390 视口扣内边距和 16px 列间距再除以 2），
@@ -958,8 +968,7 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
   /* 涟漪层 z-index 不遮挡 fixed 元素 */
   .theme-ripple { z-index: 9998; }
 
-  /* 导航：确保汉堡菜单在顶层 */
-  .nav__links.is-open { z-index: 10002; }
+  /* 抽屉与遮罩的层级在文件末尾「⑨ 手机端导航」一节统一处理 */
 }
 
 /* 超窄屏（≤480px）：装备区更紧凑 */
@@ -1277,4 +1286,102 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
   [data-theme="dark"] {
     --glass-ink: #f5f5f7; --glass-ink-2: #a1a1a6; --glass-border-soft: #2a2a2c;
   }
+}
+
+/* =========================================================
+   ⑨ 手机端导航：常驻液态玻璃 + 目录式抽屉（浅色 / 深色各一套）
+   放在文件最末尾是为了盖过玻璃层的 .nav.is-scrolled 等规则，不用堆 !important。
+   抽屉里那串 01/02/04/05/06/08 不是新发明的装饰：页面上每个区块本来就有
+   「01 — 关于」这样的编号，菜单里复用它等于提前告诉用户"点了会落到哪一节"。
+   ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* 9.1 顶部栏：手机端常驻玻璃（不再只有吸顶后才有底子） */
+  .nav,
+  .nav.is-scrolled {
+    background: rgba(255, 255, 255, var(--glass-alpha-nav));
+    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-sat));
+    backdrop-filter: blur(18px) saturate(var(--glass-sat));
+    border-bottom: 1px solid var(--glass-hairline);
+    box-shadow: 0 6px 24px rgba(16, 24, 40, .08), inset 0 1px 0 var(--glass-highlight);
+  }
+  /* 深色必须换成不透光的深底。玻璃层原本那套是「页面纯黑 + 白玻璃 .10」，
+     可顶部栏底下是 Showreel 视频，片里 10.28s 有一帧整幅白闪（meanY 235）——
+     白玻璃叠白闪，浅墨就糊成一片读不出了。 */
+  [data-theme="dark"] .nav,
+  [data-theme="dark"] .nav.is-scrolled {
+    background: rgba(10, 11, 14, .72);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .07);
+  }
+
+  /* 9.2 抽屉：浮起的玻璃片，左右留白、圆角 16px（不再贴满宽的旧式下拉） */
+  .nav__links {
+    position: fixed; top: 64px; left: 12px; right: 12px; z-index: 10002;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 6px; border-radius: 16px;
+    background: rgba(255, 255, 255, .86);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid var(--glass-hairline);
+    box-shadow: 0 18px 44px rgba(16, 24, 40, .18), inset 0 1px 0 var(--glass-highlight);
+    max-height: calc(var(--vport-h, 100svh) - 84px);
+    overflow-y: auto; overscroll-behavior: contain;
+    transform-origin: 50% 0;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(-10px) scale(.98);
+    transition: opacity .22s ease, transform .32s cubic-bezier(.22, .61, .36, 1), visibility .32s;
+  }
+  .nav.is-open .nav__links {
+    opacity: 1; visibility: visible; pointer-events: auto; transform: none;
+  }
+  [data-theme="dark"] .nav__links {
+    background: rgba(18, 20, 26, .90);
+    border-color: rgba(255, 255, 255, .10);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .08);
+  }
+
+  /* 9.3 行：左名称右编号，行与行之间是内缩细线（不是左侧色条，也不是卡片） */
+  .nav__link {
+    position: relative; display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; padding: 13px 14px; border-radius: 11px;
+    font-size: 1.02rem; color: var(--glass-ink);
+    background: none; border: none; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .nav__link:not(:first-child)::before {
+    content: ''; position: absolute; left: 14px; right: 14px; top: -1px; height: 1px;
+    background: var(--glass-hairline);
+  }
+  .nav__link-num {
+    display: block; font-size: .72rem; letter-spacing: .1em;
+    font-variant-numeric: tabular-nums; color: var(--glass-ink-2);
+  }
+  /* 触屏没有 hover，但桌面系的 :hover 规则会在点完之后黏住，这里一律取消；
+     按下反馈交给 :active。 */
+  .nav__link:hover { background: none; transform: none; color: var(--glass-ink); }
+  .nav__link:active { background: rgba(127, 127, 127, .16); }
+  .nav__link.active { background: var(--accent-soft); color: var(--accent); }
+  .nav__link.active .nav__link-num { color: var(--accent); opacity: .8; }
+
+  /* 9.4 抽屉底部那行海外托管提示 */
+  .nav__note {
+    display: block; margin: 2px 2px 0; padding: 10px 12px 4px;
+    border-top: 1px solid var(--glass-hairline);
+    font-size: .74rem; line-height: 1.55; color: var(--glass-ink-2);
+  }
+
+  /* 9.5 逐行错开入场（8 个子元素：7 条链接 + 1 行提示） */
+  @keyframes nav-row-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .nav.is-open .nav__link, .nav.is-open .nav__note {
+    animation: nav-row-in .32s cubic-bezier(.22, .61, .36, 1) backwards;
+  }
+  .nav.is-open .nav__link:nth-child(2) { animation-delay: .03s; }
+  .nav.is-open .nav__link:nth-child(3) { animation-delay: .06s; }
+  .nav.is-open .nav__link:nth-child(4) { animation-delay: .09s; }
+  .nav.is-open .nav__link:nth-child(5) { animation-delay: .12s; }
+  .nav.is-open .nav__link:nth-child(6) { animation-delay: .15s; }
+  .nav.is-open .nav__link:nth-child(7) { animation-delay: .18s; }
+  .nav.is-open .nav__note { animation-delay: .21s; }
+
+  /* 9.6 遮罩：点它关抽屉。压在内容之上、导航之下（.nav 是 100）。 */
+  .nav.is-open ~ .nav-scrim { opacity: 1; visibility: visible; }
 }
