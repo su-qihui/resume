@@ -755,3 +755,11 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    ⚠️ 坑：`Emulation.setTouchEmulationEnabled({enabled:true})` 会**强制把 `hover` 改写成 none**，
    所以"谎报 hover 的手机"这一档在 CDP 里造不出来；而且 `enabled:false` 之后 `maxTouchPoints` 仍是 10（不清零），
    想测桌面档必须连 `mobile:false` 一起给，否则会被上一阶段的残留骗到。
+
+8. **线上复测抓到两个本地没复现的问题**（同一份脚本，本地绿、线上红 —— 慢网络把时序差暴露出来了）：
+   ① `sync()` 为了"关掉灯箱后能恢复"放开暂停判断之后，**灯箱还开着时 500ms 停留计时器一到又把内联视频拉起来**，
+   实测 `totalPlaying:2`。补 `lightboxOpen()` 闸门：`sync()` 第一行 `if (lightboxOpen()) return;`。
+   ② "关掉灯箱后恢复自动播"原来是**靠用户正好又滚一下**触发 IO 才成立（第二档就没恢复）。改成 `closeLb()` 主动调 `phoneResync()`（`setupPhoneAutoPlay` 里赋值的闭包，400ms 后补一次 `sync()`）。
+   逐状态验证（每档重新导航）：停留后 `paused:false centerOff:-58` → 灯箱开着 `paused:true` → **刚关灯箱就自己恢复 `paused:false`、currentTime 0.4→0.94 在走** → 再滑 300 切到下一张（旧卡 -358 停、新卡 -82 播）。
+   ⚠️ 测试脚本自己的坑：同一个页面里连跑两轮"点开→关闭→再滑"会互相污染状态，报出假失败；每轮必须重新 `Page.navigate`。这次就是先被它骗了一次。
+9. 版本号最终：CSS `neo41`，JS `neo15`（neo13 修主体 → neo14 加灯箱闸门 → neo15 加关灯箱后的主动补同步）。

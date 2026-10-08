@@ -574,6 +574,8 @@
     var lb = document.getElementById('lightbox');
     return !!(lb && lb.classList.contains('is-open'));
   }
+  // 关掉灯箱后由它主动补一次同步，不靠"用户正好又滚了一下"才触发 IntersectionObserver
+  var phoneResync = null;
 
   function setupHoverPlay(imgEl) {
     imgEl.addEventListener('mouseenter', function () { inlinePlay(imgEl); });
@@ -632,6 +634,10 @@
       }, 500);
     }, { threshold: [0, 0.6, 1] });
     imgEls.forEach(function (el) { io.observe(el); });
+    phoneResync = function () {
+      clearTimeout(dwell);
+      dwell = setTimeout(function () { if (gateOpen()) sync(); }, 400);
+    };
     if (conn && conn.addEventListener) {
       conn.addEventListener('change', function () {
         if (!gateOpen() && playing) { inlineStop(playing); playing = null; }
@@ -783,6 +789,7 @@
     lb.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
     lbStage.innerHTML = "";
+    if (phoneResync) phoneResync();
   }
   function navLb(dir) {
     if (!currentList.length) return;
