@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第十九轮）
+> 更新日期：2026-10-08（第二十轮）
 
 ## 1. 一句话定位
 
@@ -95,7 +95,7 @@
 | 作品卡即播（桌面悬停 / 手机停留） | 同一套 `inlinePlay/inlineStop(imgEl)`，状态挂在 `imgEl._ip`（`{vid,bar,fill,timer,hideBar}`），首次才建 `<video class="card__vid">`；分流开关是 `isTouchLike` | `preload="none"` + 首次触发才赋 src；淡入盖封面、`.card__play` 隐掉。**慢网才出进度条**：起播挂 260ms 定时器 → `.card__buf.is-on`，`playing`/停止时撤掉，宽度取 `buffered.end/duration`。桌面绑 `mouseenter/leave`；触屏走 `setupPhoneAutoPlay()`：IO 阈值 0.6 收集在屏卡 → **首次起播要停留 500ms，已在播则切下一张立即生效** → 全站只播离视口中线最近的一张，切换先 `inlineStop` 旧的。`navigator.connection` 的 `saveData` 或 `effectiveType` 含 2g/3g 时整套闸住，退回点卡片开灯箱，并监听 `connection.change`。**`openLb()` 第一件事是 `stopAllInline()`**，否则卡片面和灯箱面一起出声；`reduceMotion` 下整套不启用 |
 | 触屏判定 `isTouchLike` | `(hover:none)` ‖ `(pointer:coarse)` ‖ `(max-width:768px) && maxTouchPoints>0` | **只认 `(hover:none)` 不够**：三星浏览器报有 hover，点击补发的 mouseenter 会让卡片视频和灯箱视频一起播。第三条**必须带宽度条件**，否则带触摸屏的笔记本（`maxTouchPoints=10`）会被误判成手机，桌面悬停播放就没了。3D 倾斜同样用 `!isTouchLike` |
 | 平滑滚动 | `html { scroll-behavior: smooth }` **只写在 `@media (min-width: 769px)` 里** | 全局挂会让安卓地址栏收起时浏览器自己的滚动修正变成"往上跳一段"的动画（三星复现、夸克不复现）。手机端锚点跳转瞬时到位 |
-
+| 视口高度锁 `--vport-h` | JS 开页时把 `innerHeight` 写成 px 变量，`resize` 里**只有宽度变了才重量**；`.hero min-height`、手机端 `.caps__stack padding-bottom`、`.section / .caps__head` 的 `clamp(64px, 10vh, 120px)` 三处都改读 `var(--vport-h, 100svh)` | **任何留在文档流里的 `vh/svh` 都会让安卓/ iOS 地址栏收起时整页位移**（实测 94px，就是「往下滑却往上跳」）。锁只对触屏生效，桌面拖窗口高度该变还是要变。背景视频那一层反过来用 `100dvh` 跟随长高填满——它在 absolute 的 `.bg-stage` 里，不在流中，推不动内容 |
 性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
 
 ## 6. 常用改动指引
@@ -763,3 +763,32 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    逐状态验证（每档重新导航）：停留后 `paused:false centerOff:-58` → 灯箱开着 `paused:true` → **刚关灯箱就自己恢复 `paused:false`、currentTime 0.4→0.94 在走** → 再滑 300 切到下一张（旧卡 -358 停、新卡 -82 播）。
    ⚠️ 测试脚本自己的坑：同一个页面里连跑两轮"点开→关闭→再滑"会互相污染状态，报出假失败；每轮必须重新 `Page.navigate`。这次就是先被它骗了一次。
 9. 版本号最终：CSS `neo41`，JS `neo15`（neo13 修主体 → neo14 加灯箱闸门 → neo15 加关灯箱后的主动补同步）。
+**2026-10-08（第二十轮：下滑回跳的真凶不是 scroll-behavior，是文档流高度被视口高牵着走）**
+第十九轮那版把 `scroll-behavior` 收到桌面之后，用户拿**三星 + iPhone 6s Plus 系统浏览器**复测，仍然跳。
+两条新线索：夸克不跳（它不触发地址栏收起全屏），跳的两个都是会收起地址栏的。用户给的思路是
+「收起地址栏时对背景视频放大填满」。
+
+1. **量出来的位移链**（CDP 把视口高从 844 改到 916、`scrollY` 固定不动）：
+   `hero高 +72`、`#capabilities 视口内 top +87`、`.portfolio +158`、`.contact +202`、四张堆叠卡各 `+93~94`。
+   也就是**同一个滚动位置下整页内容往下挪了约 94px**，人眼看到的就是「往上跳一段」。
+2. **三处把文档流高度绑在视口高上**（这才是根因，`scroll-behavior` 只是放大器）：
+   ① `.hero { min-height: 100vh/100svh }`；② 手机端 `.caps__stack { padding-bottom: calc(50vh+40px) }`；
+   ③ **`.section { padding: clamp(64px, 10vh, 120px) 0 }`** —— 每个区块上下内边距都是 10vh，
+   七个区块累加正好是修完前两条后剩下的那 101px（`.caps__head` 里还有一条同样的）。
+   这条最隐蔽，因为它藏在 `clamp()` 中间项里，`grep "vh"` 一眼扫过去容易漏。
+3. **修法：视口高度锁**。JS 开页时把 `innerHeight` 写成 `--vport-h`（px），
+   `resize` 里**只在宽度变化（转屏）时重量**；地址栏收起不改宽度 → 文档流全程不变。
+   `min-height` / `padding-bottom` / `clamp` 三处全部改读 `var(--vport-h, 100svh)`。
+   ⚠️ **锁只对触屏生效**（`!isTouchLike` 时桌面照常跟随窗口）—— 桌面用户拖窗口改高度时 10vh 内边距本来就该变。
+   堆叠卡挤扁的 `k` 值也从 `window.innerHeight` 换成 `vportH()`，否则同一帧会整体偏。
+4. **背景视频改用 `100dvh`**（`.bg-stage__pin`）：地址栏收起时它**跟着长高填满屏幕**，正是用户要的效果。
+   它不在文档流里（父级 `.bg-stage` 是 absolute、高度由 JS 量 02 下沿写死 px），所以它变高推不动任何内容。
+5. 版本号：CSS `neo41 → neo42`，JS `neo15 → neo16`。
+6. **验证（拿同一把尺子复量）**：视口 844→916 且 `scrollY` 不动 ——
+   `文档高差 0`、`.hero / #capabilities / .portfolio / .contact` 视口内 top **位移全 0**、四张堆叠卡 **0,0,0,0**；
+   同时 `--vport-h` 稳在 `844px`、`.bg-stage__pin` 高度 844→**916**（视频确实长高填满）、`heroBottom` 两次都是 544。
+   桌面档反向确认没被锁死：窗口 900→1100 时 `--vport-h` 跟着变 `1100px`、区块内边距 `90px → 110px`。
+   回归全过：停留即播 ✓、点灯箱不再双播 ✓、关灯箱后恢复 ✓、谎报 hover 那档仍走停留即播 ✓、
+   桌面悬停播放与 3D 倾斜 ✓、`scrollBehavior` 1440=smooth / 390=auto ✓、`Runtime.exceptionThrown` 0 条。
+7. ⚠️ 仍未在真机验证：iPhone 上拖进度条（`pages.dev` 不支持 Range 的已知后果）。
+   用户手上那台 6s Plus 系统偏老，能播不足以证明新系统的行为。

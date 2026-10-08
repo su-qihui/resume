@@ -9,6 +9,30 @@
   var isMobileViewport = window.matchMedia("(max-width: 768px)").matches;  // 手机端（≤768px）：关掉若干重效果
   var root = document.documentElement;
 
+  /* ---------- 视口高度锁（修"往下滑却往上跳一段"） ----------
+     会收起地址栏的浏览器（iOS Safari、三星浏览器）在滚动中把可视高改变一次。首屏
+     min-height 和 02 堆叠区的钉住行程都按视口高算，于是**文档流高度**跟着变，
+     同一个 scrollY 下整页内容往下挪 —— 看着就是往上跳（实测 844→916：作品集位移 158px、
+     四张堆叠卡各 93~94px）。做法：把首屏高度锁成开页那一刻量到的 px，**只在宽度变化
+     （转屏）时重量**；地址栏收起不改宽度，所以文档流全程不变。
+     背景视频那一层改用 dvh 跟着长高填满屏幕 —— 它不在文档流里，不会造成位移。 */
+  var isTouchLike = window.matchMedia('(hover: none)').matches
+    || window.matchMedia('(pointer: coarse)').matches
+    || (window.matchMedia('(max-width: 768px)').matches && (navigator.maxTouchPoints || 0) > 0);
+  var vportLockW = window.innerWidth;
+  var vportLockH = window.innerHeight;
+  function applyVportLock() { root.style.setProperty('--vport-h', vportLockH + 'px'); }
+  function vportH() { return vportLockH; }
+  applyVportLock();
+  window.addEventListener('resize', function () {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (!isTouchLike) {                       // 桌面没有"收起地址栏"这回事，窗口照常跟着变
+      vportLockW = w; vportLockH = h; applyVportLock(); capsTops = null; return;
+    }
+    if (w === vportLockW) return;             // 触屏且宽度没变 = 地址栏收起，一律不动
+    vportLockW = w; vportLockH = h; applyVportLock(); capsTops = null;
+  }, { passive: true });
+
   /* ---------- 主题切换（圆形扩散 Ripple） ---------- */
   var themeToggle = document.getElementById("themeToggle");
   var ripple = document.querySelector('.theme-ripple');
@@ -480,7 +504,7 @@
   function updateCapsSquash() {
     if (!capsSquashOn) return;
     if (!capsTops) measureCaps();
-    var vh = window.innerHeight, y = window.pageYOffset;
+    var vh = vportH(), y = window.pageYOffset;   // 用锁住的视口高，地址栏收起时这一帧才不会整体偏
     for (var i = 0; i < capsCards.length; i++) {
       var el = capsCards[i];
       var k = (capsTops[i] - y - CAPS_PIN) / (vh - CAPS_PIN);   // 1=刚进视口底，0=到钉住位
@@ -645,13 +669,8 @@
     }
   }
 
-  // 触屏判定不能只信 `(hover: none)`：三星浏览器会报有 hover，于是点击时浏览器补发的
-  // mouseenter 让卡片视频和灯箱视频一起播，而"停留即播"永远不触发。
-  // 三条：① hover:none；② pointer:coarse；③ 手机宽度下还有触点（兜住把前两条都谎报的浏览器）。
-  // ③ 必须带宽度条件 —— 带触摸屏的笔记本 maxTouchPoints 是 10，不加宽度会把桌面悬停播放误关掉。
-  var isTouchLike = window.matchMedia('(hover: none)').matches
-    || window.matchMedia('(pointer: coarse)').matches
-    || (window.matchMedia('(max-width: 768px)').matches && (navigator.maxTouchPoints || 0) > 0);
+  // isTouchLike 定义在文件开头「视口高度锁」那一节 —— 三星浏览器谎报 hover 是它的由来，
+  // 第三条带手机宽度条件是为了不误伤带触摸屏的笔记本。
 
   // 动态给所有portfolio cards添加overlay + interactive class
   var phoneVideoCards = [];

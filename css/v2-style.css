@@ -67,7 +67,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ---------- 布局工具 ---------- */
 .container { width: min(1200px, 92vw); margin-inline: auto; }
-.section { padding: clamp(64px, 10vh, 120px) 0; position: relative; scroll-margin-top: 60px; }
+.section { padding: clamp(64px, 10vh, 120px) 0; padding: clamp(64px, calc(var(--vport-h, 100svh) * 0.10), 120px) 0; position: relative; scroll-margin-top: 60px; }
 .section__eyebrow {
   font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--accent); font-weight: 600; margin-bottom: 14px;
@@ -167,7 +167,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    Hero 首屏
    ========================================================= */
 .hero {
-  position: relative; z-index: 1; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
+  position: relative; z-index: 1; min-height: 100vh; min-height: 100svh;
+  min-height: var(--vport-h, 100svh);   /* 由 JS 锁成开页那一刻的视口高；地址栏收起不再改文档流高度 */
+  display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center; overflow: hidden;
   padding: 100px 20px;  /* 上下对称：首屏文字块的光学中心才落在视口正中（原来 0 底边距会压低 50px） */
 }
@@ -181,7 +183,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   z-index: 0; background: #08090c;  /* 视频未就位/播放失败时的深色底，保证浅色墨始终可读 */
   pointer-events: none;
 }
-.bg-stage__pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+/* 视频层用 dvh（动态视口高）：地址栏收起时它跟着长高、填满屏幕（用户要求）。
+   它不在文档流里（父级 .bg-stage 是 absolute，高度由 JS 量 02 下沿写死 px），
+   所以这一层变高不会推动任何内容 —— 首屏 .hero 用的是锁住的 --vport-h，位移为零。 */
+.bg-stage__pin { position: sticky; top: 0; height: 100vh; height: 100svh; height: 100dvh; }
 .bg-stage__end {
   position: absolute; left: 0; right: 0; bottom: 0; height: 34vh;
   background: linear-gradient(180deg, rgba(6,7,10,0) 0%, var(--bg) 92%);
@@ -381,7 +386,7 @@ section.on-video { background: rgba(6,7,10,.30); }
   --caps-pin: 74px;
   --caps-gap: 14px;
 }
-.caps__head { text-align: center; padding: clamp(64px, 10vh, 120px) 20px 46px; }
+.caps__head { text-align: center; padding: clamp(64px, 10vh, 120px) 20px 46px; padding: clamp(64px, calc(var(--vport-h, 100svh) * 0.10), 120px) 20px 46px; }
 .caps__head .section__title { margin-bottom: 0; }
 .caps__stack {
   width: min(980px, 82vw); margin-inline: auto;
@@ -672,7 +677,7 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
      钉住位以下还有 782px，放得下了（当年"一屏放不下 68vh"的理由已经不成立）。
      图文改成上下排，图在上；钉住位从 74px 收到 62px（手机导航 56px）。 */
   .caps { --caps-pin: 62px; }
-  .caps__stack { width: 92vw; padding-bottom: calc(50vh + 40px); padding-bottom: calc(50svh + 40px); }
+  .caps__stack { width: 92vw; padding-bottom: calc(50vh + 40px); padding-bottom: calc(50svh + 40px); padding-bottom: calc(var(--vport-h, 100svh) * 0.5 + 40px); }
   .caps__card {
     position: sticky; top: var(--caps-pin); grid-template-columns: 1fr; gap: 16px;
     min-height: 0; margin-bottom: 20px; padding: 14px;
