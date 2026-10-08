@@ -570,6 +570,10 @@
     var els = document.querySelectorAll('.card__img.is-playing');
     for (var i = 0; i < els.length; i++) inlineStop(els[i]);
   }
+  function lightboxOpen() {
+    var lb = document.getElementById('lightbox');
+    return !!(lb && lb.classList.contains('is-open'));
+  }
 
   function setupHoverPlay(imgEl) {
     imgEl.addEventListener('mouseenter', function () { inlinePlay(imgEl); });
@@ -601,6 +605,7 @@
       return best;
     }
     function sync() {
+      if (lightboxOpen()) return;   // 灯箱开着时不许再拉起内联播放，否则两个声音一起响
       var t = nearestToCenter();
       // 只有"还是同一张且它仍在播"才跳过；灯箱会把内联视频停掉，这时要能重新起播
       if (t === playing && t && t._ip && !t._ip.vid.paused) return;
