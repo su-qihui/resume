@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第十八轮）
+> 更新日期：2026-10-08（第十九轮）
 
 ## 1. 一句话定位
 
@@ -92,7 +92,9 @@
 | 时间线展开 | **点 `.tl__item` 任意处** → `.is-open`（`.tl__toggle` 只当箭头 + 键盘焦点，`aria-expanded` 由 JS 同步） | `max-height` 0 → 200px；展开后点 `.tl__detail` 内的文字不收起（可选中） |
 | 作品集筛选 | `.tab[data-filter]` → `.gallery[data-group]` | 切换时 80ms 错位入场 |
 | 灯箱 | `[data-lightbox]` = `image` / `video` / `gear` / `solo` | Esc 关、←→ 切换、点遮罩关；`video` 类型自动 play；`solo` 为单图查看（不参与任何图库） |
-| 作品卡即播（桌面悬停 / 手机停留） | 同一套 `inlinePlay/inlineStop(imgEl)`，状态挂在 `imgEl._ip`（`{vid,bar,fill,timer,hideBar}`），首次才建 `<video class="card__vid">` | `preload="none"` + 首次触发才赋 src；淡入盖封面、`.card__play` 隐掉。**慢网才出进度条**：起播挂 260ms 定时器 → `.card__buf.is-on`，`playing`/停止时撤掉，宽度取 `buffered.end/duration`。桌面 `mouseenter/leave` 直接绑；触屏（`hover: none`）走 `setupPhoneAutoPlay()`：IO 阈值 0.6 收集在_view 卡 → **停留 500ms** 才起播 → 只播 `_ip` 状态里离视口中线最近的那一张，切换时先 `inlineStop` 旧的。`navigator.connection.saveData` 或 `effectiveType` 含 2g/3g 时闸住不播，并监听 `connection.change`。`reduceMotion` 下整套不启用，点卡片仍走灯箱 |
+| 作品卡即播（桌面悬停 / 手机停留） | 同一套 `inlinePlay/inlineStop(imgEl)`，状态挂在 `imgEl._ip`（`{vid,bar,fill,timer,hideBar}`），首次才建 `<video class="card__vid">`；分流开关是 `isTouchLike` | `preload="none"` + 首次触发才赋 src；淡入盖封面、`.card__play` 隐掉。**慢网才出进度条**：起播挂 260ms 定时器 → `.card__buf.is-on`，`playing`/停止时撤掉，宽度取 `buffered.end/duration`。桌面绑 `mouseenter/leave`；触屏走 `setupPhoneAutoPlay()`：IO 阈值 0.6 收集在屏卡 → **首次起播要停留 500ms，已在播则切下一张立即生效** → 全站只播离视口中线最近的一张，切换先 `inlineStop` 旧的。`navigator.connection` 的 `saveData` 或 `effectiveType` 含 2g/3g 时整套闸住，退回点卡片开灯箱，并监听 `connection.change`。**`openLb()` 第一件事是 `stopAllInline()`**，否则卡片面和灯箱面一起出声；`reduceMotion` 下整套不启用 |
+| 触屏判定 `isTouchLike` | `(hover:none)` ‖ `(pointer:coarse)` ‖ `(max-width:768px) && maxTouchPoints>0` | **只认 `(hover:none)` 不够**：三星浏览器报有 hover，点击补发的 mouseenter 会让卡片视频和灯箱视频一起播。第三条**必须带宽度条件**，否则带触摸屏的笔记本（`maxTouchPoints=10`）会被误判成手机，桌面悬停播放就没了。3D 倾斜同样用 `!isTouchLike` |
+| 平滑滚动 | `html { scroll-behavior: smooth }` **只写在 `@media (min-width: 769px)` 里** | 全局挂会让安卓地址栏收起时浏览器自己的滚动修正变成"往上跳一段"的动画（三星复现、夸克不复现）。手机端锚点跳转瞬时到位 |
 
 性能约定（改动时请保持）：滚动只挂 1 个监听 + `rAF` 节流 + `{passive:true}`；只动 `transform`/`opacity`；Observer 触发后 `unobserve`。
 
@@ -719,3 +721,37 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    ⚠️ 量法两个坑：`Network.loadingFinished` 对**没下完**的视频请求永远不来，字节必须用 `dataReceived` 累加；
    `performance.getEntriesByType('resource').transferSize` 同样只记已完成的请求，用它量流式视频会严重少报
    （第一版就是这么读出"7.3 MB"的假数）。
+
+**2026-10-08（第十九轮：安卓两处真机问题——下滑回跳 + 触屏没自动播还双重播放）**
+用户拿安卓真机测了 `suqihui.pages.dev`，反馈两条：① 夸克正常，**三星浏览器往下滑会往上跳一段**；
+② **手机端停留即播没生效，点击变成"卡片面 + 灯箱面一起播"**，要求做成 B 站那种滑到哪面播哪面。
+
+1. **下滑回跳的根因是全局 `html { scroll-behavior: smooth }`**。安卓地址栏收起时浏览器会自己修正滚动偏移，
+   这个修正被 CSS 平滑化之后就成了一次"往上跳"的动画 —— 夸克不复现、三星复现，正是浏览器对这条属性的处理差异。
+   改成只在桌面生效：`@media (min-width: 769px) { html { scroll-behavior: smooth; } }`。
+   实测 `getComputedStyle(html).scrollBehavior`：**1440 = `smooth`、390 = `auto`**。
+   顺手把 02 区两处高度单位补了稳定档（`min-height:48vh → +48svh`、手机端 `padding-bottom:calc(50vh+40px) → +50svh`），
+   这样即使某浏览器让 `vh` 跟着可视高变，滚动中途整段也不会变长。
+   ⚠️ 我用 CDP 改 `innerHeight` 量到过"02 区下移 94px / 文档高 +209px"，但**那不能直接当成他看到的跳幅**：
+   真机上 `vh` 未必随地址栏变（Chrome 系 `vh`=lvh 是稳定的），这个量法只证明"如果变会偏多少"。
+2. **触屏判定放宽**。原来只认 `(hover: none)`，而三星浏览器报"有 hover"，于是走了桌面的
+   `mouseenter` 分支 —— 触屏点击会补发 mouseenter，所以"点一下卡片视频开始播 + 同时灯箱也播"，
+   而停留即播永远不触发。现在三条取或：`(hover:none)` ‖ `(pointer:coarse)` ‖ **`(max-width:768px) && maxTouchPoints>0`**。
+   ⚠️ 第三条**必须带宽度条件**：带触摸屏的笔记本 `navigator.maxTouchPoints` 是 10，不带宽度就会把桌面的悬停播放误关掉。
+   同理 3D 倾斜的开关也从 `!(hover:none)` 换成 `!isTouchLike`。
+3. **灯箱起来前先停掉所有内联视频**：新增 `stopAllInline()`（遍历 `.card__img.is-playing` 调 `inlineStop`），
+   在 `openLb()` 里 `renderLb()` 之前调用。这条与检测无关，就算浏览器把两条媒体查询都谎报了，双重播放也不会再出现。
+4. **关掉灯箱后要能恢复自动播**：`sync()` 原来 `if (t === playing) return;` 会因为"还是那张但已被停掉"而永远不再起播。
+   改成 `if (t === playing && t && t._ip && !t._ip.vid.paused) return;`。
+5. **跟手感**：从"没在播"到第一次起播仍要停留 500ms（防快速划过连环下载），
+   但**一旦信息流已经在播**，滑到下一张立刻切换，不再等 500ms —— 这才是 B 站信息流的感觉。
+6. 版本号：CSS `neo40 → neo41`，JS `neo12 → neo13`。
+7. **验证（headless Chrome + CDP，四档设备画像）**：
+   停留即播在 `hover:none+coarse`、`hover:hover+coarse`、`390+maxTouchPoints=5` 三档下都成立，
+   **同时在播峰值始终 1**；点卡片开灯箱后 `inlinePlaying=0 / isPlayingClass=0 / lbVideos=1`（全场只剩灯箱在播）；
+   `#lbClose` 关掉后 `lbOpen=false`，再滑到下一张 `inlinePlaying=1` 恢复；
+   桌面档（1440、无触屏）`mouseenter` 建视频并播放 ✓、`--card-ry=-1.12deg` 3D 倾斜仍生效 ✓；
+   `Runtime.exceptionThrown` 0 条。
+   ⚠️ 坑：`Emulation.setTouchEmulationEnabled({enabled:true})` 会**强制把 `hover` 改写成 none**，
+   所以"谎报 hover 的手机"这一档在 CDP 里造不出来；而且 `enabled:false` 之后 `maxTouchPoints` 仍是 10（不清零），
+   想测桌面档必须连 `mobile:false` 一起给，否则会被上一阶段的残留骗到。

@@ -565,6 +565,12 @@
     imgEl.classList.remove('is-playing');
   }
 
+  // 灯箱起来时必须先把卡片里的内联视频全停掉，否则"展示面 + 预览面"两个声音一起播
+  function stopAllInline() {
+    var els = document.querySelectorAll('.card__img.is-playing');
+    for (var i = 0; i < els.length; i++) inlineStop(els[i]);
+  }
+
   function setupHoverPlay(imgEl) {
     imgEl.addEventListener('mouseenter', function () { inlinePlay(imgEl); });
     imgEl.addEventListener('mouseleave', function () { inlineStop(imgEl); });
@@ -596,7 +602,8 @@
     }
     function sync() {
       var t = nearestToCenter();
-      if (t === playing) return;
+      // 只有"还是同一张且它仍在播"才跳过；灯箱会把内联视频停掉，这时要能重新起播
+      if (t === playing && t && t._ip && !t._ip.vid.paused) return;
       if (playing) inlineStop(playing);
       playing = t || null;
       if (playing) inlinePlay(playing);
@@ -608,6 +615,12 @@
         else if (k >= 0) inView.splice(k, 1);
       });
       clearTimeout(dwell);
+      // 从"没在播"到起播要停留满 500ms，避免快速划过时连环下载；
+      // 但一旦已经在信息流里了，换到下一张就立刻切（B 站那种跟手感）。
+      if (playing && playing._ip && !playing._ip.vid.paused) {
+        if (gateOpen()) sync();
+        return;
+      }
       dwell = setTimeout(function () {
         if (!gateOpen()) { if (playing) { inlineStop(playing); playing = null; } return; }
         sync();
@@ -620,6 +633,14 @@
       });
     }
   }
+
+  // 触屏判定不能只信 `(hover: none)`：三星浏览器会报有 hover，于是点击时浏览器补发的
+  // mouseenter 让卡片视频和灯箱视频一起播，而"停留即播"永远不触发。
+  // 三条：① hover:none；② pointer:coarse；③ 手机宽度下还有触点（兜住把前两条都谎报的浏览器）。
+  // ③ 必须带宽度条件 —— 带触摸屏的笔记本 maxTouchPoints 是 10，不加宽度会把桌面悬停播放误关掉。
+  var isTouchLike = window.matchMedia('(hover: none)').matches
+    || window.matchMedia('(pointer: coarse)').matches
+    || (window.matchMedia('(max-width: 768px)').matches && (navigator.maxTouchPoints || 0) > 0);
 
   // 动态给所有portfolio cards添加overlay + interactive class
   var phoneVideoCards = [];
@@ -636,11 +657,11 @@
       imgEl.appendChild(overlay);
     }
     if (imgEl && isVideo && !reduceMotion) {
-      if (window.matchMedia('(hover: none)').matches) { phoneVideoCards.push(imgEl); }
+      if (isTouchLike) { phoneVideoCards.push(imgEl); }
       else { setupHoverPlay(imgEl); }
     }
     // 3D tilt hover
-    if (!reduceMotion && !window.matchMedia("(hover: none)").matches) {
+    if (!reduceMotion && !isTouchLike) {
       card.addEventListener('mousemove', function (e) {
         var r = card.getBoundingClientRect();
         var px = (e.clientX - r.left) / r.width - 0.5;
@@ -746,6 +767,7 @@
     }
     currentIndex = currentList.indexOf(btn);
     if (currentIndex < 0) currentIndex = 0;
+    stopAllInline();
     renderLb();
     lb.classList.add("is-open");
     lb.setAttribute("aria-hidden", "false");
