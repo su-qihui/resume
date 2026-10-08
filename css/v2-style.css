@@ -1295,60 +1295,87 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
    「01 — 关于」这样的编号，菜单里复用它等于提前告诉用户"点了会落到哪一节"。
    ------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  /* 9.1 顶部栏：手机端常驻玻璃（不再只有吸顶后才有底子） */
+  /* 9.1 顶部栏：手机端常驻玻璃。材质和 .card 那套一致 ——
+     半透明填充 + 140° 斜向光泽 + 顶边内高光 + 细线描边 + 双层投影，
+     只给 blur 是"糊了一层"，不是玻璃。 */
   .nav,
   .nav.is-scrolled {
-    background: rgba(255, 255, 255, var(--glass-alpha-nav));
-    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-sat));
-    backdrop-filter: blur(18px) saturate(var(--glass-sat));
+    background-color: rgba(255, 255, 255, var(--glass-alpha-nav));
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .5) 0%, var(--glass-sheen) 52%, rgba(255, 255, 255, .3) 100%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(var(--glass-bright));
+    backdrop-filter: blur(20px) saturate(190%) brightness(var(--glass-bright));
     border-bottom: 1px solid var(--glass-hairline);
-    box-shadow: 0 6px 24px rgba(16, 24, 40, .08), inset 0 1px 0 var(--glass-highlight);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 -1px 0 rgba(17, 20, 28, .05),
+      0 2px 6px rgba(16, 24, 40, .07),
+      0 10px 28px rgba(16, 24, 40, .10);
   }
-  /* 深色必须换成不透光的深底。玻璃层原本那套是「页面纯黑 + 白玻璃 .10」，
-     可顶部栏底下是 Showreel 视频，片里 10.28s 有一帧整幅白闪（meanY 235）——
-     白玻璃叠白闪，浅墨就糊成一片读不出了。 */
+  /* 深色必须换成不透光的深底。玻璃层原本那套是"页面纯黑 + 白玻璃 .10"，
+     可顶部栏底下是 Showreel 视频，片里 10.28s 有一帧整幅白闪（meanY 235），
+     白玻璃叠白闪 = 浅墨直接糊掉。深底 + 顶部一道白色内高光才有厚度。 */
   [data-theme="dark"] .nav,
   [data-theme="dark"] .nav.is-scrolled {
-    background: rgba(10, 11, 14, .72);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .07);
+    background-color: rgba(10, 11, 14, .74);
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 52%, rgba(255, 255, 255, 0) 100%);
+    border-bottom-color: rgba(255, 255, 255, .10);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .12),
+      inset 0 -1px 0 rgba(0, 0, 0, .5),
+      0 2px 6px rgba(0, 0, 0, .4),
+      0 12px 30px rgba(0, 0, 0, .5);
   }
 
-  /* 9.2 抽屉：浮起的玻璃片，左右留白、圆角 16px（不再贴满宽的旧式下拉） */
+  /* 9.2 抽屉：浮起的玻璃片。浅色原来"平"是因为只有填充没有材质三件套，
+     现在斜向光泽 + 顶边内高光 + 底边内暗线 + 紧/松两层投影一起上。 */
   .nav__links {
     position: fixed; top: 64px; left: 12px; right: 12px; z-index: 10002;
-    display: flex; flex-direction: column; gap: 2px;
+    display: flex; flex-direction: column; gap: 0;
     padding: 6px; border-radius: 16px;
-    background: rgba(255, 255, 255, .86);
-    -webkit-backdrop-filter: blur(26px) saturate(180%);
-    backdrop-filter: blur(26px) saturate(180%);
+    background-color: rgba(255, 255, 255, .88);
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .62) 0%, var(--glass-sheen) 46%, rgba(255, 255, 255, .34) 100%);
+    -webkit-backdrop-filter: blur(26px) saturate(190%);
+    backdrop-filter: blur(26px) saturate(190%);
     border: 1px solid var(--glass-hairline);
-    box-shadow: 0 18px 44px rgba(16, 24, 40, .18), inset 0 1px 0 var(--glass-highlight);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .95),
+      inset 0 -1px 0 rgba(17, 20, 28, .07),
+      0 1px 2px rgba(16, 24, 40, .10),
+      0 10px 22px rgba(16, 24, 40, .14),
+      0 26px 56px rgba(16, 24, 40, .16);
     max-height: calc(var(--vport-h, 100svh) - 84px);
     overflow-y: auto; overscroll-behavior: contain;
     transform-origin: 50% 0;
     opacity: 0; visibility: hidden; pointer-events: none;
-    transform: translateY(-10px) scale(.98);
-    transition: opacity .22s ease, transform .32s cubic-bezier(.22, .61, .36, 1), visibility .32s;
+    transform: scale(.985);
+    transition: opacity .2s ease, transform .3s cubic-bezier(.22, .61, .36, 1), visibility .3s;
   }
   .nav.is-open .nav__links {
     opacity: 1; visibility: visible; pointer-events: auto; transform: none;
   }
   [data-theme="dark"] .nav__links {
-    background: rgba(18, 20, 26, .90);
+    background-color: rgba(18, 20, 26, .92);
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 46%, rgba(255, 255, 255, 0) 100%);
     border-color: rgba(255, 255, 255, .10);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .14),
+      inset 0 -1px 0 rgba(0, 0, 0, .55),
+      0 1px 2px rgba(0, 0, 0, .45),
+      0 12px 26px rgba(0, 0, 0, .5),
+      0 28px 60px rgba(0, 0, 0, .55);
   }
 
-  /* 9.3 行：左名称右编号，行与行之间是内缩细线（不是左侧色条，也不是卡片） */
+  /* 9.3 行：左名称右编号。行高压到 44px（原来 50px 显得松，但不能再低 ——
+     44px 是 iOS/WCAG 2.5.5 的触摸目标下限），行间是内缩 14px 的细线。 */
   .nav__link {
     position: relative; display: flex; align-items: baseline; justify-content: space-between;
-    gap: 12px; padding: 13px 14px; border-radius: 11px;
-    font-size: 1.02rem; color: var(--glass-ink);
+    gap: 12px; padding: 11px 14px; border-radius: 11px;
+    font-size: 1rem; line-height: 1.35; color: var(--glass-ink);
     background: none; border: none; box-shadow: none;
     -webkit-backdrop-filter: none; backdrop-filter: none;
   }
   .nav__link:not(:first-child)::before {
-    content: ''; position: absolute; left: 14px; right: 14px; top: -1px; height: 1px;
+    content: ''; position: absolute; left: 14px; right: 14px; top: 0; height: 1px;
     background: var(--glass-hairline);
   }
   .nav__link-num {
@@ -1364,23 +1391,23 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
 
   /* 9.4 抽屉底部那行海外托管提示 */
   .nav__note {
-    display: block; margin: 2px 2px 0; padding: 10px 12px 4px;
+    display: block; margin: 2px 2px 0; padding: 9px 12px 3px;
     border-top: 1px solid var(--glass-hairline);
     font-size: .74rem; line-height: 1.55; color: var(--glass-ink-2);
   }
 
-  /* 9.5 逐行错开入场（8 个子元素：7 条链接 + 1 行提示） */
-  @keyframes nav-row-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* 9.5 逐行从右侧错开弹入（片本身只淡入，方向感交给行，避免两个方向打架） */
+  @keyframes nav-row-in { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
   .nav.is-open .nav__link, .nav.is-open .nav__note {
-    animation: nav-row-in .32s cubic-bezier(.22, .61, .36, 1) backwards;
+    animation: nav-row-in .34s cubic-bezier(.22, .61, .36, 1) backwards;
   }
-  .nav.is-open .nav__link:nth-child(2) { animation-delay: .03s; }
-  .nav.is-open .nav__link:nth-child(3) { animation-delay: .06s; }
-  .nav.is-open .nav__link:nth-child(4) { animation-delay: .09s; }
-  .nav.is-open .nav__link:nth-child(5) { animation-delay: .12s; }
-  .nav.is-open .nav__link:nth-child(6) { animation-delay: .15s; }
-  .nav.is-open .nav__link:nth-child(7) { animation-delay: .18s; }
-  .nav.is-open .nav__note { animation-delay: .21s; }
+  .nav.is-open .nav__link:nth-child(2) { animation-delay: .04s; }
+  .nav.is-open .nav__link:nth-child(3) { animation-delay: .08s; }
+  .nav.is-open .nav__link:nth-child(4) { animation-delay: .12s; }
+  .nav.is-open .nav__link:nth-child(5) { animation-delay: .16s; }
+  .nav.is-open .nav__link:nth-child(6) { animation-delay: .20s; }
+  .nav.is-open .nav__link:nth-child(7) { animation-delay: .24s; }
+  .nav.is-open .nav__note { animation-delay: .28s; }
 
   /* 9.6 遮罩：点它关抽屉。压在内容之上、导航之下（.nav 是 100）。 */
   .nav.is-open ~ .nav-scrim { opacity: 1; visibility: visible; }
