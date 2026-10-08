@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第二十四轮）
+> 更新日期：2026-10-08（第二十五轮）
 
 ## 1. 一句话定位
 
@@ -125,7 +125,7 @@
 | ~~P1~~ | ~~封面图印着「年龄 18 岁」~~ | **已修复**：换成 1.2 版封面（19 岁）并覆盖 `assets/img/resume/cover.jpg` | — |
 | P1 | 抖音链接串入分享文案 | `href="https://v.douyin.com/-5uPGKXw7kI/ 8@4.com :9pm"`，含空格与残留字符，抖音区与联系区各一处 | 换成干净短链 |
 | P2 | 6 段视频未挂载 | `douyin-03/04/05/07/08.mp4`、`school-05.mp4` 在目录里但 HTML 无引用 | 补进作品集或删除 |
-| P2 | v1 遗留文件 | `css/style.css`、`js/main.js`、`v2.html` 均未被引用 | 归档或删除 |
+| P2 | v1 遗留文件 | `css/style.css`、`js/main.js` 未被引用；**`v2.html` 虽无入口但会随站点发布** —— `suqihui.pages.dev/v2.html` 实测 200/35,680 B，里面是旧排版 + 过期简历数据（`2020.05`），与 PDF 矛盾 | 归档或删除；删前不必改别处（无站内链接指向它） |
 | P2 | 导航缺 2 个入口 | `#skills`、`#certificates` 无导航项 | 补 `nav__link` |
 | P3 | 未定义变量 | `v2-style.css` 中 `.radar-label` 用 `font-family: var(--sans)`，`--sans` 全站未定义 | 改 `var(--ff-body)` 或删该行 |
 | P3 | 死代码 | `.skills__grid`、`.skill`、`.skill__icon`、`.skill__name` 无对应 DOM | 清理 |
@@ -916,3 +916,21 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    `detail=2 toggle=2`、两条工作详情展开 `340/340`、`515/515` 无截断、点学历卡不会误开空详情；
    深色牌 alpha `.92`、opacity `.86`、牌上标签对比 **6.76:1**、雷达描边 `rgba(255,255,255,.22)`；
    浅色一侧 chip `.68` + opacity `.5` 未变。浅/深两张截图人工看过。`Runtime.exceptionThrown` 0 条。
+
+**2026-10-08（第二十五轮：站点外层与简历 PDF 统一，只差两行）**
+1. 上一轮遗留的冲突定了方向：**以简历 PDF / `JSON/苏其辉-影视后期.json` 为准**（那是实际递出去的材料，
+   也是用户让我"照搬一模一样"的那一份）。核对下来 JSON 与简历图完全一致，**站点是唯一的异类**，
+   所以只有两行需要改，其余外层字段一个没碰：
+   - 机电卡片 `tl__sub`：数字媒体技术应用 → **计算机技术应用**
+   - 齐辉卡片 `tl__date`：2020.05 — 兼职 → **2022.05 — 2026.09**
+   分隔符统一成站点风格「`.` + `—`」；JSON 里齐辉那条原本写的是 `2022/05 - 2026/09`（斜杠），
+   这是排版口径差异，不算数据不一致。
+2. **只有 `index.html` 两个字符级改动**，CSS/JS 未动 → **没有升 `?v=`**（neo47 / neo19 保持不变）。
+3. **验证**：判据先写后改，20 条断言全 PASS。核心是脚本从 DOM 抓四张卡片的 date/title/sub/meta，
+   再拿 `JSON` 的 `education[]`、`experience[]` 反向对账 —— 八条"站点 vs JSON 一致"全过，
+   四条"该不该动"分别守住（交通技师专业、交通技师起止、融媒起止、齐辉岗位未动）；
+   `git diff` 实测正好 4 行（2 增 2 删），CRLF 未被破坏（bare LF = 0）。
+4. ⚠️ **新发现的活账**：`v2.html` 是被 Cloudflare 一起发布的旧设计快照，
+   `https://suqihui.pages.dev/v2.html` 实测 **200 / 35,680 字节**，里面还带着本轮刚清掉的 `2020.05`。
+   招聘方误开这一页会看到一套过期排版 + 和简历矛盾的数据。建议从部署目录删掉（或加 noindex/跳转），
+   **等用户点头再动**，本轮没有碰它。
