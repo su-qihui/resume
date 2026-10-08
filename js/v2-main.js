@@ -447,6 +447,7 @@
       if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     }
     if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    if (!detail) return;   // 学历卡没有额外内容可展开，不绑点击、也不留箭头
     item.addEventListener('click', function (e) {
       // 展开之后在详情里选文字、点链接，不该顺手把卡片收起来
       if (detail && item.classList.contains('is-open') && detail.contains(e.target)) return;

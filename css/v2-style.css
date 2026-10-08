@@ -1208,7 +1208,9 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
    ⑤ 移动端：玻璃层越少越省，模糊降一档、底子加厚（可读性优先）
    ------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  :root, [data-theme="light"] { --glass-blur: 10px; --glass-alpha: .68; --glass-alpha-nav: .72; }
+  /* 浅色吸顶导航再透一档（.72 → .58）：只动吸顶后的那一态，
+     未吸顶的透明态和深色档都不碰。 */
+  :root, [data-theme="light"] { --glass-blur: 10px; --glass-alpha: .68; --glass-alpha-nav: .58; }
   [data-theme="dark"] { --glass-blur: 16px; --glass-alpha: .14; --glass-alpha-nav: .12; }
   .lightbox__caption { max-width: 86vw; font-size: .85rem; }
 }
@@ -1411,3 +1413,31 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
     background-color: #161617;
   }
 }
+
+/* -------------------------------------------------------------------------
+   ⑩ 深色模式修正：03 软件熟练度区
+   这个区在深色下"黑到看不见"有三层原因，实测出来的：
+     a) `.skill-icon` 默认 `opacity: .5`（只有 hover/active 才回到 1）。浅色下是
+        白底上的淡灰胶囊，读得出来；深色下变成"黑牌 + 五成透明"，直接糊进背景。
+     b) 深色玻璃牌是 `白 .12 叠纯黑 ≈ #1f1f1f`，而 CorelDRAW / 剪映 / Cinema 4D /
+        即梦 / Codex 这些品牌 logo 本身就是深色稿（是给浅底设计的），对比只剩 1 点几。
+     c) 雷达图的 `.radar-grid` / `.radar-axis` 用 `var(--line)` = `rgb(42,42,44)`
+        压在 `rgb(0,0,0)` 上，对比约 1.2:1，整个网骨架看不见。
+   解法：深色下把 logo 牌做成"亮色小牌"（品牌标志按设计意图回到浅底），
+   透明度抬回来；雷达骨架改用白色半透明描边。浅色一侧一个字没动。
+   ------------------------------------------------------------------------- */
+[data-theme="dark"] .skill-icon {
+  background: rgba(255, 255, 255, .92);
+  border-color: rgba(255, 255, 255, .92);
+  opacity: .86;
+  --text: #1a1d26;
+  --text-2: #4a5060;
+}
+[data-theme="dark"] .skill-icon:hover,
+[data-theme="dark"] .skill-icon.is-active { opacity: 1; border-color: var(--accent); }
+[data-theme="dark"] .skill-icon--ai { opacity: .92; }
+[data-theme="dark"] .skill-icon--ai:hover { opacity: 1; }
+[data-theme="dark"] .skills__radar .radar-grid { stroke: rgba(255, 255, 255, .22); }
+[data-theme="dark"] .skills__radar .radar-axis { stroke: rgba(255, 255, 255, .14); }
+[data-theme="dark"] .skills__radar .radar-poly { fill: rgba(41, 151, 255, .20); }
+[data-theme="dark"] .skills__radar .radar-label { fill: #c7c7cc; }
