@@ -236,17 +236,14 @@ section.on-video { background: rgba(6,7,10,.30); }
   text-shadow: 0 0 2px rgba(0,0,0,.95), 0 1px 3px rgba(0,0,0,.85), 0 3px 16px rgba(0,0,0,.7);
 }
 /* 顶部导航未吸顶时（只在首屏出现）压在深色视频上，墨色同步转浅。
-   ⚠️ 只给桌面：手机端顶部栏现在是常驻玻璃（见 ≤768px 那组），底子不透明了，
-   再套浅墨就会在白玻璃上糊成一片，所以手机端要走主题自己的墨色。 */
-@media (min-width: 769px) {
-  .nav:not(.is-scrolled) {
-    --text: #f5f6fa; --text-2: rgba(245,246,250,.72);
-    color: var(--text);  /* 同理：.nav__name 无自身 color，继承自这里 */
-  }
-  .nav:not(.is-scrolled) .nav__link {
-    background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
-  }
+   手机端同样需要这条：吸顶前的顶栏是透明的，见 §⑨ 9.1。 */
+.nav:not(.is-scrolled) {
+  --text: #f5f6fa; --text-2: rgba(245,246,250,.72);
+  color: var(--text);  /* 同理：.nav__name 无自身 color，继承自这里 */
+}
+.nav:not(.is-scrolled) .nav__link {
+  background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
 }
 /* 首屏头像已移除（原引用 headshot.webp 线上 404 导致破图） */
 .hero__eyebrow { font-size: 0.85rem; letter-spacing: 0.3em; color: var(--text-2); margin-bottom: 20px; }
@@ -879,7 +876,11 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
 }
 .tl__detail p { color: var(--text-2); font-size: 0.92rem; margin-bottom: 6px; }
 .tl__detail p:last-child { margin-bottom: 0; }
-.tl__item.is-open .tl__detail { max-height: 200px; opacity: 1; margin-top: 0.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+/* max-height 由 JS 按内容实际高度写死（详见 v2-main.js 的时间线一节）。
+   这里留一个足够大的兜底值：原来钉死 200px，逐字搬进简历的五条长句后
+   齐辉那条要 340px、融媒体那条要 515px，超过一半内容点开了也看不见。
+   JS 没跑起来时至少保证文字是完整的，只是展开动画的行程会长一点。 */
+.tl__item.is-open .tl__detail { max-height: 60rem; opacity: 1; margin-top: 0.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
 
 /* =========================================================
    v2 移动端响应式修复
@@ -1295,54 +1296,37 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
    「01 — 关于」这样的编号，菜单里复用它等于提前告诉用户"点了会落到哪一节"。
    ------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  /* 9.1 顶部栏：手机端常驻玻璃。材质和 .card 那套一致 ——
-     半透明填充 + 140° 斜向光泽 + 顶边内高光 + 细线描边 + 双层投影，
-     只给 blur 是"糊了一层"，不是玻璃。 */
-  .nav,
-  .nav.is-scrolled {
-    background-color: rgba(255, 255, 255, var(--glass-alpha-nav));
-    background-image: linear-gradient(140deg, rgba(255, 255, 255, .5) 0%, var(--glass-sheen) 52%, rgba(255, 255, 255, .3) 100%);
-    -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(var(--glass-bright));
-    backdrop-filter: blur(20px) saturate(190%) brightness(var(--glass-bright));
-    border-bottom: 1px solid var(--glass-hairline);
-    box-shadow:
-      inset 0 1px 0 var(--glass-highlight),
-      inset 0 -1px 0 rgba(17, 20, 28, .05),
-      0 2px 6px rgba(16, 24, 40, .07),
-      0 10px 28px rgba(16, 24, 40, .10);
-  }
-  /* 深色必须换成不透光的深底。玻璃层原本那套是"页面纯黑 + 白玻璃 .10"，
-     可顶部栏底下是 Showreel 视频，片里 10.28s 有一帧整幅白闪（meanY 235），
-     白玻璃叠白闪 = 浅墨直接糊掉。深底 + 顶部一道白色内高光才有厚度。 */
-  [data-theme="dark"] .nav,
+  /* 9.1 顶栏：吸顶态的玻璃由 §10 玻璃层统一负责，这里**不再重复声明** ——
+     上一轮写了 `.nav, .nav.is-scrolled {...}`，把未吸顶的透明态一起糊掉了，
+     "透明 → 下滑变玻璃"的过渡就没了。这里只补一处手机端深色修正：
+     玻璃层原本给深色导航的是"白玻璃 .10"，可顶栏底下是 Showreel 视频，
+     片里 10.28s 有一帧整幅白闪（meanY 235），白玻璃叠白闪浅墨直接糊掉，
+     所以手机端深色改用薄深底撑住对比。 */
   [data-theme="dark"] .nav.is-scrolled {
-    background-color: rgba(10, 11, 14, .74);
-    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 52%, rgba(255, 255, 255, 0) 100%);
+    background-color: rgba(10, 11, 14, .62);
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 55%, rgba(255, 255, 255, 0) 100%);
     border-bottom-color: rgba(255, 255, 255, .10);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .12),
-      inset 0 -1px 0 rgba(0, 0, 0, .5),
-      0 2px 6px rgba(0, 0, 0, .4),
-      0 12px 30px rgba(0, 0, 0, .5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 2px 6px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .5);
   }
 
-  /* 9.2 抽屉：浮起的玻璃片。浅色原来"平"是因为只有填充没有材质三件套，
-     现在斜向光泽 + 顶边内高光 + 底边内暗线 + 紧/松两层投影一起上。 */
+  /* 9.2 抽屉：浮起的玻璃片。材质参数一律复用 §⑤ 为手机端调好的令牌
+     （light: --glass-alpha .68 / --glass-blur 10px），和 .card 完全同源。
+     上一轮自己写成 .88 + blur(26px)，比卡片实心一倍、糊得更狠，
+     所以"看着不像同一种玻璃"—— 这不是调参能救的，是不该另发明一套数。 */
   .nav__links {
     position: fixed; top: 64px; left: 12px; right: 12px; z-index: 10002;
     display: flex; flex-direction: column; gap: 0;
     padding: 6px; border-radius: 16px;
-    background-color: rgba(255, 255, 255, .88);
-    background-image: linear-gradient(140deg, rgba(255, 255, 255, .62) 0%, var(--glass-sheen) 46%, rgba(255, 255, 255, .34) 100%);
-    -webkit-backdrop-filter: blur(26px) saturate(190%);
-    backdrop-filter: blur(26px) saturate(190%);
+    background-color: rgba(255, 255, 255, var(--glass-alpha));
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .55) 0%, var(--glass-sheen) 50%, rgba(255, 255, 255, .38) 100%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
     border: 1px solid var(--glass-hairline);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .95),
-      inset 0 -1px 0 rgba(17, 20, 28, .07),
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 -1px 0 rgba(17, 20, 28, .06),
       0 1px 2px rgba(16, 24, 40, .10),
-      0 10px 22px rgba(16, 24, 40, .14),
-      0 26px 56px rgba(16, 24, 40, .16);
+      0 12px 28px rgba(16, 24, 40, .16);
     max-height: calc(var(--vport-h, 100svh) - 84px);
     overflow-y: auto; overscroll-behavior: contain;
     transform-origin: 50% 0;
@@ -1354,15 +1338,14 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
     opacity: 1; visibility: visible; pointer-events: auto; transform: none;
   }
   [data-theme="dark"] .nav__links {
-    background-color: rgba(18, 20, 26, .92);
-    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 46%, rgba(255, 255, 255, 0) 100%);
+    background-color: rgba(16, 18, 24, .72);
+    background-image: linear-gradient(140deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .03) 50%, rgba(255, 255, 255, 0) 100%);
     border-color: rgba(255, 255, 255, .10);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, .14),
-      inset 0 -1px 0 rgba(0, 0, 0, .55),
+      inset 0 -1px 0 rgba(0, 0, 0, .5),
       0 1px 2px rgba(0, 0, 0, .45),
-      0 12px 26px rgba(0, 0, 0, .5),
-      0 28px 60px rgba(0, 0, 0, .55);
+      0 14px 34px rgba(0, 0, 0, .55);
   }
 
   /* 9.3 行：左名称右编号。行高压到 44px（原来 50px 显得松，但不能再低 ——
@@ -1411,4 +1394,20 @@ button.cert { width: 100%; font: inherit; color: var(--text); cursor: pointer; -
 
   /* 9.6 遮罩：点它关抽屉。压在内容之上、导航之下（.nav 是 100）。 */
   .nav.is-open ~ .nav-scrim { opacity: 1; visibility: visible; }
+}
+
+/* 9.7 系统开"降低透明度"时的退化（§10 ④ 那份清单里没有抽屉，这里补上，
+   否则手机端抽屉会绕过无障碍降级）。 */
+@media (max-width: 768px) and (prefers-reduced-transparency: reduce) {
+  .nav__links {
+    background-image: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background-color: #fbfbfd;
+  }
+  [data-theme="dark"] .nav__links,
+  [data-theme="dark"] .nav.is-scrolled {
+    background-image: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background-color: #161617;
+  }
 }

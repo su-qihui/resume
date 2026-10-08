@@ -433,11 +433,17 @@
   }
 
   /* ---------- 可展开时间线：点整张卡片展开（v2 升级） ---------- */
+  var tlItems = [];
   document.querySelectorAll('.tl__item').forEach(function (item) {
     var toggle = item.querySelector('.tl__toggle');
     var detail = item.querySelector('.tl__detail');
+    function fit() {
+      // 展开态下把 max-height 钉成内容实际高：写死 200px 会把长条目截掉
+      if (detail) detail.style.maxHeight = item.classList.contains('is-open') ? detail.scrollHeight + 'px' : '0px';
+    }
     function setOpen(open) {
       item.classList.toggle('is-open', open);
+      fit();
       if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     }
     if (toggle) toggle.setAttribute('aria-expanded', 'false');
@@ -446,7 +452,12 @@
       if (detail && item.classList.contains('is-open') && detail.contains(e.target)) return;
       setOpen(!item.classList.contains('is-open'));
     });
+    tlItems.push({ item: item, fit: fit });
   });
+  // 换行会变（转屏、窗口缩放），重算一次展开条目的实际高度
+  window.addEventListener('resize', function () {
+    for (var i = 0; i < tlItems.length; i++) tlItems[i].fit();
+  }, { passive: true });
 
   /* ---------- 装备散开效果初始化 ---------- */
   var gearItems = document.querySelectorAll('.gear__item');

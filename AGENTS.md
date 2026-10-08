@@ -5,7 +5,7 @@
 > 基底版本：`HTTP/resume-34f.pages.dev/resume-main`（含 2026-09-12 三轮改动）
 > 与线上 https://resume-34f.pages.dev 的关系：**本目录就是线上源码**，已接回 git 仓库
 > `github.com/su-qihui/resume`（main），推 main 即由 Cloudflare Pages 自动重建发布。2026-09-29 起同步。
-> 更新日期：2026-10-08（第二十二轮）
+> 更新日期：2026-10-08（第二十三轮）
 
 ## 1. 一句话定位
 
@@ -89,7 +89,7 @@
 | 技能图标联动 | `.radar-dot[data-skill-index]` ↔ `.skill-icon[data-skill]` | 双向 hover 高亮 |
 | 装备散开入场 | `.gear__item[data-angle]` | JS 注入 `--angle/--lift/--scale`，每件错位 60ms；`lifts`/`scales` 数组按 DOM 顺序对齐，**增减装备必须同步改数组** |
 | 背景 Emoji 互动层 | `#emojiBg`（`<canvas>`，`z-index:-1`） | 点击任意处召唤 8~14 个 emoji，重力 0.5 / 摩擦 0.985 / 弹跳 0.7 / 粒子碰撞；上限 90 个，**首次掉到底部后 3s 淡出、0.4s 内消失**；**≤768px 手机端整体关闭**（CSS `display:none` + JS `matchMedia` 短路，不初始化引擎、点击也不响应） |
-| 时间线展开 | **点 `.tl__item` 任意处** → `.is-open`（`.tl__toggle` 只当箭头 + 键盘焦点，`aria-expanded` 由 JS 同步） | `max-height` 0 → 200px；展开后点 `.tl__detail` 内的文字不收起（可选中） |
+| 时间线展开 | **点 `.tl__item` 任意处** → `.is-open`（`.tl__toggle` 只当箭头 + 键盘焦点，`aria-expanded` 由 JS 同步） | `max-height` 由 JS 写成 `detail.scrollHeight`（收起时 `0px`），`resize` 重算；CSS 只留 `60rem` 兜底。**别改回写死的 px**：原来钉 200px，第二十三轮把简历五条长句逐字搬进来后齐辉要 340px、融媒体要 515px，点开也只能看见前三条。展开后点 `.tl__detail` 内的文字不收起（可选中） |
 | 作品集筛选 | `.tab[data-filter]` → `.gallery[data-group]` | 切换时 80ms 错位入场 |
 | 灯箱 | `[data-lightbox]` = `image` / `video` / `gear` / `solo` | Esc 关、←→ 切换、点遮罩关；`video` 类型自动 play；`solo` 为单图查看（不参与任何图库） |
 | 作品卡即播（桌面悬停 / 手机停留） | 同一套 `inlinePlay/inlineStop(imgEl)`，状态挂在 `imgEl._ip`（`{vid,bar,fill,timer,hideBar}`），首次才建 `<video class="card__vid">`；分流开关是 `isTouchLike` | `preload="none"` + 首次触发才赋 src；淡入盖封面、`.card__play` 隐掉。**慢网才出进度条**：起播挂 260ms 定时器 → `.card__buf.is-on`，`playing`/停止时撤掉，宽度取 `buffered.end/duration`。桌面绑 `mouseenter/leave`；触屏走 `setupPhoneAutoPlay()`：IO 阈值 0.6 收集在屏卡 → **首次起播要停留 500ms，已在播则切下一张立即生效** → 全站只播离视口中线最近的一张，切换先 `inlineStop` 旧的。`navigator.connection` 的 `saveData` 或 `effectiveType` 含 2g/3g 时整套闸住，退回点卡片开灯箱，并监听 `connection.change`。**`openLb()` 第一件事是 `stopAllInline()`**，否则卡片面和灯箱面一起出声；`reduceMotion` 下整套不启用 |
@@ -846,3 +846,43 @@ G="/c/Program Files/Git/cmd/git.exe"; cd "/e/vibe coding/Resume/HTTP/mbl-resume-
    `background-image` 含 `linear-gradient`（片与顶栏各一处 = 斜向光泽到位）、顶栏 `box-shadow` 4 层、
    行的 `animation-name: nav-row-in`；圆角 16px、左右各 12px、遮罩/Esc 关闭照旧；
    最坏情况对比度 浅 **16.55:1** / 深 **14.07:1**；`Runtime.exceptionThrown` 0 条。
+**2026-10-08（第二十三轮：修我上一轮引入的两条回退 + 换简历图 + 经历栏逐字照搬简历）**
+用户真机复测后四条。前两条是我第二十一/二十二轮弄出来的回退，按"先找根因再改"走了一遍。
+
+1. **回退①：顶栏从"透明→下滑变玻璃"变成了全程半透明。**
+   根因用 `git show f2510b7` 直接定位到我自己写的那行选择器：`+  .nav,` 和 `.nav.is-scrolled` 并列，
+   等于未吸顶也上了底子；同时我把"未吸顶转浅墨"那条收进了 `@media (min-width:769px)`，手机端连浅墨也没了。
+   **修法不是调参，是把这两处撤销**：§⑨ 里不再声明 `.nav` 的底色（交回 §10 玻璃层的 `.nav.is-scrolled`），
+   `.nav:not(.is-scrolled)` 那组恢复全局。手机端深色只保留一处必要修正（见第 3 条的理由）。
+2. **回退②：抽屉/顶栏"不像玻璃"。** 并排量了已经做对的 `.card`：它是
+   `rgba(255,255,255,.68) + blur(10px) saturate(1.8) brightness(1)`，
+   而我给抽屉写的是 **`.88 + blur(26px)`** —— 比卡片实心一档、糊得更狠，所以看着是白面板不是玻璃。
+   更该记的教训是：**仓库 §⑤ 早就为手机端调过一套玻璃令牌**（`--glass-blur:10px / --glass-alpha:.68 /
+   --glass-alpha-nav:.72`，注释写着"可读性优先"），我没读就自己发明了一组数。
+   修法：抽屉的填充、模糊、饱和、亮度全部改成读 `var(--glass-*)`，和 `.card` 同源。
+3. ⚠️ **顺带查出我自己引入的第三个问题**：§⑨ 写在 `@media (prefers-reduced-transparency: reduce)` 降级块**之后**，
+   手机端抽屉会绕过无障碍降级。补了 §9.7 专门覆盖抽屉与深色顶栏的降级路径。
+   （深色顶栏用薄深底而不是玻璃层原本的"白玻璃 .10"是有依据的：顶栏底下是 Showreel，
+   片里 10.28s 有一帧整幅白闪 meanY 235，白玻璃叠白闪浅墨读不出。）
+4. **换简历照片**：`PNG\个人简历-苏其辉-2.9.jpg`（2480×3508 / 2.6 MB）→ 缩到 **1240×1754 / 329 KB**
+   覆盖 `assets/img/resume/cv.jpg`，两处引用 `?v=2.8.1 → ?v=2.9`。
+   旧图不另存副本（git 历史里有），一度写进站点目录的 `cv-2.8.1.jpg` 已删 —— 那会被一起部署。
+5. **经历栏逐字照搬简历**（用户"就写一模一样的就好"）。四条卡片：
+   浙江交通技师学院（实习阶段 / 数字媒体技术应用 / 主修三条）、浙江机电职业技术学院（不在校 /
+   **计算机技术应用**，原来站点写的是"数字媒体技术应用"，专业名以简历为准）、
+   义乌齐辉广告社（**2022.05—2026.09**，原来写的 2020.05—兼职 与简历不符）、学校融媒体社团，
+   两条工作条目各 5 条职责原样录入；删掉的是原来那些简历里没有的自撰小结（"家族企业实战起步"等）。
+6. 🔴 **搬完暴露一个真 bug**：`.tl__item.is-open .tl__detail { max-height: 200px }` 是钉死的，
+   五条长句进来后齐辉要 **340px**、融媒体要 **515px** —— 点开也只能看见前三条。
+   改成 JS 按 `detail.scrollHeight` 写 `max-height`（收起归 0）、`resize` 时重算，
+   CSS 侧只留 `60rem` 作为无 JS 兜底。
+7. 版本号：CSS `neo46`，JS `neo18`。
+8. **验证**：先写判据再改（`navtest.mjs` 六条断言，改前 4 条 FAIL）。改后全 PASS ——
+   未吸顶 `rgba(0,0,0,0)`、吸顶 `alpha .72 + blur`、抽屉 alpha 与 `.card` 同为 **.68** 且 blur 同为 10px、
+   reduce 下顶栏退化 `.97 + none`、抽屉退化不透明。
+   展开走真实点击：手机 390 四条 `103/103 103/103 340/340 515/515`、桌面 1440 `103/103 103/103 190/190 240/240`
+   全部无截断，收起归 0、再展开仍正确；`#aboutCard img` 实测 `naturalWidth 1240x1754` 加载完成。
+   ⚠️ 两条踩过的测法坑：(a) 直接 `classList.add('is-open')` 会绕过 JS 的 `setOpen`，
+   又在同一帧读 `getBoundingClientRect` → 读出 16px 的假截断；必须点卡片再量。
+   (b) 本机 Chrome 的 `prefers-reduced-transparency` 会被 Windows「透明效果」设置影响，
+   且 localStorage 残留的深色主题会让读数全偏 —— 量材质前先清 localStorage 并锁浅色。
